@@ -18,7 +18,7 @@ const features = [
     title: 'Personalized Meal Plans',
     description:
       'Design your perfect menu with our expert nutritionists. From keto to vegan, we accommodate all dietary preferences with premium, locally-sourced ingredients.',
-    icon: <HandPlatterIcon className="stroke-blue-500 size-32 lg:size-64" />,
+    icon: <HandPlatterIcon className="stroke-blue-500 size-24 lg:size-64" />,
     tag: 'Nutrition',
     checklist: [
       'Customizable',
@@ -32,7 +32,7 @@ const features = [
     description:
       'From Sabang to Merauke, we ensure your meals arrive fresh and on time, no matter where you are in Indonesia.',
     icon: (
-      <TruckElectricIcon className="stroke-emerald-500 size-32 lg:size-64" />
+      <TruckElectricIcon className="stroke-emerald-500 size-24 lg:size-64" />
     ),
     tag: 'Delivery',
     checklist: ['Fast Shipping', 'Cold Chain', 'Island Coverage', 'On-Time'],
@@ -41,7 +41,7 @@ const features = [
     title: 'Transparent Nutrition',
     description:
       'Track your wellness journey with detailed nutritional insights for every meal, helping you achieve your health and fitness goals with confidence.',
-    icon: <BatteryPlusIcon className="stroke-amber-500 size-32 lg:size-64" />,
+    icon: <BatteryPlusIcon className="stroke-amber-500 size-24 lg:size-64" />,
     tag: 'Transparency',
     checklist: ['Macro Details', 'Ingredient List', 'Verified Sources'],
   },
@@ -63,16 +63,16 @@ export default function Home() {
             quality={100}
             className="w-[250px] md:w-[400px]"
           />
-          <div className="flex flex-col justify-center gap-4 text-center md:text-left">
-            <h1 className="flex flex-col text-4xl md:text-5xl font-dm-sans font-semibold leading-snug">
+          <div className="flex flex-col justify-center gap-4 text-left md:text-center">
+            <h1 className="flex flex-col text-2xl md:text-5xl font-dm-sans font-semibold leading-snug">
               <span>Healthy Meals</span>
               <span>Anytime, Anywhere.</span>
             </h1>
-            <p className="flex flex-col text-base md:text-lg font-medium">
+            <p className="flex flex-col text-xs md:text-lg font-medium">
               <span>Experience healthy eating made effortless.</span>
               <span>Fresh, customizable meals delivered across Indonesia.</span>
             </p>
-            <div className="flex items-center justify-center md:justify-start gap-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-start md:justify-center gap-4">
               <Link className={buttonVariants({ size: 'lg' })} href="/login">
                 <LogInIcon />
                 Get Started
@@ -98,7 +98,7 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-6 md:gap-8 py-8 md:py-12">
-          <h2 className="text-3xl md:text-4xl font-dm-sans font-semibold">
+          <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
             Why Choose Us
           </h2>
           <div className="flex flex-col items-center gap-12 md:gap-24">
@@ -113,7 +113,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="w-full max-w-6xl flex flex-col md:flex-row justify-between py-8 px-6 md:px-4 text-sm text-muted-foreground gap-8 md:gap-0">
+      <footer className="w-full max-w-6xl flex flex-col md:flex-row justify-between px-8 md:px-0 py-8 text-sm text-muted-foreground gap-8 md:gap-0">
         <div className="flex-1 flex flex-col md:flex-row gap-8 md:gap-16">
           <span>&copy; 2025</span>
           <div className="flex flex-col gap-2">
@@ -199,16 +199,16 @@ function Feature({
         >
           {tag}
         </span>
-        <h3 className="text-2xl md:text-3xl font-dm-sans font-semibold">
+        <h3 className="text-lg md:text-3xl font-dm-sans font-semibold">
           {title}
         </h3>
-        <p className="text-base md:text-lg">{description}</p>
+        <p className="text-sm md:text-lg">{description}</p>
         <ul className="flex flex-col gap-2 mt-2">
           {checklist.map((item) => (
             <li
               key={item}
               className={cn(
-                'flex items-center gap-2 font-medium',
+                'flex items-center gap-2 font-medium text-sm md:text-base',
                 tag === 'Nutrition'
                   ? 'text-blue-500'
                   : tag === 'Delivery'
