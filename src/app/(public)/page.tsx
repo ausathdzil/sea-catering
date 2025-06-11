@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { TestimonialCarousel } from './testimonial-carousel';
 
 const features = [
   {
@@ -95,7 +96,7 @@ export default function Home() {
         <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
           Why Choose Us
         </h2>
-        <div className="flex flex-col items-center gap-12 md:gap-24">
+        <div className="flex flex-col items-center gap-8">
           {features.map((feature, idx) => (
             <Feature
               key={feature.title}
@@ -104,6 +105,13 @@ export default function Home() {
             />
           ))}
         </div>
+      </div>
+
+      <div className="hidden xl:flex flex-col items-center justify-center gap-8 py-12">
+        <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
+          What Our Customers Say
+        </h2>
+        <TestimonialCarousel />
       </div>
     </main>
   );
@@ -127,7 +135,7 @@ function Feature({
   return (
     <div
       className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-32 p-8 lg:p-16 ${
-        alignReverse ? 'lg:flex-row-reverse' : 'bg-muted/50 rounded-lg'
+        alignReverse ? 'lg:flex-row-reverse' : 'bg-accent/50 rounded-lg'
       }`}
     >
       {icon}
