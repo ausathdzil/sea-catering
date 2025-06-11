@@ -1,19 +1,19 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import { MenuIcon } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
-import { buttonVariants } from './ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from './ui/drawer';
+} from '@/components/ui/drawer';
+import { cn } from '@/lib/utils';
+import { MenuIcon } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 const navItems = [
   {
@@ -22,7 +22,7 @@ const navItems = [
   },
   {
     label: 'Meal Plans',
-    href: '/menu',
+    href: '/meal-plans',
   },
   {
     label: 'Subscription',
@@ -100,12 +100,12 @@ export function Header() {
             </DrawerContent>
           </Drawer>
         </div>
-        <nav className="hidden sm:flex items-center gap-4">
+        <nav className="hidden sm:flex items-center gap-2">
           {navItems.map((item) => (
             <Link
               className={cn(
                 buttonVariants({ variant: 'ghost', size: 'sm' }),
-                pathname === item.href && 'bg-primary/5 text-primary'
+                pathname === item.href && 'bg-accent text-accent-foreground'
               )}
               key={item.href}
               href={item.href}
