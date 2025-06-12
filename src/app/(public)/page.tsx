@@ -11,6 +11,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { TestimonialCarousel } from './testimonial-carousel';
+import { TestimonialForm } from './testimonial-form';
 
 const features = [
   {
@@ -112,6 +113,13 @@ export default function Home() {
           What Our Customers Say
         </h2>
         <TestimonialCarousel />
+      </div>
+
+      <div className="w-full max-w-2xl flex flex-col items-center justify-center gap-8 py-12">
+        <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
+          Give Us Your Feedback
+        </h2>
+        <TestimonialForm />
       </div>
     </main>
   );

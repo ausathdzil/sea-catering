@@ -69,13 +69,25 @@ export default function PublicLayout({
             <div className="flex flex-col items-start md:items-end gap-2">
               <span className="font-medium text-foreground">Socials</span>
               <div className="flex items-center gap-3">
-                <a href="https://github.com/ausathdzil/sea-catering">
+                <a
+                  href="https://github.com/ausathdzil/sea-catering"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <GitHub className="size-4 fill-muted-foreground hover:fill-foreground transition-colors" />
                 </a>
-                <a href="https://www.x.com/ausathdzil">
+                <a
+                  href="https://www.x.com/ausathdzil"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <XformerlyTwitter className="size-4 fill-muted-foreground hover:fill-foreground transition-colors" />
                 </a>
-                <a href="https://www.instagram.com/ausathikram">
+                <a
+                  href="https://www.instagram.com/ausathikram"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Instagram className="size-4 fill-muted-foreground hover:fill-foreground transition-colors" />
                 </a>
               </div>

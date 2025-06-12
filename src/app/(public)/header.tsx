@@ -59,7 +59,7 @@ export function Header() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 w-full flex items-center justify-center p-6',
+        'sticky top-0 z-50 w-full flex items-center justify-center px-6 py-4 md:p-6',
         isScrolled && 'bg-background shadow-xs'
       )}
     >
@@ -69,9 +69,9 @@ export function Header() {
           href="/"
         >
           <Image src="/logo.png" alt="SEA Catering" width={50} height={50} />
-          <span>SEA Catering</span>
+          <span className="hidden md:block">SEA Catering</span>
         </Link>
-        <div className="flex sm:hidden">
+        <div className="flex md:hidden">
           <Drawer open={isOpen} onOpenChange={handleOpenChange}>
             <DrawerTrigger asChild>
               <button aria-label="Menu">
@@ -100,7 +100,7 @@ export function Header() {
             </DrawerContent>
           </Drawer>
         </div>
-        <nav className="hidden sm:flex items-center gap-2">
+        <nav className="hidden md:flex items-center gap-2">
           {navItems.map((item) => (
             <Link
               className={cn(
