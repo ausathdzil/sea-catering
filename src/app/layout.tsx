@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { DM_Sans, Inter } from 'next/font/google';
+import { Suspense } from 'react';
 import './globals.css';
 
 const inter = Inter({
@@ -18,6 +19,8 @@ export const metadata: Metadata = {
   description: 'Healthy Meals, Anytime, Anywhere.',
 };
 
+export const experimental_ppr = true;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +35,7 @@ export default function RootLayout({
           'font-sans dark:antialiased'
         )}
       >
-        {children}
+        <Suspense fallback={null}>{children}</Suspense>
       </body>
     </html>
   );

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { TestimonialCarousel } from './testimonial-carousel';
 import { TestimonialForm } from './testimonial-form';
 
@@ -115,7 +116,9 @@ export default async function Home() {
         <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
           What Our Customers Say
         </h2>
-        <TestimonialCarousel testimonials={testimonials} />
+        <Suspense fallback={null}>
+          <TestimonialCarousel testimonials={testimonials} />
+        </Suspense>
       </div>
 
       <div className="w-full max-w-2xl flex flex-col items-center justify-center gap-8 py-12">
