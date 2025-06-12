@@ -1,7 +1,13 @@
 'use client';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Carousel,
   CarouselApi,
@@ -10,44 +16,16 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { Testimonial } from '@/db/schema';
 import { cn } from '@/lib/utils';
-import { DotIcon } from 'lucide-react';
+import { DotIcon, StarIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const testimonials = [
-  {
-    name: 'Sarah Wijaya',
-    comment:
-      'The personalized meal plans have been a game-changer for my fitness journey. The food is always fresh and delicious!',
-  },
-  {
-    name: 'Budi Santoso',
-    comment:
-      'As a busy professional, having healthy meals delivered to my office has saved me so much time. The quality is consistently excellent.',
-  },
-  {
-    name: 'Maya Putri',
-    comment:
-      'I love how they accommodate my vegan diet. The variety of options and attention to nutritional details is impressive.',
-  },
-  {
-    name: 'Ahmad Rizki',
-    comment:
-      'The delivery service is incredibly reliable. My meals always arrive on time and perfectly fresh, even during peak hours.',
-  },
-  {
-    name: 'Dewi Lestari',
-    comment:
-      'The transparency in nutritional information helps me stay on track with my health goals. Highly recommended!',
-  },
-  {
-    name: 'Rudi Hartono',
-    comment:
-      'The premium ingredients really make a difference. You can taste the quality in every bite. Worth every penny!',
-  },
-];
-
-export function TestimonialCarousel()  {
+export function TestimonialCarousel({
+  testimonials,
+}: {
+  testimonials: Testimonial[];
+}) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
@@ -77,7 +55,7 @@ export function TestimonialCarousel()  {
           {testimonials.map((testimonial) => (
             <CarouselItem
               className="basis-full md:basis-1/2 lg:basis-1/3"
-              key={testimonial.name}
+              key={testimonial.id}
             >
               <TestimonialCard {...testimonial} />
             </CarouselItem>
@@ -101,17 +79,37 @@ export function TestimonialCarousel()  {
   );
 }
 
-function TestimonialCard({ name, comment }: { name: string; comment: string }) {
+function TestimonialCard({
+  author,
+  content,
+  rating,
+}: {
+  author: string;
+  content: string;
+  rating: number;
+}) {
   return (
-    <Card className="shadow-none border-accent hover:bg-accent transition-colors">
-      <CardHeader className="flex flex-row items-center gap-2">
-        <Avatar>
-          <AvatarFallback>{name.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <CardTitle>{name}</CardTitle>
+    <Card className="shadow-none">
+      <CardHeader>
+        <div className="flex flex-row items-center gap-2">
+          <Avatar className="size-10">
+            <AvatarFallback>{author.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col gap-1">
+            <CardTitle>{author}</CardTitle>
+            <CardDescription className="flex flex-row items-center gap-1">
+              {Array.from({ length: rating }).map((_, index) => (
+                <StarIcon
+                  key={index}
+                  className="fill-yellow-500 stroke-yellow-500 size-4"
+                />
+              ))}
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm md:text-base line-clamp-3">{comment}</p>
+        <p className="text-sm md:text-base line-clamp-4">{content}</p>
       </CardContent>
     </Card>
   );

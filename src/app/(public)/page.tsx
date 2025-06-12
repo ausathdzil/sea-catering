@@ -1,4 +1,5 @@
 import { buttonVariants } from '@/components/ui/button';
+import { getTestimonials } from '@/db/data';
 import { cn } from '@/lib/utils';
 import {
   BatteryPlusIcon,
@@ -47,7 +48,9 @@ const features = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const testimonials = await getTestimonials();
+
   return (
     <main className="flex-1 flex flex-col items-center gap-8 md:gap-16 py-8 md:py-12 px-8 md:px-0">
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
@@ -112,7 +115,7 @@ export default function Home() {
         <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
           What Our Customers Say
         </h2>
-        <TestimonialCarousel />
+        <TestimonialCarousel testimonials={testimonials} />
       </div>
 
       <div className="w-full max-w-2xl flex flex-col items-center justify-center gap-8 py-12">

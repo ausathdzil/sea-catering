@@ -14,11 +14,12 @@ export const mealPlanCategoryEnum = pgEnum('meal_plan_category', [
 ]);
 
 export interface MealPlanDetails {
-  mealsPerWeek: number;
+  cancellationPolicy: string;
+  customization: string;
   deliveryDays: string[];
   dietaryOptions: string[];
-  customization: string;
-  cancellationPolicy: string;
+  mealsPerWeek: number;
+  mealType: string[];
 }
 
 export const mealPlansTable = pgTable('meal_plans', {
@@ -57,11 +58,11 @@ export const subscriptionsTable = pgTable('subscriptions', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+  mealPlanId: text('meal_plan_id').references(() => mealPlansTable.id),
+  mealPlan: jsonb('meal_plan').$type<MealPlan>().notNull(),
   name: text('name').notNull(),
   phoneNumber: text('phone_number').notNull(),
-  plan: text('plan').notNull(),
-  mealType: text('meal_type').array().notNull(),
-  deliveryDay: integer('delivery_day').notNull(),
+  deliveryDays: text('delivery_days').array().notNull(),
   allergies: text('allergies').array(),
   totalPrice: integer('total_price').notNull(),
   createdAt: timestamp('created_at')

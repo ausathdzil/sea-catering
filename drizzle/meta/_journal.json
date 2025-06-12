@@ -15,6 +15,13 @@
       "when": 1749729431171,
       "tag": "0001_busy_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1749732952640,
+      "tag": "0002_numerous_energizer",
+      "breakpoints": true
     }
   ]
 }
