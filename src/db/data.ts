@@ -27,8 +27,9 @@ export async function getTestimonials() {
   const testimonials = await db
     .select()
     .from(testimonialsTable)
-    .orderBy(desc(testimonialsTable.createdAt));
-    
+    .orderBy(desc(testimonialsTable.createdAt))
+    .limit(5);
+
   return testimonials;
 }
 

@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { DM_Sans, Inter } from 'next/font/google';
@@ -36,6 +37,11 @@ export default function RootLayout({
         )}
       >
         <Suspense fallback={null}>{children}</Suspense>
+        <Toaster
+          toastOptions={{ className: '!font-sans' }}
+          richColors
+          position="bottom-center"
+        />
       </body>
     </html>
   );

@@ -12,10 +12,12 @@ const createTestimonialSchema = z.strictObject({
 });
 
 export type CreateTestimonialState = {
+  success: boolean;
+  message: string;
   errors: {
-    name?: string[];
-    message?: string[];
-    rating?: string[];
+    name?: string[] | undefined;
+    message?: string[] | undefined;
+    rating?: string[] | undefined;
   };
   fields: {
     name: string;
@@ -41,6 +43,8 @@ export async function createTestimonial(
 
   if (!validatedFields.success) {
     return {
+      success: false,
+      message: 'Invalid form data',
       errors: z.flattenError(validatedFields.error).fieldErrors,
       fields: {
         name: rawFormData.name,
@@ -64,6 +68,8 @@ export async function createTestimonial(
   revalidateTag('testimonials');
 
   return {
+    success: true,
+    message: 'Thank you for your feedback!',
     errors: {},
     fields: {
       name: '',

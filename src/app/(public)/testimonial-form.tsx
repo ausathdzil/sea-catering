@@ -7,9 +7,12 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { createTestimonial, CreateTestimonialState } from '@/db/actions';
 import { Loader } from 'lucide-react';
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 const initialState: CreateTestimonialState = {
+  success: false,
+  message: '',
   errors: {},
   fields: {
     name: '',
@@ -23,6 +26,16 @@ export function TestimonialForm() {
     createTestimonial,
     initialState
   );
+
+  useEffect(() => {
+    if (state.message) {
+      if (state.success) {
+        toast.success(state.message);
+      } else {
+        toast.error(state.message);
+      }
+    }
+  }, [state]);
 
   return (
     <form className="w-full max-w-2xl space-y-6" action={formAction}>
@@ -72,7 +85,7 @@ export function TestimonialForm() {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={isPending}>
+        <Button className="min-w-20" type="submit" disabled={isPending}>
           {isPending ? <Loader className="animate-spin" /> : 'Submit'}
         </Button>
       </div>
