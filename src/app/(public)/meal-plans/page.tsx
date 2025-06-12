@@ -1,6 +1,9 @@
+import { getMealPlans } from '@/db/data';
 import { MealPlans } from './meal-plans';
 
-export default function MealPlansPage() {
+export default async function MealPlansPage() {
+  const plans = await getMealPlans();
+  
   return (
     <main className="w-full max-w-6xl flex-1 flex flex-col p-8 md:px-2">
       <div className="space-y-2">
@@ -10,7 +13,7 @@ export default function MealPlansPage() {
           preferences
         </p>
       </div>
-      <MealPlans />
+      <MealPlans plans={plans} />
     </main>
   );
 }

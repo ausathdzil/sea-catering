@@ -47,7 +47,7 @@ const testimonials = [
   },
 ];
 
-export function TestimonialCarousel() {
+export function TestimonialCarousel()  {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);

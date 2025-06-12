@@ -19,7 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { MealPlanItem, mealPlans } from '@/lib/data';
+import { MealPlan, mealPlanCategoryEnum } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import {
   ArrowRightIcon,
@@ -31,51 +31,50 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 
-export function MealPlans() {
-  const [selectedPlan, setSelectedPlan] = useState<
-    'basic' | 'premium' | 'executive'
-  >('basic');
+export function MealPlans({ plans }: { plans: MealPlan[] }) {
+  const [selectedPlan, setSelectedPlan] =
+    useState<(typeof mealPlanCategoryEnum)['enumValues'][number]>('diet');
 
-  const plans = mealPlans.find((plan) => plan.type === selectedPlan)?.items;
+  const filteredPlans = plans.filter((plan) => plan.category === selectedPlan);
 
   return (
     <div className="w-full flex flex-col gap-4 py-8">
       <div className="flex flex-wrap items-center gap-2 md:gap-4">
         <Button
           className={`${
-            selectedPlan === 'basic'
+            selectedPlan === 'diet'
               ? 'opacity-100'
               : 'opacity-50 hover:opacity-100'
           }`}
           variant="secondary"
           size="sm"
-          onClick={() => setSelectedPlan('basic')}
+          onClick={() => setSelectedPlan('diet')}
         >
-          Basic
+          Diet
         </Button>
         <Button
           className={`${
-            selectedPlan === 'premium'
+            selectedPlan === 'protein'
               ? 'opacity-100'
               : 'opacity-50 hover:opacity-100'
           }`}
           variant="secondary"
           size="sm"
-          onClick={() => setSelectedPlan('premium')}
+          onClick={() => setSelectedPlan('protein')}
         >
-          Premium
+          Protein
         </Button>
         <Button
           className={`${
-            selectedPlan === 'executive'
+            selectedPlan === 'royal'
               ? 'opacity-100'
               : 'opacity-50 hover:opacity-100'
           }`}
           variant="secondary"
           size="sm"
-          onClick={() => setSelectedPlan('executive')}
+          onClick={() => setSelectedPlan('royal')}
         >
-          Executive
+          Royal
         </Button>
         <div className="flex-1 flex justify-end">
           <Link
@@ -88,8 +87,8 @@ export function MealPlans() {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {plans?.map((plan) => (
-          <MealPlanCard key={plan.id} type={selectedPlan} {...plan} />
+        {filteredPlans?.map((plan) => (
+          <MealPlanCard key={plan.id} {...plan} />
         ))}
       </div>
     </div>
@@ -97,21 +96,21 @@ export function MealPlans() {
 }
 
 function MealPlanCard({
-  type,
   name,
-  price,
   description,
+  category,
+  price,
   details,
-}: MealPlanItem & { type: 'basic' | 'premium' | 'executive' }) {
+}: MealPlan) {
   return (
     <Drawer>
       <DrawerTrigger asChild>
         <Card
           className={cn(
             'border transition-colors shadow-none gap-2',
-            type === 'basic' && 'hover:border-blue-500',
-            type === 'premium' && 'hover:border-purple-500',
-            type === 'executive' && 'hover:border-amber-500'
+            category === 'diet' && 'hover:border-blue-500',
+            category === 'protein' && 'hover:border-purple-500',
+            category === 'royal' && 'hover:border-amber-500'
           )}
         >
           <CardHeader>
@@ -123,9 +122,10 @@ function MealPlanCard({
                 <Badge
                   variant="secondary"
                   className={cn(
-                    type === 'basic' && 'bg-blue-500/10 text-blue-500',
-                    type === 'premium' && 'bg-purple-500/10 text-purple-500',
-                    type === 'executive' && 'bg-amber-500/10 text-amber-500'
+                    category === 'diet' && 'bg-blue-500/10 text-blue-500',
+                    category === 'protein' &&
+                      'bg-purple-500/10 text-purple-500',
+                    category === 'royal' && 'bg-amber-500/10 text-amber-500'
                   )}
                 >
                   {details.mealsPerWeek} meals
@@ -134,10 +134,10 @@ function MealPlanCard({
                   variant="outline"
                   className={cn(
                     'hidden md:block',
-                    type === 'basic' && 'border-blue-500/20 text-blue-500',
-                    type === 'premium' &&
+                    category === 'diet' && 'border-blue-500/20 text-blue-500',
+                    category === 'protein' &&
                       'border-purple-500/20 text-purple-500',
-                    type === 'executive' && 'border-amber-500/20 text-amber-500'
+                    category === 'royal' && 'border-amber-500/20 text-amber-500'
                   )}
                 >
                   {details.dietaryOptions[0]}
@@ -173,9 +173,9 @@ function MealPlanCard({
               <CalendarIcon
                 className={cn(
                   'size-4',
-                  type === 'basic' && 'text-blue-500',
-                  type === 'premium' && 'text-purple-500',
-                  type === 'executive' && 'text-amber-500'
+                  category === 'diet' && 'text-blue-500',
+                  category === 'protein' && 'text-purple-500',
+                  category === 'royal' && 'text-amber-500'
                 )}
               />
               <span>{details.deliveryDays.join(', ')}</span>
@@ -184,9 +184,9 @@ function MealPlanCard({
               <ClockIcon
                 className={cn(
                   'size-4',
-                  type === 'basic' && 'text-blue-500',
-                  type === 'premium' && 'text-purple-500',
-                  type === 'executive' && 'text-amber-500'
+                  category === 'diet' && 'text-blue-500',
+                  category === 'protein' && 'text-purple-500',
+                  category === 'royal' && 'text-amber-500'
                 )}
               />
               <span>{details.cancellationPolicy}</span>
@@ -206,9 +206,9 @@ function MealPlanCard({
             <Badge
               variant="secondary"
               className={cn(
-                type === 'basic' && 'bg-blue-100 text-blue-700',
-                type === 'premium' && 'bg-purple-100 text-purple-700',
-                type === 'executive' && 'bg-amber-100 text-amber-700'
+                category === 'diet' && 'bg-blue-100 text-blue-700',
+                category === 'protein' && 'bg-purple-100 text-purple-700',
+                category === 'royal' && 'bg-amber-100 text-amber-700'
               )}
             >
               {details.mealsPerWeek} meals per week
@@ -218,9 +218,9 @@ function MealPlanCard({
                 key={option}
                 variant="outline"
                 className={cn(
-                  type === 'basic' && 'border-blue-200 text-blue-700',
-                  type === 'premium' && 'border-purple-200 text-purple-700',
-                  type === 'executive' && 'border-amber-200 text-amber-700'
+                  category === 'diet' && 'border-blue-200 text-blue-700',
+                  category === 'protein' && 'border-purple-200 text-purple-700',
+                  category === 'royal' && 'border-amber-200 text-amber-700'
                 )}
               >
                 {option}
@@ -235,9 +235,9 @@ function MealPlanCard({
                 <CalendarIcon
                   className={cn(
                     'size-5',
-                    type === 'basic' && 'text-blue-500',
-                    type === 'premium' && 'text-purple-500',
-                    type === 'executive' && 'text-amber-500'
+                    category === 'diet' && 'text-blue-500',
+                    category === 'protein' && 'text-purple-500',
+                    category === 'royal' && 'text-amber-500'
                   )}
                 />
                 <div>
@@ -251,9 +251,9 @@ function MealPlanCard({
                 <UtensilsIcon
                   className={cn(
                     'size-5',
-                    type === 'basic' && 'text-blue-500',
-                    type === 'premium' && 'text-purple-500',
-                    type === 'executive' && 'text-amber-500'
+                    category === 'diet' && 'text-blue-500',
+                    category === 'protein' && 'text-purple-500',
+                    category === 'royal' && 'text-amber-500'
                   )}
                 />
                 <div>
@@ -269,9 +269,9 @@ function MealPlanCard({
                 <ChefHatIcon
                   className={cn(
                     'size-5',
-                    type === 'basic' && 'text-blue-500',
-                    type === 'premium' && 'text-purple-500',
-                    type === 'executive' && 'text-amber-500'
+                    category === 'diet' && 'text-blue-500',
+                    category === 'protein' && 'text-purple-500',
+                    category === 'royal' && 'text-amber-500'
                   )}
                 />
                 <div>
@@ -285,9 +285,9 @@ function MealPlanCard({
                 <ClockIcon
                   className={cn(
                     'size-5',
-                    type === 'basic' && 'text-blue-500',
-                    type === 'premium' && 'text-purple-500',
-                    type === 'executive' && 'text-amber-500'
+                    category === 'diet' && 'text-blue-500',
+                    category === 'protein' && 'text-purple-500',
+                    category === 'royal' && 'text-amber-500'
                   )}
                 />
                 <div>
