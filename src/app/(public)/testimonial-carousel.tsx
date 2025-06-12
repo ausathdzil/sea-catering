@@ -89,7 +89,7 @@ function TestimonialCard({
   rating: number;
 }) {
   return (
-    <Card className="shadow-none">
+    <Card>
       <CardHeader>
         <div className="flex flex-row items-center gap-2">
           <Avatar className="size-10">

@@ -31,6 +31,21 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 
+const MEAL_TYPE_PRICE = {
+  diet: 30000,
+  protein: 40000,
+  royal: 60000,
+};
+
+function calculateTotalPrice(plan: MealPlan) {
+  return (
+    MEAL_TYPE_PRICE[plan.category] *
+    plan.details.mealType.length *
+    plan.details.mealsPerWeek *
+    4.3
+  );
+}
+
 export function MealPlans({ plans }: { plans: MealPlan[] }) {
   const [selectedPlan, setSelectedPlan] =
     useState<(typeof mealPlanCategoryEnum)['enumValues'][number]>('diet');
@@ -39,7 +54,7 @@ export function MealPlans({ plans }: { plans: MealPlan[] }) {
 
   return (
     <div className="w-full flex flex-col gap-4 py-8">
-      <div className="flex flex-wrap items-center gap-2 md:gap-4">
+      <div className="flex flex-wrap items-center gap-2 md:gap-4 justify-center md:justify-start">
         <Button
           className={`${
             selectedPlan === 'diet'
@@ -76,7 +91,7 @@ export function MealPlans({ plans }: { plans: MealPlan[] }) {
         >
           Royal
         </Button>
-        <div className="flex-1 flex justify-end">
+        <div className="flex-1 flex justify-center md:justify-end">
           <Link
             href="/subscription"
             className={buttonVariants({ variant: 'ghost', size: 'sm' })}
@@ -88,59 +103,74 @@ export function MealPlans({ plans }: { plans: MealPlan[] }) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredPlans?.map((plan) => (
-          <MealPlanCard key={plan.id} {...plan} />
+          <MealPlanCard key={plan.id} plan={plan} />
         ))}
       </div>
     </div>
   );
 }
 
-function MealPlanCard({
-  name,
-  description,
-  category,
-  price,
-  details,
-}: MealPlan) {
+function MealPlanCard({ plan }: { plan: MealPlan }) {
+  const totalPrice = calculateTotalPrice(plan);
   return (
     <Drawer>
       <DrawerTrigger asChild>
         <Card
           className={cn(
-            'border transition-colors shadow-none gap-2',
-            category === 'diet' && 'hover:border-blue-500',
-            category === 'protein' && 'hover:border-purple-500',
-            category === 'royal' && 'hover:border-amber-500'
+            'transition-colors gap-2',
+            plan.category === 'diet' && 'hover:border-blue-500',
+            plan.category === 'protein' && 'hover:border-purple-500',
+            plan.category === 'royal' && 'hover:border-amber-500'
           )}
         >
           <CardHeader>
             <div className="flex flex-col">
               <CardTitle className="text-xl font-semibold font-dm-sans">
-                {name}
+                {plan.name}
               </CardTitle>
               <div className="mt-2 flex items-center gap-2">
                 <Badge
                   variant="secondary"
                   className={cn(
-                    category === 'diet' && 'bg-blue-500/10 text-blue-500',
-                    category === 'protein' &&
+                    plan.category === 'diet' && 'bg-blue-500/10 text-blue-500',
+                    plan.category === 'protein' &&
                       'bg-purple-500/10 text-purple-500',
-                    category === 'royal' && 'bg-amber-500/10 text-amber-500'
+                    plan.category === 'royal' &&
+                      'bg-amber-500/10 text-amber-500'
                   )}
                 >
-                  {details.mealsPerWeek} meals
+                  {plan.details.mealsPerWeek} meals
                 </Badge>
+                {plan.details.mealType.map((type, i) => (
+                  <Badge
+                    key={i}
+                    variant="secondary"
+                    className={cn(
+                      'capitalize',
+                      plan.category === 'diet' &&
+                        'bg-blue-500/10 text-blue-500',
+                      plan.category === 'protein' &&
+                        'bg-purple-500/10 text-purple-500',
+                      plan.category === 'royal' &&
+                        'bg-amber-500/10 text-amber-500'
+                    )}
+                  >
+                    {type}
+                  </Badge>
+                ))}
                 <Badge
                   variant="outline"
                   className={cn(
                     'hidden md:block',
-                    category === 'diet' && 'border-blue-500/20 text-blue-500',
-                    category === 'protein' &&
+                    plan.category === 'diet' &&
+                      'border-blue-500/20 text-blue-500',
+                    plan.category === 'protein' &&
                       'border-purple-500/20 text-purple-500',
-                    category === 'royal' && 'border-amber-500/20 text-amber-500'
+                    plan.category === 'royal' &&
+                      'border-amber-500/20 text-amber-500'
                   )}
                 >
-                  {details.dietaryOptions[0]}
+                  {plan.details.dietaryOptions[0]}
                 </Badge>
               </div>
             </div>
@@ -151,45 +181,49 @@ function MealPlanCard({
             </CardAction>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <p className="text-xl md:text-3xl font-semibold tabluar-nums">
+            <div className="space-y-4">
+              <p className="text-xl md:text-3xl font-semibold tabular-nums">
                 {new Intl.NumberFormat('id-ID', {
                   style: 'currency',
                   currency: 'IDR',
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 0,
-                }).format(price)}
+                }).format(totalPrice)}
                 <span className="text-sm font-normal text-muted-foreground ml-1">
-                  /week
+                  / week
                 </span>
               </p>
             </div>
             <p className="hidden md:block text-sm text-muted-foreground">
-              {description}
+              {plan.description}
             </p>
           </CardContent>
           <CardFooter className="flex flex-col items-start gap-2 mt-4">
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-2">
               <CalendarIcon
                 className={cn(
-                  'size-4',
-                  category === 'diet' && 'text-blue-500',
-                  category === 'protein' && 'text-purple-500',
-                  category === 'royal' && 'text-amber-500'
+                  'size-3 md:size-4',
+                  plan.category === 'diet' && 'text-blue-500',
+                  plan.category === 'protein' && 'text-purple-500',
+                  plan.category === 'royal' && 'text-amber-500'
                 )}
               />
-              <span>{details.deliveryDays.join(', ')}</span>
+              <span className="text-xs md:text-sm">
+                {plan.details.deliveryDays.join(', ')}
+              </span>
             </div>
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-2">
               <ClockIcon
                 className={cn(
-                  'size-4',
-                  category === 'diet' && 'text-blue-500',
-                  category === 'protein' && 'text-purple-500',
-                  category === 'royal' && 'text-amber-500'
+                  'size-3 md:size-4',
+                  plan.category === 'diet' && 'text-blue-500',
+                  plan.category === 'protein' && 'text-purple-500',
+                  plan.category === 'royal' && 'text-amber-500'
                 )}
               />
-              <span>{details.cancellationPolicy}</span>
+              <span className="text-xs md:text-sm">
+                {plan.details.cancellationPolicy}
+              </span>
             </div>
           </CardFooter>
         </Card>
@@ -197,30 +231,42 @@ function MealPlanCard({
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle className="text-xl md:text-3xl font-bold">
-            {name}
+            {plan.name}
           </DrawerTitle>
           <DrawerDescription className="text-xs md:text-lg">
-            {description}
+            {plan.description}
           </DrawerDescription>
           <div className="flex flex-wrap items-center justify-center gap-2 mt-2">
             <Badge
               variant="secondary"
               className={cn(
-                category === 'diet' && 'bg-blue-100 text-blue-700',
-                category === 'protein' && 'bg-purple-100 text-purple-700',
-                category === 'royal' && 'bg-amber-100 text-amber-700'
+                plan.category === 'diet' && 'bg-blue-100 text-blue-700',
+                plan.category === 'protein' && 'bg-purple-100 text-purple-700',
+                plan.category === 'royal' && 'bg-amber-100 text-amber-700'
               )}
             >
-              {details.mealsPerWeek} meals per week
+              {plan.details.mealsPerWeek} meals in total
             </Badge>
-            {details.dietaryOptions.map((option) => (
+            <Badge
+              variant="secondary"
+              className={cn(
+                'capitalize',
+                plan.category === 'diet' && 'bg-blue-100 text-blue-700',
+                plan.category === 'protein' && 'bg-purple-100 text-purple-700',
+                plan.category === 'royal' && 'bg-amber-100 text-amber-700'
+              )}
+            >
+              {plan.details.mealType}
+            </Badge>
+            {plan.details.dietaryOptions.map((option) => (
               <Badge
                 key={option}
                 variant="outline"
                 className={cn(
-                  category === 'diet' && 'border-blue-200 text-blue-700',
-                  category === 'protein' && 'border-purple-200 text-purple-700',
-                  category === 'royal' && 'border-amber-200 text-amber-700'
+                  plan.category === 'diet' && 'border-blue-200 text-blue-700',
+                  plan.category === 'protein' &&
+                    'border-purple-200 text-purple-700',
+                  plan.category === 'royal' && 'border-amber-200 text-amber-700'
                 )}
               >
                 {option}
@@ -229,21 +275,21 @@ function MealPlanCard({
           </div>
         </DrawerHeader>
         <div className="w-full flex justify-center overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-16 p-6 md:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 md:p-8">
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <CalendarIcon
                   className={cn(
                     'size-5',
-                    category === 'diet' && 'text-blue-500',
-                    category === 'protein' && 'text-purple-500',
-                    category === 'royal' && 'text-amber-500'
+                    plan.category === 'diet' && 'text-blue-500',
+                    plan.category === 'protein' && 'text-purple-500',
+                    plan.category === 'royal' && 'text-amber-500'
                   )}
                 />
                 <div>
                   <h4 className="font-semibold">Delivery Schedule</h4>
                   <p className="text-muted-foreground">
-                    {details.deliveryDays.join(', ')}
+                    {plan.details.deliveryDays.join(', ')}
                   </p>
                 </div>
               </div>
@@ -251,15 +297,15 @@ function MealPlanCard({
                 <UtensilsIcon
                   className={cn(
                     'size-5',
-                    category === 'diet' && 'text-blue-500',
-                    category === 'protein' && 'text-purple-500',
-                    category === 'royal' && 'text-amber-500'
+                    plan.category === 'diet' && 'text-blue-500',
+                    plan.category === 'protein' && 'text-purple-500',
+                    plan.category === 'royal' && 'text-amber-500'
                   )}
                 />
                 <div>
                   <h4 className="font-semibold">Dietary Options</h4>
                   <p className="text-muted-foreground">
-                    {details.dietaryOptions.join(', ')}
+                    {plan.details.dietaryOptions.join(', ')}
                   </p>
                 </div>
               </div>
@@ -269,15 +315,15 @@ function MealPlanCard({
                 <ChefHatIcon
                   className={cn(
                     'size-5',
-                    category === 'diet' && 'text-blue-500',
-                    category === 'protein' && 'text-purple-500',
-                    category === 'royal' && 'text-amber-500'
+                    plan.category === 'diet' && 'text-blue-500',
+                    plan.category === 'protein' && 'text-purple-500',
+                    plan.category === 'royal' && 'text-amber-500'
                   )}
                 />
                 <div>
                   <h4 className="font-semibold">Customization</h4>
                   <p className="text-muted-foreground">
-                    {details.customization}
+                    {plan.details.customization}
                   </p>
                 </div>
               </div>
@@ -285,15 +331,15 @@ function MealPlanCard({
                 <ClockIcon
                   className={cn(
                     'size-5',
-                    category === 'diet' && 'text-blue-500',
-                    category === 'protein' && 'text-purple-500',
-                    category === 'royal' && 'text-amber-500'
+                    plan.category === 'diet' && 'text-blue-500',
+                    plan.category === 'protein' && 'text-purple-500',
+                    plan.category === 'royal' && 'text-amber-500'
                   )}
                 />
                 <div>
                   <h4 className="font-semibold">Cancellation Policy</h4>
                   <p className="text-muted-foreground">
-                    {details.cancellationPolicy}
+                    {plan.details.cancellationPolicy}
                   </p>
                 </div>
               </div>
