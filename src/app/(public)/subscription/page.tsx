@@ -1,6 +1,10 @@
-import { SubscriptionForm } from "./subscription-form";
+import { getMealPlans } from '@/db/data';
+import { SubscriptionForm } from './subscription-form';
+import { Suspense } from 'react';
 
-export default function SubscriptionPage() {
+export default async function SubscriptionPage() {
+  const mealPlans = await getMealPlans();
+
   return (
     <main className="w-full max-w-6xl flex-1 flex flex-col gap-8 p-8 md:px-2">
       <div className="space-y-2 text-center">
@@ -12,7 +16,9 @@ export default function SubscriptionPage() {
           preferences
         </p>
       </div>
-      <SubscriptionForm />
+      <Suspense fallback={<div>Loading...</div>}>
+        <SubscriptionForm mealPlans={mealPlans} />
+      </Suspense>
     </main>
   );
 }

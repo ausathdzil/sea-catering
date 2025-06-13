@@ -1,11 +1,11 @@
 'use cache';
 
 import { db } from '@/db';
+import { asc, desc } from 'drizzle-orm';
 import {
   unstable_cacheLife as cacheLife,
   unstable_cacheTag as cacheTag,
 } from 'next/cache';
-import { desc } from 'drizzle-orm';
 import {
   mealPlansTable,
   subscriptionsTable,
@@ -16,7 +16,11 @@ export async function getMealPlans() {
   cacheTag('meal-plans');
   cacheLife('hours');
 
-  const plans = await db.select().from(mealPlansTable);
+  const plans = await db
+    .select()
+    .from(mealPlansTable)
+    .orderBy(asc(mealPlansTable.price));
+
   return plans;
 }
 
@@ -34,6 +38,13 @@ export async function getTestimonials() {
 }
 
 export async function getSubscriptions() {
-  const subscriptions = await db.select().from(subscriptionsTable);
+  cacheTag('subscriptions');
+  cacheLife('hours');
+
+  const subscriptions = await db
+    .select()
+    .from(subscriptionsTable)
+    .orderBy(desc(subscriptionsTable.createdAt));
+
   return subscriptions;
 }

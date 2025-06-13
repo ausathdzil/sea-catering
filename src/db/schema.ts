@@ -55,17 +55,21 @@ export const testimonialsTable = pgTable('testimonials', {
     .notNull(),
 });
 
+export interface CustomMealPlan {
+  basePlan: string;
+  mealTypes: string[];
+  deliveryDays: number;
+  allergies: string[];
+  totalPrice: number;
+}
+
 export const subscriptionsTable = pgTable('subscriptions', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  mealPlanId: text('meal_plan_id').references(() => mealPlansTable.id),
-  mealPlan: jsonb('meal_plan').$type<MealPlan>().notNull(),
   name: text('name').notNull(),
   phoneNumber: text('phone_number').notNull(),
-  deliveryDays: text('delivery_days').array().notNull(),
-  allergies: text('allergies').array(),
-  totalPrice: integer('total_price').notNull(),
+  mealPlan: jsonb('meal_plan').$type<CustomMealPlan>().notNull(),
   isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())

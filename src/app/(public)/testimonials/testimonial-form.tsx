@@ -5,10 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
-import { createTestimonial, CreateTestimonialState } from '@/db/actions';
 import { Loader, StarIcon } from 'lucide-react';
 import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import {
+  createTestimonial,
+  CreateTestimonialState,
+} from './testimonial-action';
 
 const initialState: CreateTestimonialState = {
   success: false,

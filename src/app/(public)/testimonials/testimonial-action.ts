@@ -1,9 +1,9 @@
 'use server';
 
 import { db } from '@/db';
+import { testimonialsTable } from '@/db/schema';
 import { revalidateTag } from 'next/cache';
 import z from 'zod/v4';
-import { testimonialsTable } from './schema';
 
 const createTestimonialSchema = z.strictObject({
   name: z.string().min(1, { error: 'Name is required' }).max(50, {
@@ -15,7 +15,7 @@ const createTestimonialSchema = z.strictObject({
   rating: z.number().min(1),
 });
 
-export type CreateTestimonialState = {
+export interface CreateTestimonialState {
   success: boolean;
   message: string;
   errors: {
@@ -28,7 +28,7 @@ export type CreateTestimonialState = {
     message: string;
     rating: string;
   };
-};
+}
 
 export async function createTestimonial(
   prevState: CreateTestimonialState,

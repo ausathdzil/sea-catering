@@ -12,8 +12,8 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { TestimonialCarousel } from './testimonial-carousel';
-import { TestimonialForm } from './testimonial-form';
+import { TestimonialCarousel } from './testimonials/testimonial-carousel';
+import { TestimonialForm } from './testimonials/testimonial-form';
 
 const features = [
   {

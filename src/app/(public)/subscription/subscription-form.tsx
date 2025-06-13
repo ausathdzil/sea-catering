@@ -19,15 +19,41 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { formatDateRange } from 'little-date';
-import { ChevronDownIcon } from 'lucide-react';
-import { useState } from 'react';
+import { CalendarIcon, Loader2Icon } from 'lucide-react';
+import { useActionState, useState } from 'react';
 import { type DateRange } from 'react-day-picker';
+import {
+  createSubscription,
+  CreateSubscriptionState,
+} from './subscription-action';
+import { MealPlan } from '@/db/schema';
 
-export function SubscriptionForm() {
+const initialState: CreateSubscriptionState = {
+  success: false,
+  message: '',
+  errors: {},
+  fields: {
+    name: '',
+    phone: '',
+    basePlan: '',
+    mealTypes: [],
+    deliveryDays: 0,
+    allergies: [],
+  },
+};
+
+export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
+  const [state, formAction, isPending] = useActionState(
+    createSubscription,
+    initialState
+  );
+
   const [range, setRange] = useState<DateRange | undefined>(undefined);
   const [deliveryDays, setDeliveryDays] = useState<number | undefined>(
     undefined
   );
+
+  const [mealTypes, setMealTypes] = useState<string[]>([]);
 
   const handleRange = (range: DateRange | undefined) => {
     if (range?.from && range?.to) {
@@ -38,10 +64,16 @@ export function SubscriptionForm() {
     setRange(range);
   };
 
-  console.log(deliveryDays);
+  const handleMealTypeChange = (value: string, checked: boolean) => {
+    if (checked) {
+      setMealTypes([...mealTypes, value]);
+    } else {
+      setMealTypes(mealTypes.filter((type) => type !== value));
+    }
+  };
 
   return (
-    <form className="w-full max-w-sm mx-auto space-y-6">
+    <form className="w-full max-w-sm mx-auto space-y-6" action={formAction}>
       <div className="grid gap-1.5">
         <Label htmlFor="name">Name</Label>
         <Input
@@ -53,6 +85,11 @@ export function SubscriptionForm() {
           minLength={1}
           maxLength={50}
         />
+        {state?.errors?.name && (
+          <span className="text-sm text-destructive">
+            {state.errors.name[0]}
+          </span>
+        )}
       </div>
 
       <div className="grid gap-2">
@@ -64,43 +101,86 @@ export function SubscriptionForm() {
           placeholder="08123456789"
           required
         />
+        {state?.errors?.phone && (
+          <span className="text-sm text-destructive">
+            {state.errors.phone[0]}
+          </span>
+        )}
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="meal-plan">Meal Plan</Label>
-        <Select name="meal-plan" required>
-          <SelectTrigger>
+        <Label htmlFor="base-plan">Base Meal Plan</Label>
+        <Select name="base-plan" required>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Select your base plan" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="diet">Diet</SelectItem>
-              <SelectItem value="protein">Protein</SelectItem>
-              <SelectItem value="royal">Royal</SelectItem>
+              {mealPlans.map((mealPlan) => (
+                <SelectItem key={mealPlan.id} value={mealPlan.category}>
+                  {mealPlan.name}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
+        {state?.errors?.basePlan && (
+          <span className="text-sm text-destructive">
+            {state.errors.basePlan[0]}
+          </span>
+        )}
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="delivery-days">Meal Type</Label>
+        <Label htmlFor="meal-type">Meal Type</Label>
         <span className="text-sm text-muted-foreground">
           Select the 1 or more meal types you want to receive
         </span>
-        <div className="flex flex-wrap gap-4">
+        <div id="meal-type" className="flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
-            <Checkbox id="breakfast" name="breakfast" />
+            <Checkbox
+              id="breakfast"
+              value="breakfast"
+              checked={mealTypes.includes('breakfast')}
+              onCheckedChange={(checked) =>
+                handleMealTypeChange('breakfast', checked as boolean)
+              }
+            />
             <Label htmlFor="breakfast">Breakfast</Label>
           </div>
           <div className="flex items-center gap-2">
-            <Checkbox id="lunch" name="lunch" />
+            <Checkbox
+              id="lunch"
+              value="lunch"
+              checked={mealTypes.includes('lunch')}
+              onCheckedChange={(checked) =>
+                handleMealTypeChange('lunch', checked as boolean)
+              }
+            />
             <Label htmlFor="lunch">Lunch</Label>
           </div>
           <div className="flex items-center gap-2">
-            <Checkbox id="dinner" name="dinner" />
+            <Checkbox
+              id="dinner"
+              value="dinner"
+              checked={mealTypes.includes('dinner')}
+              onCheckedChange={(checked) =>
+                handleMealTypeChange('dinner', checked as boolean)
+              }
+            />
             <Label htmlFor="dinner">Dinner</Label>
           </div>
         </div>
+        {state?.errors?.mealTypes && (
+          <span className="text-sm text-destructive">
+            {state.errors.mealTypes[0]}
+          </span>
+        )}
+        <input
+          type="hidden"
+          name="meal-types"
+          value={JSON.stringify(mealTypes)}
+        />
       </div>
 
       <div className="grid gap-2">
@@ -113,14 +193,14 @@ export function SubscriptionForm() {
             <Button
               variant="outline"
               id="dates"
-              className="w-56 justify-between font-normal"
+              className="w-full justify-between text-muted-foreground"
             >
               {range?.from && range?.to
                 ? formatDateRange(range.from, range.to, {
                     includeTime: false,
                   })
                 : 'Select date'}
-              <ChevronDownIcon />
+              <CalendarIcon />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto overflow-hidden p-0" align="start">
@@ -134,6 +214,12 @@ export function SubscriptionForm() {
             />
           </PopoverContent>
         </Popover>
+        {state?.errors?.deliveryDays && (
+          <span className="text-sm text-destructive">
+            {state.errors.deliveryDays[0]}
+          </span>
+        )}
+        <input type="hidden" name="delivery-days" defaultValue={deliveryDays} />
       </div>
 
       <div className="grid gap-2">
@@ -150,7 +236,9 @@ export function SubscriptionForm() {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit">Subscribe</Button>
+        <Button disabled={isPending} type="submit">
+          {isPending ? <Loader2Icon className="animate-spin" /> : 'Subscribe'}
+        </Button>
       </div>
     </form>
   );
