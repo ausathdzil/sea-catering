@@ -11,7 +11,7 @@ interface BetterAuthError {
 
 export interface SignInFormState {
   success: boolean;
-  message: string;
+  message?: string;
   fields?: {
     email?: string;
     password?: string;
@@ -41,7 +41,6 @@ export async function signIn(
   if (!validatedFields.success) {
     return {
       success: false,
-      message: 'Invalid form data',
       errors: z.flattenError(validatedFields.error).fieldErrors,
       fields: {
         email: rawFormData.email,
@@ -87,7 +86,7 @@ export async function signIn(
 
 export interface SignUpFormState {
   success: boolean;
-  message: string;
+  message?: string;
   fields?: {
     name?: string;
     email?: string;
@@ -108,7 +107,13 @@ const signUpFormSchema = z
     email: z.email({ message: 'Invalid email address' }),
     password: z
       .string()
-      .min(8, { message: 'Password must be at least 8 characters' }),
+      .min(8, { message: 'Be at least 8 characters' })
+      .regex(/[A-Z]/, { message: 'Include an uppercase letter' })
+      .regex(/[a-z]/, { message: 'Include a lowercase letter' })
+      .regex(/[0-9]/, { message: 'Include a number' })
+      .regex(/[^A-Za-z0-9]/, {
+        message: 'Include a special character',
+      }),
     confirmPassword: z
       .string()
       .min(1, { message: 'Please confirm your password' }),
@@ -118,10 +123,7 @@ const signUpFormSchema = z
     path: ['confirmPassword'],
   });
 
-export async function signUp(
-  prevState: SignUpFormState,
-  formData: FormData
-): Promise<SignUpFormState> {
+export async function signUp(prevState: SignUpFormState, formData: FormData) {
   const rawFormData = {
     name: formData.get('name') as string,
     email: formData.get('email') as string,
@@ -134,7 +136,6 @@ export async function signUp(
   if (!validatedFields.success) {
     return {
       success: false,
-      message: 'Invalid form data',
       errors: z.flattenError(validatedFields.error).fieldErrors,
       fields: {
         name: rawFormData.name,

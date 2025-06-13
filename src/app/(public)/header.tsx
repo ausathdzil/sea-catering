@@ -131,8 +131,21 @@ export function Header() {
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <Link href="/sign-in">Sign In</Link>
-            <Link href="/sign-up">Sign Up</Link>
+            <Link
+              className={cn(
+                buttonVariants({ variant: 'secondary', size: 'sm' }),
+                'rounded-full'
+              )}
+              href="/sign-in"
+            >
+              Sign In
+            </Link>
+            <Link
+              className={cn(buttonVariants({ size: 'sm' }), 'rounded-full')}
+              href="/sign-up"
+            >
+              Get Started
+            </Link>
           </div>
         )}
       </div>

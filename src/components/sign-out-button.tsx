@@ -17,10 +17,11 @@ export function SignOutButton() {
 
   return (
     <Button
-      onClick={handleSignOut}
+      className="rounded-full !px-3"
       variant="secondary"
-      className="rounded-full"
+      size="sm"
       disabled={isPending}
+      onClick={handleSignOut}
     >
       {isPending ? <LoaderIcon className="animate-spin" /> : <LogOutIcon />}
       Sign Out

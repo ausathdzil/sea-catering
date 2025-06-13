@@ -80,9 +80,14 @@ export default function SignUpPage() {
             required
           />
           {state?.errors?.password && (
-            <span className="text-destructive text-sm">
-              {state.errors.password}
-            </span>
+            <div className="flex flex-col gap-1">
+              <span className="text-destructive text-sm">Password must:</span>
+              <ul className="text-destructive text-sm list-disc pl-4">
+                {state.errors.password.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
 

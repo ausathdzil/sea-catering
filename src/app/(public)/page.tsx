@@ -73,12 +73,18 @@ export default async function Home() {
             Fresh, customizable meals delivered across Indonesia.
           </p>
           <div className="flex flex-col md:flex-row items-start md:items-center justify-start md:justify-center gap-4">
-            <Link className={buttonVariants({ size: 'lg' })} href="/sign-in">
+            <Link
+              className={cn(buttonVariants({ size: 'lg' }), 'rounded-full')}
+              href="/sign-in"
+            >
               <LogInIcon />
               Get Started
             </Link>
             <Link
-              className={buttonVariants({ variant: 'secondary', size: 'lg' })}
+              className={cn(
+                buttonVariants({ variant: 'secondary', size: 'lg' }),
+                'rounded-full'
+              )}
               href="/"
             >
               <BookOpenIcon />

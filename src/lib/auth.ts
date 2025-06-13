@@ -18,4 +18,4 @@ export const auth = betterAuth({
 
 const api = auth.api;
 
-export const { signInEmail, signUpEmail } = api;
+export const { signInEmail, signUpEmail, getSession } = api;
