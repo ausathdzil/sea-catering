@@ -36,6 +36,13 @@
       "when": 1749816009647,
       "tag": "0004_silly_chimera",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1749825130687,
+      "tag": "0005_chief_shadow_king",
+      "breakpoints": true
     }
   ]
 }
