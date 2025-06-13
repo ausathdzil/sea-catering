@@ -1,5 +1,7 @@
 import { getMealPlans } from '@/db/data';
 import { MealPlans } from './meal-plans';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Suspense } from 'react';
 
 export default async function MealPlansPage() {
   const plans = await getMealPlans();
@@ -15,7 +17,22 @@ export default async function MealPlansPage() {
           preferences.
         </p>
       </div>
-      <MealPlans plans={plans} />
+      <Suspense fallback={<MealPlansSkeleton />}>
+        <MealPlans plans={plans} />
+      </Suspense>
     </main>
+  );
+}
+
+function MealPlansSkeleton() {
+  return (
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-8">
+      <Skeleton className="h-[300px] rounded-lg" />
+      <Skeleton className="h-[300px] rounded-lg" />
+      <Skeleton className="h-[300px] rounded-lg" />
+      <Skeleton className="h-[300px] rounded-lg" />
+      <Skeleton className="h-[300px] rounded-lg" />
+      <Skeleton className="h-[300px] rounded-lg" />
+    </div>
   );
 }

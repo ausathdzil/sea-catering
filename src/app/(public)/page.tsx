@@ -3,7 +3,6 @@ import { getTestimonials } from '@/db/data';
 import { cn } from '@/lib/utils';
 import {
   BatteryPlusIcon,
-  BookOpenIcon,
   CheckIcon,
   HandPlatterIcon,
   LogInIcon,
@@ -14,6 +13,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { TestimonialCarousel } from './testimonials/testimonial-carousel';
 import { TestimonialForm } from './testimonials/testimonial-form';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const features = [
   {
@@ -54,7 +54,7 @@ export default async function Home() {
 
   return (
     <main className="flex-1 flex flex-col items-center gap-8 md:gap-16 py-8 md:py-12 px-8 md:px-0">
-      <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-8 md:gap-16">
         <Image
           src="/chef.png"
           alt="Chef"
@@ -85,10 +85,10 @@ export default async function Home() {
                 buttonVariants({ variant: 'secondary', size: 'lg' }),
                 'rounded-full'
               )}
-              href="/"
+              href="/meal-plans"
             >
-              <BookOpenIcon />
-              Learn More
+              <HandPlatterIcon />
+              See Our Plans
             </Link>
           </div>
         </div>
@@ -122,7 +122,7 @@ export default async function Home() {
         <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
           What Our Customers Say
         </h2>
-        <Suspense fallback={<></>}>
+        <Suspense fallback={<TestimonialSkeleton />}>
           <TestimonialCarousel testimonials={testimonials} />
         </Suspense>
       </div>
@@ -194,6 +194,16 @@ function Feature({
           ))}
         </ul>
       </div>
+    </div>
+  );
+}
+
+function TestimonialSkeleton() {
+  return (
+    <div className="w-full flex gap-4">
+      <Skeleton className="basis-1/3 h-[200px] rounded-lg" />
+      <Skeleton className="basis-1/3 h-[200px] rounded-lg" />
+      <Skeleton className="basis-1/3 h-[200px] rounded-lg" />
     </div>
   );
 }

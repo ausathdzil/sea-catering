@@ -14,12 +14,14 @@ export function AuthHeader() {
   const { data: session } = useSession();
 
   return session ? (
-    <div className="flex items-center gap-4">
-      <span className="text-sm font-medium">👋 Hey, {session.user.name}!</span>
+    <div className="flex flex-1 justify-end items-center gap-4">
+      <span className="text-sm font-medium hidden lg:block">
+        👋 Hey, {session.user.name}!
+      </span>
       <SignOutButton />
     </div>
   ) : (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-1 justify-end items-center gap-2">
       <Link
         className={cn(
           buttonVariants({ variant: 'secondary', size: 'sm' }),

@@ -3,7 +3,7 @@
 import { formatDateRange } from 'little-date';
 import { CalendarIcon, LoaderIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { type DateRange } from 'react-day-picker';
 
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { MealPlan } from '@/db/schema';
 import { useSession } from '@/lib/auth-client';
+import { toast } from 'sonner';
 import {
   createSubscription,
   CreateSubscriptionState,
@@ -60,6 +61,16 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
     initialState
   );
 
+  useEffect(() => {
+    if (state.message) {
+      if (state.success) {
+        toast.success(state.message);
+      } else {
+        toast.error(state.message);
+      }
+    }
+  }, [state]);
+
   const handleRange = (range: DateRange | undefined) => {
     if (range?.from && range?.to) {
       const diffTime = Math.abs(range.to.getTime() - range.from.getTime());
@@ -80,12 +91,12 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
   if (!session) {
     return (
       <div className="flex flex-col gap-2 items-center">
-        <p className="text-sm text-muted-foreground">
-          Please sign in to subscribe to a meal plan
-        </p>
         <Link className={buttonVariants()} href="/sign-in">
           Sign in
         </Link>
+        <p className="text-xs md:text-sm text-center text-muted-foreground">
+          Please sign in to subscribe to a meal plan
+        </p>
       </div>
     );
   }

@@ -22,8 +22,8 @@ export default function AuthLayout({
           <div className="w-full max-w-xs">{children}</div>
         </div>
       </div>
-      <div className="p-2 hidden lg:block">
-        <div className="size-full bg-primary/10 rounded-xl flex items-center justify-center">
+      <div className="p-4 hidden lg:block">
+        <div className="size-full bg-primary/20 rounded-3xl flex items-center justify-center">
           <Image
             src="/chef-3d.png"
             alt="chef"
