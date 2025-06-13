@@ -11,5 +11,12 @@ export default async function DashboardPage() {
     redirect('/sign-in');
   }
 
-  return <div>Dashboard</div>;
+  return (
+    <div className="flex-1 flex flex-col">
+      <header className="p-4 flex items-center justify-center border-b">
+        <h1 className="font-semibold">Subscriptions</h1>
+      </header>
+      <main></main>
+    </div>
+  );
 }

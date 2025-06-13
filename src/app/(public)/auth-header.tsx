@@ -48,9 +48,7 @@ function SignOutButton() {
   const handleSignOut = async () => {
     await signOut({
       fetchOptions: {
-        onRequest: () => {
-          setIsPending(true);
-        },
+        onRequest: () => setIsPending(true),
         onSuccess: () => {
           router.push('/sign-in');
           setIsPending(false);
