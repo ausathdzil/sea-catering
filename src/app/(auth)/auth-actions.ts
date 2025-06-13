@@ -1,13 +1,6 @@
-'use server';
-
-import { signInEmail, signUpEmail } from '@/lib/auth';
+import { signIn, signUp } from '@/lib/auth-client';
 import { redirect } from 'next/navigation';
 import { z } from 'zod/v4';
-
-interface BetterAuthError {
-  code: string;
-  message: string;
-}
 
 export interface SignInFormState {
   success: boolean;
@@ -27,7 +20,7 @@ const signInFormSchema = z.object({
   password: z.string().min(1, { message: 'Password is required' }),
 });
 
-export async function signIn(
+export async function signInWithEmail(
   prevState: SignInFormState,
   formData: FormData
 ): Promise<SignInFormState> {
@@ -52,17 +45,10 @@ export async function signIn(
   const { email, password } = validatedFields.data;
 
   try {
-    const response = await signInEmail({
-      body: {
-        email,
-        password,
-      },
-      asResponse: true,
-    });
+    const { error } = await signIn.email({ email, password });
 
-    if (!response.ok) {
-      const data: BetterAuthError = await response.json();
-      throw new Error(data.message);
+    if (error) {
+      throw new Error(error.message);
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -123,7 +109,10 @@ const signUpFormSchema = z
     path: ['confirmPassword'],
   });
 
-export async function signUp(prevState: SignUpFormState, formData: FormData) {
+export async function signUpWithEmail(
+  prevState: SignUpFormState,
+  formData: FormData
+) {
   const rawFormData = {
     name: formData.get('name') as string,
     email: formData.get('email') as string,
@@ -149,18 +138,14 @@ export async function signUp(prevState: SignUpFormState, formData: FormData) {
   const { name, email, password } = validatedFields.data;
 
   try {
-    const response = await signUpEmail({
-      body: {
-        name,
-        email,
-        password,
-      },
-      asResponse: true,
+    const { error } = await signUp.email({
+      name,
+      email,
+      password,
     });
 
-    if (!response.ok) {
-      const data: BetterAuthError = await response.json();
-      throw new Error(data.message);
+    if (error) {
+      throw new Error(error.message);
     }
   } catch (error) {
     if (error instanceof Error) {

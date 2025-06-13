@@ -1,5 +1,3 @@
-'use cache';
-
 import { db } from '@/db';
 import { asc, desc } from 'drizzle-orm';
 import {
@@ -13,9 +11,6 @@ import {
 } from './schema';
 
 export async function getMealPlans() {
-  cacheTag('meal-plans');
-  cacheLife('hours');
-
   const plans = await db
     .select()
     .from(mealPlansTable)
@@ -25,6 +20,8 @@ export async function getMealPlans() {
 }
 
 export async function getTestimonials() {
+  'use cache';
+  
   cacheTag('testimonials');
   cacheLife('hours');
 
@@ -38,6 +35,8 @@ export async function getTestimonials() {
 }
 
 export async function getSubscriptions() {
+  'use cache';
+
   cacheTag('subscriptions');
   cacheLife('hours');
 

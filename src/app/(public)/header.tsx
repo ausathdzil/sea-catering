@@ -4,9 +4,8 @@ import { MenuIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 
-import { SignOutButton } from '@/components/sign-out-button';
 import { buttonVariants } from '@/components/ui/button';
 import {
   Drawer,
@@ -15,8 +14,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { useSession } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
+import { AuthHeader } from './auth-header';
 
 const navItems = [
   {
@@ -42,8 +41,6 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   const pathname = usePathname();
-  const { data: session } = useSession();
-  const user = session?.user;
 
   const handleOpenChange = useCallback((open: boolean) => {
     setIsOpen(open);
@@ -124,30 +121,9 @@ export function Header() {
           </Drawer>
         </div>
 
-        {session && user ? (
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium">👋 Hey, {user.name}!</span>
-            <SignOutButton />
-          </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <Link
-              className={cn(
-                buttonVariants({ variant: 'secondary', size: 'sm' }),
-                'rounded-full'
-              )}
-              href="/sign-in"
-            >
-              Sign In
-            </Link>
-            <Link
-              className={cn(buttonVariants({ size: 'sm' }), 'rounded-full')}
-              href="/sign-up"
-            >
-              Get Started
-            </Link>
-          </div>
-        )}
+        <Suspense fallback={<></>}>
+          <AuthHeader />
+        </Suspense>
       </div>
     </header>
   );

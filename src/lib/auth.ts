@@ -30,4 +30,4 @@ export const auth = betterAuth({
   plugins: [admin(), nextCookies()],
 });
 
-export const { signInEmail, signUpEmail, getSession } = auth.api;
+export const { getSession } = auth.api;

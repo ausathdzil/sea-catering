@@ -1,9 +1,10 @@
 'use server';
 
-import { db } from '@/db';
-import { CustomMealPlan, subscriptionsTable } from '@/db/schema';
 import { revalidateTag } from 'next/cache';
 import { z } from 'zod/v4';
+
+import { db } from '@/db';
+import { CustomMealPlan, subscriptionsTable } from '@/db/schema';
 
 export interface CreateSubscriptionState {
   success: boolean;

@@ -1,6 +1,12 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { formatDateRange } from 'little-date';
+import { CalendarIcon, LoaderIcon } from 'lucide-react';
+import Link from 'next/link';
+import { useActionState, useState } from 'react';
+import { type DateRange } from 'react-day-picker';
+
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -20,16 +26,10 @@ import {
 } from '@/components/ui/select';
 import { MealPlan } from '@/db/schema';
 import { useSession } from '@/lib/auth-client';
-import { formatDateRange } from 'little-date';
-import { CalendarIcon, LoaderIcon } from 'lucide-react';
-import Link from 'next/link';
-import { useActionState, useState } from 'react';
-import { type DateRange } from 'react-day-picker';
 import {
   createSubscription,
   CreateSubscriptionState,
 } from './subscription-action';
-import { buttonVariants } from '@/components/ui/button';
 
 const initialState: CreateSubscriptionState = {
   success: false,
@@ -54,10 +54,9 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
   const [mealTypes, setMealTypes] = useState<string[]>([]);
 
   const { data: session } = useSession();
-  const user = session?.user;
 
   const [state, formAction, isPending] = useActionState(
-    createSubscription.bind(null, user?.id ?? ''),
+    createSubscription.bind(null, session?.user.id as string),
     initialState
   );
 
@@ -78,7 +77,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
     }
   };
 
-  if (!session || !user) {
+  if (!session) {
     return (
       <div className="flex flex-col gap-2 items-center">
         <p className="text-sm text-muted-foreground">

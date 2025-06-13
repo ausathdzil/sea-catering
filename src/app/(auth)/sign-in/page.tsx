@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-import { signIn, SignInFormState } from '../auth-actions';
+import { SignInFormState, signInWithEmail } from '../auth-actions';
 
 const initialState: SignInFormState = {
   success: false,
@@ -18,7 +18,10 @@ const initialState: SignInFormState = {
 };
 
 export default function SignInPage() {
-  const [state, formAction, isPending] = useActionState(signIn, initialState);
+  const [state, formAction, isPending] = useActionState(
+    signInWithEmail,
+    initialState
+  );
 
   useEffect(() => {
     if (state && state.message) {
