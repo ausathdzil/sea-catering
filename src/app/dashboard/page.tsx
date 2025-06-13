@@ -5,7 +5,7 @@ import { Subscription } from '@/db/schema';
 import { getSession } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { SiteHeader } from './layout';
+import { DashboardHeader } from './dashboard-header';
 
 export default async function DashboardPage() {
   const session = await getSession({
@@ -20,7 +20,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex-1 flex flex-col">
-      <SiteHeader title="Subscriptions" />
+      <DashboardHeader title="Subscriptions" />
       <main className="flex-1 p-8 mx-auto w-full space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {subscriptions.map((subscription) => (
