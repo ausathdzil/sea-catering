@@ -63,8 +63,8 @@ export async function createTestimonial(
   await db
     .insert(testimonialsTable)
     .values({
-      author: name,
-      content: message,
+      name,
+      message,
       rating,
     })
     .returning();

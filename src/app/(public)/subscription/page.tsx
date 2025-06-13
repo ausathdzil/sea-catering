@@ -16,7 +16,7 @@ export default async function SubscriptionPage() {
           preferences
         </p>
       </div>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<></>}>
         <SubscriptionForm mealPlans={mealPlans} />
       </Suspense>
     </main>

@@ -25,7 +25,7 @@ export default function PublicLayout({
             meal plans and subscription options to meet your needs.
           </p>
           <Link
-            href="/login"
+            href="/sign-in"
             className={cn(
               buttonVariants({ variant: 'ghost', size: 'lg' }),
               'text-primary bg-none hover:bg-primary/5 hover:text-primary hover:scale-105 transition-all'

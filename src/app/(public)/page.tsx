@@ -73,7 +73,7 @@ export default async function Home() {
             Fresh, customizable meals delivered across Indonesia.
           </p>
           <div className="flex flex-col md:flex-row items-start md:items-center justify-start md:justify-center gap-4">
-            <Link className={buttonVariants({ size: 'lg' })} href="/login">
+            <Link className={buttonVariants({ size: 'lg' })} href="/sign-in">
               <LogInIcon />
               Get Started
             </Link>
@@ -116,7 +116,7 @@ export default async function Home() {
         <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
           What Our Customers Say
         </h2>
-        <Suspense fallback={null}>
+        <Suspense fallback={<></>}>
           <TestimonialCarousel testimonials={testimonials} />
         </Suspense>
       </div>

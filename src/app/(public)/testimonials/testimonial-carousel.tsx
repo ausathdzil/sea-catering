@@ -80,12 +80,12 @@ export function TestimonialCarousel({
 }
 
 function TestimonialCard({
-  author,
-  content,
+  name,
+  message,
   rating,
 }: {
-  author: string;
-  content: string;
+  name: string;
+  message: string;
   rating: number;
 }) {
   return (
@@ -93,10 +93,10 @@ function TestimonialCard({
       <CardHeader>
         <div className="flex flex-row items-center gap-2">
           <Avatar className="size-10">
-            <AvatarFallback>{author.charAt(0)}</AvatarFallback>
+            <AvatarFallback>{name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col gap-1">
-            <CardTitle>{author}</CardTitle>
+            <CardTitle>{name}</CardTitle>
             <CardDescription className="flex flex-row items-center gap-1">
               {Array.from({ length: rating }).map((_, index) => (
                 <StarIcon
@@ -109,7 +109,7 @@ function TestimonialCard({
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm md:text-base line-clamp-4">{content}</p>
+        <p className="text-sm md:text-base line-clamp-4">{message}</p>
       </CardContent>
     </Card>
   );

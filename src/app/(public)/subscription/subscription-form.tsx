@@ -18,15 +18,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { MealPlan } from '@/db/schema';
 import { formatDateRange } from 'little-date';
-import { CalendarIcon, Loader2Icon } from 'lucide-react';
+import { CalendarIcon, LoaderIcon } from 'lucide-react';
 import { useActionState, useState } from 'react';
 import { type DateRange } from 'react-day-picker';
 import {
   createSubscription,
   CreateSubscriptionState,
 } from './subscription-action';
-import { MealPlan } from '@/db/schema';
 
 const initialState: CreateSubscriptionState = {
   success: false,
@@ -236,8 +236,8 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
       </div>
 
       <div className="flex justify-end">
-        <Button disabled={isPending} type="submit">
-          {isPending ? <Loader2Icon className="animate-spin" /> : 'Subscribe'}
+        <Button className="min-w-26" disabled={isPending} type="submit">
+          {isPending ? <LoaderIcon className="animate-spin" /> : 'Subscribe'}
         </Button>
       </div>
     </form>
