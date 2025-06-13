@@ -124,7 +124,7 @@ export function Header() {
           </Drawer>
         </div>
 
-        {user !== undefined ? (
+        {session && user ? (
           <div className="flex items-center gap-4">
             <span className="text-sm font-medium">👋 Hey, {user.name}!</span>
             <SignOutButton />
