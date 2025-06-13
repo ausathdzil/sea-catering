@@ -7,15 +7,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { ChefHatIcon, CogIcon } from 'lucide-react';
+import { ChefHatIcon, CogIcon, UtensilsCrossedIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const items = [
   {
-    title: 'Your Subscriptions',
+    title: 'Subscriptions',
     url: '/dashboard',
     icon: ChefHatIcon,
+  },
+  {
+    title: 'Meal Plans',
+    url: '/dashboard/meal-plans',
+    icon: UtensilsCrossedIcon,
   },
   {
     title: 'Settings',

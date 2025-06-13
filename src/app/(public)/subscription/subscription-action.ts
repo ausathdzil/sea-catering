@@ -100,6 +100,7 @@ export async function createSubscription(
     mealPlan,
   });
 
+  revalidateTag(`user-${userId}-subscriptions`);
   revalidateTag('subscriptions');
 
   return {

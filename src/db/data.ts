@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { asc, desc } from 'drizzle-orm';
+import { asc, desc, eq } from 'drizzle-orm';
 import {
   unstable_cacheLife as cacheLife,
   unstable_cacheTag as cacheTag,
@@ -21,7 +21,7 @@ export async function getMealPlans() {
 
 export async function getTestimonials() {
   'use cache';
-  
+
   cacheTag('testimonials');
   cacheLife('hours');
 
@@ -43,6 +43,21 @@ export async function getSubscriptions() {
   const subscriptions = await db
     .select()
     .from(subscriptionsTable)
+    .orderBy(desc(subscriptionsTable.createdAt));
+
+  return subscriptions;
+}
+
+export async function getUserSubscriptions(userId: string) {
+  'use cache';
+
+  cacheTag(`user-${userId}-subscriptions`);
+  cacheLife('hours');
+
+  const subscriptions = await db
+    .select()
+    .from(subscriptionsTable)
+    .where(eq(subscriptionsTable.userId, userId))
     .orderBy(desc(subscriptionsTable.createdAt));
 
   return subscriptions;
