@@ -44,6 +44,7 @@ const MEAL_PLAN_PRICE = {
 };
 
 export async function createSubscription(
+  userId: string,
   prevState: CreateSubscriptionState,
   formData: FormData
 ) {
@@ -92,6 +93,7 @@ export async function createSubscription(
   };
 
   await db.insert(subscriptionsTable).values({
+    userId,
     name,
     phoneNumber: phone,
     mealPlan,

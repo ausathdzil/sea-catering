@@ -19,14 +19,17 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { MealPlan } from '@/db/schema';
+import { useSession } from '@/lib/auth-client';
 import { formatDateRange } from 'little-date';
 import { CalendarIcon, LoaderIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useActionState, useState } from 'react';
 import { type DateRange } from 'react-day-picker';
 import {
   createSubscription,
   CreateSubscriptionState,
 } from './subscription-action';
+import { buttonVariants } from '@/components/ui/button';
 
 const initialState: CreateSubscriptionState = {
   success: false,
@@ -43,17 +46,20 @@ const initialState: CreateSubscriptionState = {
 };
 
 export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
-  const [state, formAction, isPending] = useActionState(
-    createSubscription,
-    initialState
-  );
-
   const [range, setRange] = useState<DateRange | undefined>(undefined);
   const [deliveryDays, setDeliveryDays] = useState<number | undefined>(
     undefined
   );
 
   const [mealTypes, setMealTypes] = useState<string[]>([]);
+
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const [state, formAction, isPending] = useActionState(
+    createSubscription.bind(null, user?.id ?? ''),
+    initialState
+  );
 
   const handleRange = (range: DateRange | undefined) => {
     if (range?.from && range?.to) {
@@ -71,6 +77,19 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
       setMealTypes(mealTypes.filter((type) => type !== value));
     }
   };
+
+  if (!user) {
+    return (
+      <div className="flex flex-col gap-2 items-center">
+        <p className="text-sm text-muted-foreground">
+          Please sign in to subscribe to a meal plan
+        </p>
+        <Link className={buttonVariants()} href="/sign-in">
+          Sign in
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <form className="w-full max-w-sm mx-auto space-y-6" action={formAction}>
