@@ -6,8 +6,12 @@ import z from 'zod/v4';
 import { testimonialsTable } from './schema';
 
 const createTestimonialSchema = z.strictObject({
-  name: z.string().min(1, { error: 'Name is required' }),
-  message: z.string().min(1, { error: 'Message is required' }),
+  name: z.string().min(1, { error: 'Name is required' }).max(50, {
+    error: 'Name must be less than 50 characters',
+  }),
+  message: z.string().min(1, { error: 'Message is required' }).max(500, {
+    error: 'Message must be less than 500 characters',
+  }),
   rating: z.number().min(1),
 });
 

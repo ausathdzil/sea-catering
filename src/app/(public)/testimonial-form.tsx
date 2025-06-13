@@ -3,11 +3,11 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { createTestimonial, CreateTestimonialState } from '@/db/actions';
-import { Loader } from 'lucide-react';
-import { useActionState, useEffect } from 'react';
+import { Loader, StarIcon } from 'lucide-react';
+import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const initialState: CreateTestimonialState = {
@@ -47,6 +47,9 @@ export function TestimonialForm() {
           name="name"
           defaultValue={state.fields.name}
           placeholder="John Doe"
+          required
+          minLength={1}
+          maxLength={50}
         />
         {state.errors?.name && (
           <span className="text-destructive text-sm">{state.errors.name}</span>
@@ -60,6 +63,9 @@ export function TestimonialForm() {
           name="message"
           defaultValue={state.fields.message}
           placeholder="Write your message here"
+          required
+          minLength={1}
+          maxLength={500}
         />
         {state.errors?.message && (
           <span className="text-destructive text-sm">
@@ -69,14 +75,7 @@ export function TestimonialForm() {
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="rating">Rating</Label>
-        <Select id="rating" name="rating" defaultValue={state.fields.rating}>
-          <option value="5">⭐⭐⭐⭐⭐</option>
-          <option value="4">⭐⭐⭐⭐</option>
-          <option value="3">⭐⭐⭐</option>
-          <option value="2">⭐⭐</option>
-          <option value="1">⭐</option>
-        </Select>
+        <RatingField state={state} />
         {state.errors?.rating && (
           <span className="text-destructive text-sm">
             {state.errors.rating}
@@ -90,5 +89,51 @@ export function TestimonialForm() {
         </Button>
       </div>
     </form>
+  );
+}
+
+function RatingField({ state }: { state: CreateTestimonialState }) {
+  const [hoverRating, setHoverRating] = useState('');
+  const [currentRating, setCurrentRating] = useState('');
+
+  return (
+    <fieldset className="space-y-2">
+      <legend className="text-foreground text-sm leading-none font-medium">
+        Rate your experience
+      </legend>
+      <RadioGroup
+        className="inline-flex gap-0"
+        onValueChange={setCurrentRating}
+        name="rating"
+        defaultValue={state.fields.rating}
+        required
+      >
+        {['1', '2', '3', '4', '5'].map((value) => (
+          <label
+            key={value}
+            className="group has-focus-visible:border-ring has-focus-visible:ring-ring/50 relative cursor-pointer rounded p-0.5 outline-none has-focus-visible:ring-[3px]"
+            onMouseEnter={() => setHoverRating(value)}
+            onMouseLeave={() => setHoverRating('')}
+          >
+            <RadioGroupItem
+              id={`rating-${value}`}
+              value={value}
+              className="sr-only"
+            />
+            <StarIcon
+              size={24}
+              className={`transition-all ${
+                (hoverRating || currentRating) >= value
+                  ? 'stroke-amber-500 fill-amber-500'
+                  : 'text-input'
+              } group-hover:scale-110`}
+            />
+            <span className="sr-only">
+              {value} star{value === '1' ? '' : 's'}
+            </span>
+          </label>
+        ))}
+      </RadioGroup>
+    </fieldset>
   );
 }

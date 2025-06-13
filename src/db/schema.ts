@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   jsonb,
   pgEnum,
@@ -65,6 +66,7 @@ export const subscriptionsTable = pgTable('subscriptions', {
   deliveryDays: text('delivery_days').array().notNull(),
   allergies: text('allergies').array(),
   totalPrice: integer('total_price').notNull(),
+  isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),

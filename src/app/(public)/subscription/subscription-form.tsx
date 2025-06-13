@@ -1,93 +1,84 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { formatDateRange } from 'little-date';
+import { ChevronDownIcon } from 'lucide-react';
 import { useState } from 'react';
-
-const MEAL_PLAN_PRICE = {
-  diet: 30000,
-  protein: 40000,
-  royal: 60000,
-};
-
-function calculateTotalPrice(
-  mealPlan: keyof typeof MEAL_PLAN_PRICE,
-  mealTypesSelected: number,
-  deliveryDays: number
-) {
-  return MEAL_PLAN_PRICE[mealPlan] * mealTypesSelected * deliveryDays * 4.3;
-}
+import { type DateRange } from 'react-day-picker';
 
 export function SubscriptionForm() {
-  const [mealPlan, setMealPlan] =
-    useState<keyof typeof MEAL_PLAN_PRICE>('diet');
-  const [dates, setDates] = useState({
-    startDate: '',
-    endDate: '',
-  });
+  const [range, setRange] = useState<DateRange | undefined>(undefined);
+  const [deliveryDays, setDeliveryDays] = useState<number | undefined>(
+    undefined
+  );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const data = Object.fromEntries(formData);
-
-    const selectedMealTypes = Object.entries(data).filter(
-      ([key, value]) =>
-        ['breakfast', 'lunch', 'dinner'].includes(key) && value === 'on'
-    ).length;
-
-    const startDate = new Date(data['start-date'] as string);
-    const endDate = new Date(data['end-date'] as string);
-    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-    const deliveryDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-    const totalPrice = calculateTotalPrice(
-      data['meal-plan'] as keyof typeof MEAL_PLAN_PRICE,
-      selectedMealTypes,
-      deliveryDays
-    );
-
-    console.log({
-      formData: data,
-      selectedMealTypes,
-      deliveryDays,
-      totalPrice,
-    });
+  const handleRange = (range: DateRange | undefined) => {
+    if (range?.from && range?.to) {
+      const diffTime = Math.abs(range.to.getTime() - range.from.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      setDeliveryDays(diffDays);
+    }
+    setRange(range);
   };
 
-  return (
-    <form
-      className="w-full max-w-2xl mx-auto space-y-6"
-      onSubmit={handleSubmit}
-    >
-      <div className="grid grid-cols-2 gap-4">
-        <div className="grid gap-1.5">
-          <Label htmlFor="name">Name</Label>
-          <Input type="text" id="name" name="name" placeholder="John Doe" />
-        </div>
+  console.log(deliveryDays);
 
-        <div className="grid gap-2">
-          <Label htmlFor="phone">Phone Number</Label>
-          <Input type="tel" id="phone" name="phone" placeholder="08123456789" />
-        </div>
+  return (
+    <form className="w-full max-w-sm mx-auto space-y-6">
+      <div className="grid gap-1.5">
+        <Label htmlFor="name">Name</Label>
+        <Input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="John Doe"
+          required
+          minLength={1}
+          maxLength={50}
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="phone">Phone Number</Label>
+        <Input
+          type="tel"
+          id="phone"
+          name="phone"
+          placeholder="08123456789"
+          required
+        />
       </div>
 
       <div className="grid gap-2">
         <Label htmlFor="meal-plan">Meal Plan</Label>
-        <Select
-          id="meal-plan"
-          name="meal-plan"
-          value={mealPlan}
-          onChange={(e) =>
-            setMealPlan(e.target.value as keyof typeof MEAL_PLAN_PRICE)
-          }
-        >
-          <option value="">Select your base plan</option>
-          <option value="diet">Diet </option>
-          <option value="protein">Protein </option>
-          <option value="royal">Royal</option>
+        <Select name="meal-plan" required>
+          <SelectTrigger>
+            <SelectValue placeholder="Select your base plan" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="diet">Diet</SelectItem>
+              <SelectItem value="protein">Protein</SelectItem>
+              <SelectItem value="royal">Royal</SelectItem>
+            </SelectGroup>
+          </SelectContent>
         </Select>
       </div>
 
@@ -97,16 +88,16 @@ export function SubscriptionForm() {
           Select the 1 or more meal types you want to receive
         </span>
         <div className="flex flex-wrap gap-4">
-          <div className="flex items-center gap-1">
-            <input type="checkbox" id="breakfast" name="breakfast" />
+          <div className="flex items-center gap-2">
+            <Checkbox id="breakfast" name="breakfast" />
             <Label htmlFor="breakfast">Breakfast</Label>
           </div>
-          <div className="flex items-center gap-1">
-            <input type="checkbox" id="lunch" name="lunch" />
+          <div className="flex items-center gap-2">
+            <Checkbox id="lunch" name="lunch" />
             <Label htmlFor="lunch">Lunch</Label>
           </div>
-          <div className="flex items-center gap-1">
-            <input type="checkbox" id="dinner" name="dinner" />
+          <div className="flex items-center gap-2">
+            <Checkbox id="dinner" name="dinner" />
             <Label htmlFor="dinner">Dinner</Label>
           </div>
         </div>
@@ -117,26 +108,32 @@ export function SubscriptionForm() {
         <span className="text-sm text-muted-foreground">
           Select the days you want to receive your meals
         </span>
-        <div className="grid grid-cols-2 gap-4">
-          <Input
-            type="date"
-            id="start-date"
-            name="start-date"
-            value={dates.startDate}
-            onChange={(e) =>
-              setDates((prev) => ({ ...prev, startDate: e.target.value }))
-            }
-          />
-          <Input
-            type="date"
-            id="end-date"
-            name="end-date"
-            value={dates.endDate}
-            onChange={(e) =>
-              setDates((prev) => ({ ...prev, endDate: e.target.value }))
-            }
-          />
-        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              id="dates"
+              className="w-56 justify-between font-normal"
+            >
+              {range?.from && range?.to
+                ? formatDateRange(range.from, range.to, {
+                    includeTime: false,
+                  })
+                : 'Select date'}
+              <ChevronDownIcon />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+            <Calendar
+              mode="range"
+              selected={range}
+              captionLayout="dropdown"
+              onSelect={(range) => handleRange(range)}
+              min={1}
+              max={7}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="grid gap-2">
