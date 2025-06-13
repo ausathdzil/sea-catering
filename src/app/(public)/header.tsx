@@ -1,5 +1,12 @@
 'use client';
 
+import { MenuIcon } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+
+import { SignOutButton } from '@/components/sign-out-button';
 import { buttonVariants } from '@/components/ui/button';
 import {
   Drawer,
@@ -8,12 +15,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
+import { useSession } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
-import { MenuIcon } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
 
 const navItems = [
   {
@@ -37,7 +40,10 @@ const navItems = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const handleOpenChange = useCallback((open: boolean) => {
     setIsOpen(open);
@@ -64,13 +70,30 @@ export function Header() {
       )}
     >
       <div className="max-w-6xl w-full flex items-center justify-between">
-        <Link
-          className="flex items-center gap-2 text-2xl font-dm-sans font-bold"
-          href="/"
-        >
-          <Image src="/logo.png" alt="SEA Catering" width={50} height={50} />
-          <span className="hidden md:block">SEA Catering</span>
-        </Link>
+        <div className="flex items-center gap-8">
+          <Link
+            className="flex items-center gap-1 font-dm-sans font-semibold"
+            href="/"
+          >
+            <Image src="/logo.png" alt="SEA Catering" width={32} height={32} />
+            <span className="hidden md:block">SEA Catering</span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-2">
+            {navItems.map((item) => (
+              <Link
+                className={cn(
+                  buttonVariants({ variant: 'ghost', size: 'sm' }),
+                  pathname === item.href && 'bg-accent text-accent-foreground'
+                )}
+                key={item.href}
+                href={item.href}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
         <div className="flex md:hidden">
           <Drawer open={isOpen} onOpenChange={handleOpenChange}>
             <DrawerTrigger asChild>
@@ -100,20 +123,18 @@ export function Header() {
             </DrawerContent>
           </Drawer>
         </div>
-        <nav className="hidden md:flex items-center gap-2">
-          {navItems.map((item) => (
-            <Link
-              className={cn(
-                buttonVariants({ variant: 'ghost', size: 'sm' }),
-                pathname === item.href && 'bg-accent text-accent-foreground'
-              )}
-              key={item.href}
-              href={item.href}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+
+        {user !== undefined ? (
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium">👋 Hey, {user.name}!</span>
+            <SignOutButton />
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Link href="/sign-in">Sign In</Link>
+            <Link href="/sign-up">Sign Up</Link>
+          </div>
+        )}
       </div>
     </header>
   );
