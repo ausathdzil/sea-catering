@@ -29,10 +29,10 @@ import { useSession } from '@/lib/auth-client';
 import { toast } from 'sonner';
 import {
   createSubscription,
-  CreateSubscriptionState,
+  CreateSubscriptionStateOrNull,
 } from './subscription-action';
 
-const initialState: CreateSubscriptionState = {
+const initialState: CreateSubscriptionStateOrNull = {
   success: false,
   message: '',
   errors: {},
@@ -56,13 +56,18 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
 
   const { data: session } = useSession();
 
+  const createSubscriptionWithUserId = createSubscription.bind(
+    null,
+    session?.user.id as string
+  );
+
   const [state, formAction, isPending] = useActionState(
-    createSubscription.bind(null, session?.user.id as string),
+    createSubscriptionWithUserId,
     initialState
   );
 
   useEffect(() => {
-    if (state.message) {
+    if (state && state.message) {
       if (state.success) {
         toast.success(state.message);
       } else {
@@ -90,7 +95,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
 
   if (!session) {
     return (
-      <div className="flex flex-col gap-2 items-center">
+      <div className="flex flex-1 flex-col gap-2 items-center justify-center">
         <Link className={buttonVariants()} href="/sign-in">
           Sign in
         </Link>

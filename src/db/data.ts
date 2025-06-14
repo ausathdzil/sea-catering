@@ -1,16 +1,23 @@
-import { db } from '@/db';
 import { asc, desc, eq } from 'drizzle-orm';
 import {
   unstable_cacheLife as cacheLife,
   unstable_cacheTag as cacheTag,
 } from 'next/cache';
+
+import { db } from '@/db';
 import {
   mealPlansTable,
   subscriptionsTable,
   testimonialsTable,
 } from './schema';
+import { Session } from '@/lib/auth';
 
 export async function getMealPlans() {
+  'use cache';
+
+  cacheTag('meal-plans');
+  cacheLife('hours');
+
   const plans = await db
     .select()
     .from(mealPlansTable)
@@ -34,8 +41,11 @@ export async function getTestimonials() {
   return testimonials;
 }
 
-export async function getSubscriptions() {
+export async function getSubscriptions(session: Session) {
   'use cache';
+
+  if (!session) return null;
+  if (session.user.role !== 'admin') return null;
 
   cacheTag('subscriptions');
   cacheLife('hours');
@@ -48,8 +58,10 @@ export async function getSubscriptions() {
   return subscriptions;
 }
 
-export async function getUserSubscriptions(userId: string) {
+export async function getUserSubscriptions(userId: string, session: Session) {
   'use cache';
+
+  if (!session) return null;
 
   cacheTag(`user-${userId}-subscriptions`);
   cacheLife('hours');

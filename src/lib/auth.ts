@@ -27,7 +27,15 @@ export const auth = betterAuth({
       },
     },
   },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
+  },
   plugins: [admin(), nextCookies()],
 });
 
 export const { getSession } = auth.api;
+
+export type Session = typeof auth.$Infer.Session;

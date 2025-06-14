@@ -4,7 +4,7 @@ import { getUserSubscriptions } from '@/db/data';
 import { Subscription } from '@/db/schema';
 import { getSession } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { unauthorized } from 'next/navigation';
 import { DashboardHeader } from './dashboard-header';
 
 export default async function DashboardPage() {
@@ -13,23 +13,31 @@ export default async function DashboardPage() {
   });
 
   if (!session) {
-    redirect('/sign-in');
+    unauthorized();
   }
 
-  const subscriptions = await getUserSubscriptions(session.user.id);
+  const subscriptions = await getUserSubscriptions(session.user.id, session);
 
   return (
     <div className="flex-1 flex flex-col">
       <DashboardHeader title="Subscriptions" />
       <main className="flex-1 p-8 mx-auto w-full space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {subscriptions.map((subscription) => (
-            <SubscriptionCard
-              key={subscription.id}
-              subscription={subscription}
-            />
-          ))}
-        </div>
+        {subscriptions && subscriptions.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {subscriptions.map((subscription) => (
+              <SubscriptionCard
+                key={subscription.id}
+                subscription={subscription}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full">
+            <p className="text-muted-foreground">
+              You don&apos;t have any subscriptions yet.
+            </p>
+          </div>
+        )}
       </main>
     </div>
   );

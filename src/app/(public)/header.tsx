@@ -20,10 +20,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const navItems = [
   {
-    label: 'Home',
-    href: '/',
-  },
-  {
     label: 'Meal Plans',
     href: '/meal-plans',
   },

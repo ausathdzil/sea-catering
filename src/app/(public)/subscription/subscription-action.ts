@@ -5,8 +5,10 @@ import { z } from 'zod/v4';
 
 import { db } from '@/db';
 import { CustomMealPlan, subscriptionsTable } from '@/db/schema';
+import { getSession } from '@/lib/auth';
+import { headers } from 'next/headers';
 
-export interface CreateSubscriptionState {
+interface CreateSubscriptionState {
   success: boolean;
   message: string;
   errors: {
@@ -27,6 +29,8 @@ export interface CreateSubscriptionState {
   };
 }
 
+export type CreateSubscriptionStateOrNull = CreateSubscriptionState | null;
+
 const createSubscriptionSchema = z.strictObject({
   name: z.string().min(1, { message: 'Name is required' }),
   phone: z.string().min(1, { message: 'Phone number is required' }),
@@ -46,9 +50,15 @@ const MEAL_PLAN_PRICE = {
 
 export async function createSubscription(
   userId: string,
-  prevState: CreateSubscriptionState,
+  prevState: CreateSubscriptionStateOrNull,
   formData: FormData
-) {
+): Promise<CreateSubscriptionStateOrNull> {
+  const session = await getSession({
+    headers: await headers(),
+  });
+
+  if (!session) return null;
+
   const rawFormData = {
     name: formData.get('name') as string,
     phone: formData.get('phone') as string,
