@@ -7,16 +7,18 @@ import { and, eq } from 'drizzle-orm';
 import { revalidateTag } from 'next/cache';
 
 export async function pauseSubscription(
-  subscriptionId: string,
-  status: 'paused' | 'active',
-  session: Session
+  session: Session,
+  status: 'paused' | 'active' | 'canceled',
+  pausedUntil: Date | null,
+  subscriptionId: string
 ) {
   if (!session) return null;
 
   await db
     .update(subscriptionsTable)
     .set({
-      status: status === 'paused' ? 'active' : 'paused',
+      status: status,
+      pausedUntil: pausedUntil,
     })
     .where(
       and(
@@ -35,7 +37,10 @@ export async function cancelSubscription(
   if (!session) return null;
 
   await db
-    .delete(subscriptionsTable)
+    .update(subscriptionsTable)
+    .set({
+      status: 'canceled',
+    })
     .where(
       and(
         eq(subscriptionsTable.id, subscriptionId),

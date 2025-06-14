@@ -2,8 +2,8 @@ import {
   AlertTriangleIcon,
   CalendarIcon,
   CreditCardIcon,
-  Utensils,
-  UtensilsCrossedIcon
+  UtensilsCrossedIcon,
+  UtensilsIcon,
 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +13,7 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { getUserSubscriptions } from '@/db/data';
@@ -65,28 +65,53 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
   return (
     <Card className="w-full hover:border-primary/50 transition-colors ease-out">
       <CardHeader>
-        <CardTitle>{subscription.mealPlan.planName}</CardTitle>
+        <CardTitle className="text-sm md:text-base">
+          {subscription.mealPlan.planName}
+        </CardTitle>
         <CardDescription className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">
+          <span className="hidden md:block text-sm text-muted-foreground">
             Subscription Status:
           </span>
           <Badge
             className="capitalize"
-            variant={subscription.status === 'active' ? 'default' : 'secondary'}
+            variant={
+              subscription.status === 'active'
+                ? 'default'
+                : subscription.status === 'canceled'
+                ? 'destructive'
+                : 'secondary'
+            }
           >
             {subscription.status}
           </Badge>
         </CardDescription>
-        <SubscriptionCardAction subscriptionId={subscription.id} status={subscription.status} />
+        {subscription.status === 'paused' && (
+          <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-1">
+            Paused until{' '}
+            <span className="font-medium text-amber-700">
+              {subscription.pausedUntil?.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+              })}
+            </span>
+          </p>
+        )}
+        <SubscriptionCardAction
+          subscriptionId={subscription.id}
+          status={subscription.status}
+        />
       </CardHeader>
       <Separator />
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2 md:gap-4">
           <div className="flex items-center space-x-4">
-            <CalendarIcon className="size-4 text-muted-foreground" />
+            <CalendarIcon className="hidden md:block size-4 text-muted-foreground" />
             <div>
-              <p className="text-sm text-muted-foreground">Delivery Days</p>
-              <p className="font-medium">
+              <p className="text-xs md:text-sm text-muted-foreground">
+                Delivery Days
+              </p>
+              <p className="font-medium text-sm md:text-base">
                 {subscription.mealPlan.deliveryDays.length} days
                 <span className="text-xs text-muted-foreground font-normal ml-1">
                   /week
@@ -95,20 +120,24 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Utensils className="size-4 text-muted-foreground" />
+            <UtensilsIcon className="hidden md:block size-4 text-muted-foreground" />
             <div>
-              <p className="text-sm text-muted-foreground">Base Plan</p>
-              <p className="font-medium capitalize">
+              <p className="text-xs md:text-sm text-muted-foreground">
+                Base Plan
+              </p>
+              <p className="font-medium capitalize text-sm md:text-base">
                 {subscription.mealPlan.basePlan}
               </p>
             </div>
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          <CreditCardIcon className="size-4 text-muted-foreground" />
+          <CreditCardIcon className="hidden md:block size-4 text-muted-foreground" />
           <div>
-            <p className="text-sm text-muted-foreground">Total Price</p>
-            <p className="text-lg font-bold text-primary tabular-nums">
+            <p className="text-xs md:text-sm text-muted-foreground">
+              Total Price
+            </p>
+            <p className="text-base md:text-lg font-bold text-primary tabular-nums">
               {new Intl.NumberFormat('id-ID', {
                 style: 'currency',
                 currency: 'IDR',
@@ -123,11 +152,11 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
         </div>
       </CardContent>
       <Separator />
-      <CardFooter className="grid grid-cols-2 gap-4">
+      <CardFooter className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-2">
           <div className="flex items-center space-x-2">
-            <UtensilsCrossedIcon className="size-4 text-muted-foreground" />
-            <p className="text-sm font-medium">Meal Types</p>
+            <UtensilsCrossedIcon className="hidden md:block size-4 text-muted-foreground" />
+            <p className="text-xs md:text-sm font-medium">Meal Types</p>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {subscription.mealPlan.mealTypes.map((type, index) => (
@@ -145,7 +174,7 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
           <div className="flex flex-col gap-2">
             <div className="flex items-center space-x-2">
               <AlertTriangleIcon className="size-4 stroke-destructive" />
-              <p className="text-sm font-medium">Allergies</p>
+              <p className="text-xs md:text-sm font-medium">Allergies</p>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {subscription.mealPlan.allergies.map((allergy, index) => (

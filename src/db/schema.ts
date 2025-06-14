@@ -123,6 +123,7 @@ export const testimonialsTable = pgTable('testimonials', {
 export const subscriptionStatusEnum = pgEnum('subscription_status', [
   'active',
   'paused',
+  'canceled',
 ]);
 
 export interface CustomMealPlan {
@@ -145,11 +146,14 @@ export const subscriptionsTable = pgTable('subscriptions', {
   phoneNumber: text('phone_number').notNull(),
   mealPlan: jsonb('meal_plan').$type<CustomMealPlan>().notNull(),
   status: subscriptionStatusEnum('status').notNull().default('active'),
+  pausedUntil: timestamp('paused_until'),
+  canceledAt: timestamp('canceled_at'),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
   updatedAt: timestamp('updated_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
+    .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
 

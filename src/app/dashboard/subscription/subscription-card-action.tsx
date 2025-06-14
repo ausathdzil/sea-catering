@@ -2,6 +2,7 @@
 
 import {
   BanknoteXIcon,
+  HistoryIcon,
   LoaderIcon,
   MoreVerticalIcon,
   PauseIcon,
@@ -11,7 +12,18 @@ import {
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { CardAction } from '@/components/ui/card';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,102 +38,142 @@ import {
   pauseSubscription,
 } from './user-subscription-action';
 
+type SubscriptionStatus = 'paused' | 'active' | 'canceled';
+
+interface SubscriptionCardActionProps {
+  subscriptionId: string;
+  status: SubscriptionStatus;
+}
+
 export function SubscriptionCardAction({
   subscriptionId,
   status,
-}: {
-  subscriptionId: string;
-  status: 'paused' | 'active';
-}) {
-  const [isPausePending, setIsPausePending] = useState(false);
-  const [isCancelPending, setIsCancelPending] = useState(false);
+}: SubscriptionCardActionProps) {
+  const [open, setOpen] = useState<boolean>(false);
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [isPausePending, setIsPausePending] = useState<boolean>(false);
+  const [isCancelPending, setIsCancelPending] = useState<boolean>(false);
 
   const { data: session } = useSession();
   if (!session) return null;
 
   const handlePauseSubscription = async () => {
     setIsPausePending(true);
-    await pauseSubscription(subscriptionId, status, session);
-    setIsPausePending(false);
+    await pauseSubscription(
+      session,
+      status === 'paused' ? 'active' : 'paused',
+      date ?? null,
+      subscriptionId
+    );
     toast(
-      status === 'active' ? 'Subscription paused' : 'Subscription resumed',
+      status === 'paused' ? 'Subscription resumed' : 'Subscription paused',
       {
-        className: '[&_svg:not([class*="size-"])]:size-4',
-        icon: status === 'active' ? <PauseIcon /> : <PlayIcon />,
         position: 'bottom-right',
       }
     );
+    setIsPausePending(false);
+    setOpen(false);
   };
 
   const handleCancelSubscription = async () => {
     setIsCancelPending(true);
     await cancelSubscription(subscriptionId, session);
+    toast.error('Subscription canceled');
     setIsCancelPending(false);
-    toast.error('Subscription cancelled', {
-      className: '[&_svg:not([class*="size-"])]:size-4',
-      icon: <BanknoteXIcon />,
-      position: 'bottom-right',
-    });
   };
 
   return (
     <CardAction>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <MoreVerticalIcon />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuGroup>
-            {status === 'active' ? (
-              <ActionDropdownItem
-                onClick={handlePauseSubscription}
-                isPending={isPausePending}
-                icon={<PauseIcon />}
-              >
-                Pause
-              </ActionDropdownItem>
-            ) : (
-              <ActionDropdownItem
-                onClick={handlePauseSubscription}
-                isPending={isPausePending}
-                icon={<PlayIcon />}
-              >
-                Resume
-              </ActionDropdownItem>
-            )}
-            <ActionDropdownItem
-              onClick={handleCancelSubscription}
-              isPending={isCancelPending}
-              icon={<BanknoteXIcon />}
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Subscription actions"
             >
-              Cancel
-            </ActionDropdownItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+              <MoreVerticalIcon />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              {status === 'active' ? (
+                <DrawerTrigger asChild>
+                  <DropdownMenuItem>
+                    <PauseIcon />
+                    Pause
+                  </DropdownMenuItem>
+                </DrawerTrigger>
+              ) : status === 'paused' ? (
+                <DropdownMenuItem
+                  onClick={handlePauseSubscription}
+                  disabled={isPausePending}
+                >
+                  {isPausePending ? (
+                    <LoaderIcon className="animate-spin" />
+                  ) : (
+                    <PlayIcon />
+                  )}
+                  Resume
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem>
+                  <HistoryIcon />
+                  Reactivate
+                </DropdownMenuItem>
+              )}
+              {status !== 'canceled' && (
+                <DropdownMenuItem
+                  onClick={handleCancelSubscription}
+                  disabled={isCancelPending}
+                >
+                  {isCancelPending ? (
+                    <LoaderIcon className="animate-spin" />
+                  ) : (
+                    <BanknoteXIcon />
+                  )}
+                  Cancel
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DrawerContent>
+          <div className="mx-auto w-full max-w-sm">
+            <DrawerHeader>
+              <DrawerTitle>Pause Subscription</DrawerTitle>
+              <DrawerDescription className="sr-only md:not-sr-only">
+                Pause your subscription to stop receiving meals. You can resume
+                your subscription at any time.
+              </DrawerDescription>
+            </DrawerHeader>
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(date) => {
+                setDate(date);
+              }}
+              required
+              className="mx-auto"
+            />
+            <DrawerFooter>
+              <Button
+                onClick={handlePauseSubscription}
+                disabled={isPausePending || !date}
+              >
+                {isPausePending ? (
+                  <LoaderIcon className="animate-spin" />
+                ) : (
+                  'Pause'
+                )}
+              </Button>
+              <DrawerClose asChild>
+                <Button variant="secondary">Cancel</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </CardAction>
-  );
-}
-
-interface ActionDropdownItemProps {
-  onClick: () => void;
-  isPending: boolean;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}
-
-function ActionDropdownItem({
-  onClick,
-  isPending,
-  icon,
-  children,
-}: ActionDropdownItemProps) {
-  return (
-    <DropdownMenuItem onClick={onClick} disabled={isPending}>
-      {isPending ? <LoaderIcon className="animate-spin" /> : icon}
-      {children}
-    </DropdownMenuItem>
   );
 }

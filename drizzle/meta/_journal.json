@@ -50,6 +50,13 @@
       "when": 1749883359559,
       "tag": "0006_flat_xavin",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1749894985367,
+      "tag": "0007_spooky_wendigo",
+      "breakpoints": true
     }
   ]
 }
