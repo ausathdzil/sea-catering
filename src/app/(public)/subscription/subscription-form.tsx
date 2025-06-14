@@ -52,6 +52,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
   const [deliveryDays, setDeliveryDays] = useState<string[]>([]);
   const [allergies, setAllergies] = useState<Tag[]>([]);
   const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -69,6 +70,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
     if (state && state.message) {
       if (state.success) {
         toast.success(state.message, {
+          richColors: false,
           action: {
             label: 'View Subscriptions',
             onClick: () => router.push('/dashboard'),
@@ -78,7 +80,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
         toast.error(state.message);
       }
     }
-  }, [state]);
+  }, [state, router]);
 
   const handleMealTypeChange = (value: string, checked: boolean) => {
     if (checked) {
@@ -163,7 +165,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
               className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-primary/10 cursor-pointer"
             >
               <RadioGroupItem
-                value={mealPlan.category}
+                value={mealPlan.name}
                 id={mealPlan.id}
                 className="mt-1 data-[state=checked]:border-primary data-[state=checked]:text-white"
                 aria-label={mealPlan.name}
@@ -171,6 +173,15 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
               <div className="grid gap-1.5 font-normal">
                 <p className="text-sm leading-none font-medium">
                   {mealPlan.name}
+                  <span className="ml-2 text-xs text-muted-foreground">
+                    {new Intl.NumberFormat('id-ID', {
+                      style: 'currency',
+                      currency: 'IDR',
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    }).format(mealPlan.price)}{' '}
+                    / meal
+                  </span>
                 </p>
                 <p className="text-muted-foreground text-sm">
                   {mealPlan.description}
@@ -283,7 +294,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
           value={JSON.stringify(allergies.map((tag) => tag.text))}
         />
         <span className="text-xs text-muted-foreground" aria-live="polite">
-          List any allergies you have, leave blank if none
+          Enter any allergies you have, leave blank if none
         </span>
       </div>
 

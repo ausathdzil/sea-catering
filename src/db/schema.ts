@@ -73,19 +73,13 @@ export const verification = pgTable('verification', {
   ),
 });
 
-export const mealPlanCategoryEnum = pgEnum('meal_plan_category', [
-  'diet',
-  'protein',
-  'royal',
-]);
-
-export interface MealPlanDetails {
-  cancellationPolicy: string;
-  customization: string;
+export interface CustomMealPlan {
+  planName: string;
+  basePlan: string | null;
+  mealTypes: string[];
   deliveryDays: string[];
-  dietaryOptions: string[];
-  mealsPerWeek: number;
-  mealType: string[];
+  allergies: string[];
+  totalPrice: number;
 }
 
 export const mealPlansTable = pgTable('meal_plans', {
@@ -94,9 +88,10 @@ export const mealPlansTable = pgTable('meal_plans', {
     .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
   description: text('description').notNull(),
-  category: mealPlanCategoryEnum('category').notNull(),
   price: integer('price').notNull(),
-  details: jsonb('details').$type<MealPlanDetails>().notNull(),
+  recommendedCustomPlan: jsonb('recommended_custom_plan')
+    .$type<CustomMealPlan>()
+    .notNull(),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
@@ -125,15 +120,6 @@ export const subscriptionStatusEnum = pgEnum('subscription_status', [
   'paused',
   'canceled',
 ]);
-
-export interface CustomMealPlan {
-  planName: string;
-  basePlan: string;
-  mealTypes: string[];
-  deliveryDays: string[];
-  allergies: string[];
-  totalPrice: number;
-}
 
 export const subscriptionsTable = pgTable('subscriptions', {
   id: text('id')

@@ -30,6 +30,8 @@ export default function AuthLayout({
             className="fixed right-16"
             width={500}
             height={500}
+            priority
+            quality={100}
           />
         </div>
       </div>
