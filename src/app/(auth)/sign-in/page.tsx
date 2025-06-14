@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { SignInFormState, signInWithEmail } from '../auth-actions';
+import { PasswordInput } from '../password-input';
 
 const initialState: SignInFormState = {
   success: false,
@@ -58,12 +59,10 @@ export default function SignInPage() {
 
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
+          <PasswordInput
             id="password"
             name="password"
             defaultValue={state?.fields?.password}
-            required
           />
           {state?.errors?.password && (
             <span className="text-destructive text-sm">

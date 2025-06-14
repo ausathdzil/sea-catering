@@ -172,7 +172,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
               />
               <div className="grid gap-1.5 font-normal">
                 <p className="text-sm leading-none font-medium">
-                  {mealPlan.name}
+                  <span className="capitalize">{mealPlan.name}</span>
                   <span className="ml-2 text-xs text-muted-foreground">
                     {new Intl.NumberFormat('id-ID', {
                       style: 'currency',
@@ -202,7 +202,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
         <span className="text-muted-foreground text-xs" aria-live="polite">
           Select the 1 or more meal types you want to receive
         </span>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {MEAL_TYPES.map((mealType) => (
             <div key={mealType} className="flex items-center gap-2">
               <Checkbox
@@ -238,7 +238,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
         </span>
         <div
           id="delivery-days"
-          className="grid grid-cols-2 md:grid-cols-3 gap-2"
+          className="grid grid-cols-2 md:grid-cols-3 gap-4"
         >
           {DELIVERY_DAYS.map((day) => (
             <div key={day} className="flex items-center gap-2">
@@ -280,7 +280,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
               'border-input rounded-md bg-background shadow-xs transition-[color,box-shadow] focus-within:border-ring outline-none focus-within:ring-[1px] focus-within:ring-ring p-1 gap-1',
             input: 'w-full min-w-[80px] shadow-none px-2 h-7',
             tag: {
-              body: 'h-7 relative bg-background border border-input hover:bg-background rounded-md font-medium text-xs ps-2 pe-7',
+              body: 'h-7 relative bg-background border border-input hover:bg-background rounded-md font-medium text-sm ps-2 pe-7',
               closeButton:
                 'absolute -inset-y-px -end-px p-0 rounded-e-md flex size-7 transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[1px] text-muted-foreground/80 hover:text-foreground',
             },

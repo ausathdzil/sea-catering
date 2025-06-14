@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { SignUpFormState, signUpWithEmail } from '../auth-actions';
+import { PasswordInput } from '../password-input';
 
 const initialState: SignUpFormState = {
   success: false,
@@ -75,12 +76,10 @@ export default function SignUpPage() {
 
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
+          <PasswordInput
             id="password"
             name="password"
             defaultValue={state?.fields?.password}
-            required
           />
           {state?.errors?.password && (
             <div className="flex flex-col gap-1">
@@ -95,13 +94,11 @@ export default function SignUpPage() {
         </div>
 
         <div className="grid gap-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
+          <Label htmlFor="confirm-password">Confirm Password</Label>
+          <PasswordInput
+            id="confirm-password"
+            name="confirm-password"
             defaultValue={state?.fields?.confirmPassword}
-            required
           />
           {state?.errors?.confirmPassword && (
             <span className="text-destructive text-sm">

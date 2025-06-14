@@ -20,7 +20,7 @@ const features = [
     title: 'Personalized Meal Plans',
     description:
       'Design your perfect menu with our expert nutritionists. From keto to vegan, we accommodate all dietary preferences with premium, locally-sourced ingredients.',
-    icon: <HandPlatterIcon className="stroke-blue-500 size-24 lg:size-64" />,
+    image: '/personalized.png',
     tag: 'Nutrition',
     checklist: [
       'Customizable',
@@ -33,9 +33,7 @@ const features = [
     title: 'Island-Wide Delivery',
     description:
       'From Sabang to Merauke, we ensure your meals arrive fresh and on time, no matter where you are in Indonesia.',
-    icon: (
-      <TruckElectricIcon className="stroke-emerald-500 size-24 lg:size-64" />
-    ),
+    image: '/delivery.png',
     tag: 'Delivery',
     checklist: ['Fast Shipping', 'Cold Chain', 'Island Coverage', 'On-Time'],
   },
@@ -43,7 +41,7 @@ const features = [
     title: 'Transparent Nutrition',
     description:
       'Track your wellness journey with detailed nutritional insights for every meal, helping you achieve your health and fitness goals with confidence.',
-    icon: <BatteryPlusIcon className="stroke-amber-500 size-24 lg:size-64" />,
+    image: '/nutrition.png',
     tag: 'Transparency',
     checklist: ['Macro Details', 'Ingredient List', 'Verified Sources'],
   },
@@ -65,7 +63,7 @@ export default async function Home() {
           className="w-[250px] md:w-[400px]"
         />
         <div className="flex flex-col justify-center gap-4 text-left md:text-center">
-          <h1 className="flex flex-col text-2xl md:text-5xl font-dm-sans font-semibold leading-snug">
+          <h1 className="flex flex-col text-2xl md:text-5xl font-dm-sans font-semibold leading-12">
             Healthy meals <br /> anytime, anywhere.
           </h1>
           <p className="flex flex-col text-xs md:text-lg font-medium">
@@ -140,14 +138,14 @@ export default async function Home() {
 function Feature({
   title,
   description,
-  icon,
+  image,
   tag,
   checklist,
   alignReverse = false,
 }: {
   title: string;
   description: string;
-  icon: React.ReactNode;
+  image: string;
   tag: string;
   checklist: string[];
   alignReverse?: boolean;
@@ -158,7 +156,14 @@ function Feature({
         alignReverse ? 'lg:flex-row-reverse' : 'bg-accent/50 rounded-lg'
       }`}
     >
-      {icon}
+      <Image
+        src={image}
+        alt={title}
+        width={300}
+        height={300}
+        priority
+        quality={100}
+      />
       <div className="flex flex-col gap-4 max-w-xl">
         <span
           className={cn(
