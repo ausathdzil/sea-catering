@@ -2,7 +2,6 @@
 
 import { LoaderIcon, LogOutIcon, MoreVerticalIcon } from 'lucide-react';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -26,7 +25,6 @@ export function NavUser() {
   const [isPending, setIsPending] = useState(false);
 
   const { isMobile } = useSidebar();
-  const router = useRouter();
   const { data: session } = useSession();
 
   if (!session) return null;
@@ -84,7 +82,7 @@ export function NavUser() {
                   fetchOptions: {
                     onRequest: () => setIsPending(true),
                     onSuccess: () => {
-                      router.push('/sign-in');
+                      window.location.href = '/sign-in';
                       setIsPending(false);
                     },
                   },

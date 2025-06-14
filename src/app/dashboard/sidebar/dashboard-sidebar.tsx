@@ -1,3 +1,13 @@
+'use client';
+
+import {
+  BookUserIcon,
+  ChefHatIcon,
+  GaugeIcon,
+  LockIcon,
+  UsersRoundIcon,
+} from 'lucide-react';
+
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,17 +20,69 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useSession } from '@/lib/auth-client';
 import { NavMain } from './nav-main';
 import { NavUser } from './nav-user';
 
+const userNavItems = [
+  {
+    title: 'Subscriptions',
+    url: '/dashboard',
+    icon: ChefHatIcon,
+  },
+  {
+    title: 'Account',
+    url: '/dashboard/account',
+    icon: BookUserIcon,
+  },
+  {
+    title: 'Security',
+    url: '/dashboard/security',
+    icon: LockIcon,
+  },
+];
+
+const adminNavItems = [
+  {
+    title: 'Dashboard',
+    url: '/dashboard',
+    icon: GaugeIcon,
+  },
+  {
+    title: 'Users',
+    url: '/dashboard/users',
+    icon: UsersRoundIcon,
+  },
+  {
+    title: 'Subscriptions',
+    url: '/dashboard/subscriptions',
+    icon: ChefHatIcon,
+  },
+  {
+    title: 'Account',
+    url: '/dashboard/account',
+    icon: BookUserIcon,
+  },
+  {
+    title: 'Security',
+    url: '/dashboard/security',
+    icon: LockIcon,
+  },
+];
+
 export function DashboardSidebar() {
+  const { data: session } = useSession();
+  if (!session) return null;
+
+  const items = session.user.role === 'admin' ? adminNavItems : userNavItems;
+
   return (
     <Sidebar className="gap-0">
       <SidebarHeader className="pt-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              className="data-[slot=sidebar-menu-button]:!p-1 text-accent-foreground"
+              className="data-[slot=sidebar-menu-button]:!p-1 gap-3 text-accent-foreground"
               size="lg"
               asChild
             >
@@ -35,7 +97,7 @@ export function DashboardSidebar() {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain />
+        <NavMain items={items} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

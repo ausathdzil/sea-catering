@@ -1,6 +1,6 @@
 'use client';
 
-import { BookUserIcon, ChefHatIcon, LockIcon } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -13,26 +13,13 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
-const items = [
-  {
-    title: 'Subscriptions',
-    url: '/dashboard',
-    icon: ChefHatIcon,
-  },
-  {
-    title: 'Account',
-    url: '/dashboard/account',
-    icon: BookUserIcon,
-  },
-  {
-    title: 'Security',
-    url: '/dashboard/security',
-    icon: LockIcon,
-  },
-];
-
-export function NavMain() {
+export function NavMain({
+  items,
+}: {
+  items: { title: string; url: string; icon?: LucideIcon }[];
+}) {
   const pathname = usePathname();
+  
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
