@@ -123,7 +123,6 @@ export const testimonialsTable = pgTable('testimonials', {
 export const subscriptionStatusEnum = pgEnum('subscription_status', [
   'active',
   'paused',
-  'cancelled',
 ]);
 
 export interface CustomMealPlan {

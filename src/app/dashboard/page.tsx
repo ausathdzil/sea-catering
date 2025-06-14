@@ -1,37 +1,26 @@
 import {
   AlertTriangleIcon,
-  BanknoteXIcon,
   CalendarIcon,
   CreditCardIcon,
-  MoreVerticalIcon,
-  PauseIcon,
   Utensils,
-  UtensilsCrossedIcon,
+  UtensilsCrossedIcon
 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { getUserSubscriptions } from '@/db/data';
 import { Subscription } from '@/db/schema';
 import { getSession } from '@/lib/auth';
 import { DashboardHeader } from './dashboard-header';
+import { SubscriptionCardAction } from './subscription/subscription-card-action';
 
 import { headers } from 'next/headers';
 import { unauthorized } from 'next/navigation';
@@ -88,27 +77,7 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
             {subscription.status}
           </Badge>
         </CardDescription>
-        <CardAction>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreVerticalIcon />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <PauseIcon />
-                  Pause
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <BanknoteXIcon />
-                  Cancel
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </CardAction>
+        <SubscriptionCardAction subscriptionId={subscription.id} status={subscription.status} />
       </CardHeader>
       <Separator />
       <CardContent className="space-y-4">
