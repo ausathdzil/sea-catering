@@ -17,8 +17,8 @@ export async function pauseSubscription(
   await db
     .update(subscriptionsTable)
     .set({
-      status: status,
-      pausedUntil: pausedUntil,
+      status,
+      pausedUntil,
     })
     .where(
       and(

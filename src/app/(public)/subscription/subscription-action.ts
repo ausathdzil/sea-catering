@@ -76,9 +76,7 @@ export async function createSubscription(
     deliveryDays: JSON.parse(
       formData.get('delivery-days') as string
     ) as string[],
-    allergies: formData.get('allergies')
-      ? [formData.get('allergies') as string]
-      : [],
+    allergies: JSON.parse(formData.get('allergies') as string) as string[],
   };
 
   const validatedFields = createSubscriptionSchema.safeParse(rawFormData);

@@ -1,8 +1,12 @@
 'use client';
 
 import { LoaderIcon } from 'lucide-react';
+
+import { Tag, TagInput } from 'emblor';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -11,7 +15,6 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { MealPlan } from '@/db/schema';
 import { useSession } from '@/lib/auth-client';
-import { toast } from 'sonner';
 import {
   createSubscription,
   CreateSubscriptionStateOrNull,
@@ -47,7 +50,9 @@ const initialState: CreateSubscriptionStateOrNull = {
 export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
   const [mealTypes, setMealTypes] = useState<string[]>([]);
   const [deliveryDays, setDeliveryDays] = useState<string[]>([]);
-
+  const [allergies, setAllergies] = useState<Tag[]>([]);
+  const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+  const router = useRouter();
   const { data: session } = useSession();
 
   const createSubscriptionWithUserId = createSubscription.bind(
@@ -63,7 +68,12 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
   useEffect(() => {
     if (state && state.message) {
       if (state.success) {
-        toast.success(state.message);
+        toast.success(state.message, {
+          action: {
+            label: 'View Subscriptions',
+            onClick: () => router.push('/dashboard'),
+          },
+        });
       } else {
         toast.error(state.message);
       }
@@ -127,12 +137,12 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
             type="tel"
             id="phone"
             name="phone"
-            className="peer ps-10"
+            className="peer ps-12 sm:ps-10"
             placeholder="8123456789"
             required
             defaultValue={state?.fields.phone}
           />
-          <span className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm peer-disabled:opacity-50">
+          <span className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 sm:text-sm peer-disabled:opacity-50">
             +62
           </span>
         </div>
@@ -178,7 +188,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
 
       <div className="grid gap-2">
         <Label htmlFor="meal-type">Meal Type</Label>
-        <span className="text-muted-foreground text-xs">
+        <span className="text-muted-foreground text-xs" aria-live="polite">
           Select the 1 or more meal types you want to receive
         </span>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -188,7 +198,6 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
                 id={mealType}
                 value={mealType}
                 defaultChecked={mealTypes.includes(mealType)}
-                checked={mealTypes.includes(mealType)}
                 onCheckedChange={(checked) =>
                   handleMealTypeChange(mealType, checked as boolean)
                 }
@@ -213,7 +222,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
 
       <div className="grid gap-2">
         <Label htmlFor="delivery-days">Delivery Days</Label>
-        <span className="text-xs text-muted-foreground">
+        <span className="text-xs text-muted-foreground" aria-live="polite">
           Select the days you want to receive your meals
         </span>
         <div
@@ -226,7 +235,6 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
                 id={day}
                 value={day}
                 defaultChecked={deliveryDays.includes(day)}
-                checked={deliveryDays.includes(day)}
                 onCheckedChange={(checked) =>
                   handleDeliveryDayChange(day, checked as boolean)
                 }
@@ -251,8 +259,30 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
 
       <div className="grid gap-2">
         <Label htmlFor="allergies">Allergies</Label>
-        <Input type="text" id="allergies" name="allergies" />
-        <span className="text-xs text-muted-foreground">
+        <TagInput
+          id="allergies"
+          tags={allergies}
+          setTags={(newTags) => setAllergies(newTags)}
+          placeholder="e.g. peanuts, eggs"
+          styleClasses={{
+            inlineTagsContainer:
+              'border-input rounded-md bg-background shadow-xs transition-[color,box-shadow] focus-within:border-ring outline-none focus-within:ring-[1px] focus-within:ring-ring p-1 gap-1',
+            input: 'w-full min-w-[80px] shadow-none px-2 h-7',
+            tag: {
+              body: 'h-7 relative bg-background border border-input hover:bg-background rounded-md font-medium text-xs ps-2 pe-7',
+              closeButton:
+                'absolute -inset-y-px -end-px p-0 rounded-e-md flex size-7 transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[1px] text-muted-foreground/80 hover:text-foreground',
+            },
+          }}
+          activeTagIndex={activeTagIndex}
+          setActiveTagIndex={setActiveTagIndex}
+        />
+        <input
+          type="hidden"
+          name="allergies"
+          value={JSON.stringify(allergies.map((tag) => tag.text))}
+        />
+        <span className="text-xs text-muted-foreground" aria-live="polite">
           List any allergies you have, leave blank if none
         </span>
       </div>
@@ -266,8 +296,9 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
           required
           minLength={1}
           maxLength={50}
+          placeholder="My Meal Plan"
         />
-        <span className="text-xs text-muted-foreground">
+        <span className="text-xs text-muted-foreground" aria-live="polite">
           Give your plan a name
         </span>
       </div>

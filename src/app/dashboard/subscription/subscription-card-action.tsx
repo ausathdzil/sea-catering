@@ -66,9 +66,12 @@ export function SubscriptionCardAction({
       subscriptionId
     );
     toast(
-      status === 'paused' ? 'Subscription resumed' : 'Subscription paused',
+      status === 'paused'
+        ? 'Your subscription has been resumed'
+        : 'Your subscription has been paused',
       {
-        position: 'bottom-right',
+        className: '[&_svg]:size-4',
+        icon: status === 'paused' ? <PlayIcon /> : <PauseIcon />,
       }
     );
     setIsPausePending(false);
@@ -78,7 +81,10 @@ export function SubscriptionCardAction({
   const handleCancelSubscription = async () => {
     setIsCancelPending(true);
     await cancelSubscription(subscriptionId, session);
-    toast.error('Subscription canceled');
+    toast.error('Your subscription has been canceled', {
+      className: '[&_svg]:size-4',
+      icon: <BanknoteXIcon />,
+    });
     setIsCancelPending(false);
   };
 
@@ -91,8 +97,13 @@ export function SubscriptionCardAction({
               variant="ghost"
               size="icon"
               aria-label="Subscription actions"
+              disabled={isPausePending || isCancelPending}
             >
-              <MoreVerticalIcon />
+              {isPausePending || isCancelPending ? (
+                <LoaderIcon className="animate-spin" />
+              ) : (
+                <MoreVerticalIcon />
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -109,11 +120,7 @@ export function SubscriptionCardAction({
                   onClick={handlePauseSubscription}
                   disabled={isPausePending}
                 >
-                  {isPausePending ? (
-                    <LoaderIcon className="animate-spin" />
-                  ) : (
-                    <PlayIcon />
-                  )}
+                  <PlayIcon />
                   Resume
                 </DropdownMenuItem>
               ) : (
@@ -155,6 +162,7 @@ export function SubscriptionCardAction({
               }}
               required
               className="mx-auto"
+              disabled={(date) => date < new Date()}
             />
             <DrawerFooter>
               <Button

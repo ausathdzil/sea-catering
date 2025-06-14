@@ -41,7 +41,7 @@ export default async function DashboardPage() {
       <DashboardHeader title="Subscriptions" />
       <main className="flex-1 p-8 mx-auto w-full space-y-4">
         {subscriptions && subscriptions.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
             {subscriptions.map((subscription) => (
               <SubscriptionCard
                 key={subscription.id}
@@ -68,35 +68,43 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
         <CardTitle className="text-sm md:text-base">
           {subscription.mealPlan.planName}
         </CardTitle>
-        <CardDescription className="flex items-center gap-2">
-          <span className="hidden md:block text-sm text-muted-foreground">
-            Subscription Status:
-          </span>
+        <CardDescription className="flex items-center gap-1">
           <Badge
-            className="capitalize"
             variant={
-              subscription.status === 'active'
-                ? 'default'
+              subscription.status === 'paused'
+                ? 'secondary'
                 : subscription.status === 'canceled'
                 ? 'destructive'
-                : 'secondary'
+                : 'default'
             }
+            className="text-xs capitalize"
           >
             {subscription.status}
           </Badge>
+          {subscription.status === 'paused' ? (
+            <p className="hidden md:block text-xs font-medium">
+              until{' '}
+              <span className="text-amber-600">
+                {subscription.pausedUntil?.toLocaleDateString('en-ID', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                })}
+              </span>
+            </p>
+          ) : subscription.status === 'canceled' ? (
+            <p className="hidden md:block text-xs font-medium">
+              on{' '}
+              <span className="text-destructive">
+                {subscription.canceledAt?.toLocaleDateString('en-ID', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                })}
+              </span>
+            </p>
+          ) : null}
         </CardDescription>
-        {subscription.status === 'paused' && (
-          <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-1">
-            Paused until{' '}
-            <span className="font-medium text-amber-700">
-              {subscription.pausedUntil?.toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric',
-              })}
-            </span>
-          </p>
-        )}
         <SubscriptionCardAction
           subscriptionId={subscription.id}
           status={subscription.status}
@@ -152,7 +160,7 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
         </div>
       </CardContent>
       <Separator />
-      <CardFooter className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CardFooter className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-2">
           <div className="flex items-center space-x-2">
             <UtensilsCrossedIcon className="hidden md:block size-4 text-muted-foreground" />
