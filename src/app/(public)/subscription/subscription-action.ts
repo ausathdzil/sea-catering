@@ -1,18 +1,19 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
+import { headers } from 'next/headers';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
 import { CustomMealPlan, subscriptionsTable } from '@/db/schema';
 import { getSession } from '@/lib/auth';
-import { headers } from 'next/headers';
 
 interface CreateSubscriptionState {
   success: boolean;
-  message: string;
+  message?: string;
   errors: {
     name?: string[] | undefined;
+    planName?: string[] | undefined;
     phone?: string[] | undefined;
     basePlan?: string[] | undefined;
     mealTypes?: string[] | undefined;
@@ -21,10 +22,11 @@ interface CreateSubscriptionState {
   };
   fields: {
     name: string;
+    planName: string;
     phone: string;
     basePlan: string;
     mealTypes: string[];
-    deliveryDays: number;
+    deliveryDays: string[];
     allergies: string[];
   };
 }
@@ -33,12 +35,15 @@ export type CreateSubscriptionStateOrNull = CreateSubscriptionState | null;
 
 const createSubscriptionSchema = z.strictObject({
   name: z.string().min(1, { message: 'Name is required' }),
-  phone: z.string().min(1, { message: 'Phone number is required' }),
+  planName: z.string().min(1, { message: 'Plan name is required' }),
+  phone: z.e164({ message: 'Invalid phone number' }),
   basePlan: z.enum(['diet', 'protein', 'royal']),
   mealTypes: z
     .array(z.string())
     .min(1, { message: 'Pick at least one meal type' }),
-  deliveryDays: z.number().min(1, { message: 'Pick at least one day' }),
+  deliveryDays: z
+    .array(z.string())
+    .min(1, { message: 'Pick at least one day' }),
   allergies: z.array(z.string()).optional(),
 });
 
@@ -61,10 +66,16 @@ export async function createSubscription(
 
   const rawFormData = {
     name: formData.get('name') as string,
-    phone: formData.get('phone') as string,
+    planName: formData.get('plan-name') as string,
+    phone: (() => {
+      const phone = formData.get('phone') as string;
+      return '+62' + phone.replace(/^0+/, '');
+    })(),
     basePlan: formData.get('base-plan') as string,
     mealTypes: JSON.parse(formData.get('meal-types') as string) as string[],
-    deliveryDays: Number(formData.get('delivery-days')),
+    deliveryDays: JSON.parse(
+      formData.get('delivery-days') as string
+    ) as string[],
     allergies: formData.get('allergies')
       ? [formData.get('allergies') as string]
       : [],
@@ -75,12 +86,12 @@ export async function createSubscription(
   if (!validatedFields.success) {
     return {
       success: false,
-      message: 'Invalid form data',
       errors: z.flattenError(validatedFields.error).fieldErrors,
       fields: {
         name: rawFormData.name,
+        planName: rawFormData.planName,
         basePlan: rawFormData.basePlan,
-        phone: rawFormData.phone,
+        phone: formData.get('phone') as string,
         mealTypes: rawFormData.mealTypes,
         deliveryDays: rawFormData.deliveryDays,
         allergies: rawFormData.allergies,
@@ -88,14 +99,23 @@ export async function createSubscription(
     };
   }
 
-  const { name, phone, basePlan, mealTypes, deliveryDays, allergies } =
-    validatedFields.data;
+  const {
+    name,
+    planName,
+    phone,
+    basePlan,
+    mealTypes,
+    deliveryDays,
+    allergies,
+  } = validatedFields.data;
 
   const basePlanPrice = MEAL_PLAN_PRICE[basePlan];
 
-  const totalPrice = basePlanPrice * mealTypes.length * deliveryDays * 4.3;
+  const totalPrice =
+    basePlanPrice * mealTypes.length * deliveryDays.length * 4.3;
 
   const mealPlan: CustomMealPlan = {
+    planName,
     basePlan,
     mealTypes,
     deliveryDays,
@@ -115,14 +135,15 @@ export async function createSubscription(
 
   return {
     success: true,
-    message: 'Thank you for subscribing! We will get back to you soon.',
+    message: 'Thank you for subscribing!',
     errors: {},
     fields: {
       name: '',
+      planName: '',
       phone: '',
       basePlan: '',
       mealTypes: [],
-      deliveryDays: 0,
+      deliveryDays: [],
       allergies: [],
     },
   };

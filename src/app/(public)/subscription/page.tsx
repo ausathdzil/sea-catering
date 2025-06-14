@@ -1,7 +1,8 @@
+import { Suspense } from 'react';
+
+import { Skeleton } from '@/components/ui/skeleton';
 import { getMealPlans } from '@/db/data';
 import { SubscriptionForm } from './subscription-form';
-import { Suspense } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export default async function SubscriptionPage() {
   const mealPlans = await getMealPlans();

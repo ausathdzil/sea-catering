@@ -7,7 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { ChefHatIcon, CogIcon, UtensilsCrossedIcon } from 'lucide-react';
+import { BookUserIcon, ChefHatIcon, LockIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -18,14 +18,14 @@ const items = [
     icon: ChefHatIcon,
   },
   {
-    title: 'Meal Plans',
-    url: '/dashboard/meal-plans',
-    icon: UtensilsCrossedIcon,
+    title: 'Account',
+    url: '/dashboard/account',
+    icon: BookUserIcon,
   },
   {
-    title: 'Settings',
-    url: '/dashboard/settings',
-    icon: CogIcon,
+    title: 'Security',
+    url: '/dashboard/security',
+    icon: LockIcon,
   },
 ];
 

@@ -120,10 +120,17 @@ export const testimonialsTable = pgTable('testimonials', {
     .notNull(),
 });
 
+export const subscriptionStatusEnum = pgEnum('subscription_status', [
+  'active',
+  'paused',
+  'cancelled',
+]);
+
 export interface CustomMealPlan {
+  planName: string;
   basePlan: string;
   mealTypes: string[];
-  deliveryDays: number;
+  deliveryDays: string[];
   allergies: string[];
   totalPrice: number;
 }
@@ -138,7 +145,7 @@ export const subscriptionsTable = pgTable('subscriptions', {
   name: text('name').notNull(),
   phoneNumber: text('phone_number').notNull(),
   mealPlan: jsonb('meal_plan').$type<CustomMealPlan>().notNull(),
-  isActive: boolean('is_active').notNull().default(true),
+  status: subscriptionStatusEnum('status').notNull().default('active'),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),

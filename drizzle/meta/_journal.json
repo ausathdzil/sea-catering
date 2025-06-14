@@ -43,6 +43,13 @@
       "when": 1749825130687,
       "tag": "0005_chief_shadow_king",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1749883359559,
+      "tag": "0006_flat_xavin",
+      "breakpoints": true
     }
   ]
 }
