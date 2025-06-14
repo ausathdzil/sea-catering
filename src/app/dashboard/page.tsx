@@ -1,11 +1,12 @@
 import {
-  AlertTriangle,
+  AlertTriangleIcon,
   BanknoteXIcon,
-  Calendar,
-  CreditCard,
+  CalendarIcon,
+  CreditCardIcon,
   MoreVerticalIcon,
   PauseIcon,
   Utensils,
+  UtensilsCrossedIcon,
 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -87,7 +88,6 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
             {subscription.status}
           </Badge>
         </CardDescription>
-
         <CardAction>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -114,7 +114,7 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="flex items-center space-x-4">
-            <Calendar className="size-4 text-muted-foreground" />
+            <CalendarIcon className="size-4 text-muted-foreground" />
             <div>
               <p className="text-sm text-muted-foreground">Delivery Days</p>
               <p className="font-medium">
@@ -136,7 +136,7 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          <CreditCard className="size-4 text-muted-foreground" />
+          <CreditCardIcon className="size-4 text-muted-foreground" />
           <div>
             <p className="text-sm text-muted-foreground">Total Price</p>
             <p className="text-lg font-bold text-primary tabular-nums">
@@ -154,10 +154,10 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
         </div>
       </CardContent>
       <Separator />
-      <CardFooter>
-        <div>
-          <div className="flex items-center space-x-2 mb-2">
-            <Utensils className="size-4 text-muted-foreground" />
+      <CardFooter className="grid grid-cols-2 gap-4">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center space-x-2">
+            <UtensilsCrossedIcon className="size-4 text-muted-foreground" />
             <p className="text-sm font-medium">Meal Types</p>
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -173,18 +173,14 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
           </div>
         </div>
         {subscription.mealPlan.allergies.length > 0 && (
-          <div>
-            <div className="flex items-center space-x-2 mb-2">
-              <AlertTriangle className="size-4 text-destructive" />
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center space-x-2">
+              <AlertTriangleIcon className="size-4 stroke-destructive" />
               <p className="text-sm font-medium">Allergies</p>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {subscription.mealPlan.allergies.map((allergy, index) => (
-                <Badge
-                  key={index}
-                  variant="destructive"
-                  className="text-xs bg-destructive/10 hover:bg-destructive/20"
-                >
+                <Badge key={index} variant="destructive">
                   {allergy}
                 </Badge>
               ))}
