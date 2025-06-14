@@ -1,9 +1,10 @@
-import { Toaster } from '@/components/ui/sonner';
-import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { DM_Sans, Inter } from 'next/font/google';
 import { Suspense } from 'react';
 import './globals.css';
+
+import { Toaster } from '@/components/ui/sonner';
+import { cn } from '@/lib/utils';
 
 const inter = Inter({
   variable: '--font-inter',

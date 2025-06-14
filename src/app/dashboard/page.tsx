@@ -6,6 +6,9 @@ import {
   UtensilsIcon,
 } from 'lucide-react';
 
+import { headers } from 'next/headers';
+import { unauthorized } from 'next/navigation';
+
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
@@ -21,9 +24,6 @@ import { Subscription } from '@/db/schema';
 import { getSession } from '@/lib/auth';
 import { DashboardHeader } from './dashboard-header';
 import { SubscriptionCardAction } from './subscription/subscription-card-action';
-
-import { headers } from 'next/headers';
-import { unauthorized } from 'next/navigation';
 
 export default async function DashboardPage() {
   const session = await getSession({

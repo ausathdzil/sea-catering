@@ -1,6 +1,6 @@
+import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from './lib/auth';
-import { headers } from 'next/headers';
 
 const protectedRoutes = ['/dashboard'];
 const publicRoutes = ['/sign-in', '/sign-up'];

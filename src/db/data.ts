@@ -5,12 +5,12 @@ import {
 } from 'next/cache';
 
 import { db } from '@/db';
+import { Session } from '@/lib/auth';
 import {
   mealPlansTable,
   subscriptionsTable,
   testimonialsTable,
 } from './schema';
-import { Session } from '@/lib/auth';
 
 export async function getMealPlans() {
   'use cache';

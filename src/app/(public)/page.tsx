@@ -1,19 +1,19 @@
-import { buttonVariants } from '@/components/ui/button';
-import { getTestimonials } from '@/db/data';
-import { cn } from '@/lib/utils';
 import {
-  BatteryPlusIcon,
   CheckIcon,
   HandPlatterIcon,
-  LogInIcon,
-  TruckElectricIcon,
+  LogInIcon
 } from 'lucide-react';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
+
+import { buttonVariants } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { getTestimonials } from '@/db/data';
+import { cn } from '@/lib/utils';
 import { TestimonialCarousel } from './testimonials/testimonial-carousel';
 import { TestimonialForm } from './testimonials/testimonial-form';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const features = [
   {

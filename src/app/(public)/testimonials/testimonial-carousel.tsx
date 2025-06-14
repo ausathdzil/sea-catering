@@ -1,5 +1,8 @@
 'use client';
 
+import { DotIcon, StarIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Card,
@@ -18,8 +21,6 @@ import {
 } from '@/components/ui/carousel';
 import { Testimonial } from '@/db/schema';
 import { cn } from '@/lib/utils';
-import { DotIcon, StarIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 export function TestimonialCarousel({
   testimonials,

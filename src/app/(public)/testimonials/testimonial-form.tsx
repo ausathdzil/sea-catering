@@ -1,13 +1,15 @@
 'use client';
 
+import { LoaderIcon, StarIcon } from 'lucide-react';
+
+import { useActionState, useEffect, useState } from 'react';
+import { toast } from 'sonner';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader, StarIcon } from 'lucide-react';
-import { useActionState, useEffect, useState } from 'react';
-import { toast } from 'sonner';
 import {
   createTestimonial,
   CreateTestimonialState,
@@ -88,7 +90,7 @@ export function TestimonialForm() {
 
       <div className="flex justify-end">
         <Button className="min-w-20" type="submit" disabled={isPending}>
-          {isPending ? <Loader className="animate-spin" /> : 'Submit'}
+          {isPending ? <LoaderIcon className="animate-spin" /> : 'Submit'}
         </Button>
       </div>
     </form>

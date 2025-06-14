@@ -1,5 +1,10 @@
 'use client';
 
+import { BookUserIcon, ChefHatIcon, LockIcon } from 'lucide-react';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -7,9 +12,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { BookUserIcon, ChefHatIcon, LockIcon } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 const items = [
   {

@@ -1,3 +1,6 @@
+import Image from 'next/image';
+import Link from 'next/link';
+
 import {
   Sidebar,
   SidebarContent,
@@ -7,8 +10,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import Image from 'next/image';
-import Link from 'next/link';
 import { NavMain } from './nav-main';
 import { NavUser } from './nav-user';
 

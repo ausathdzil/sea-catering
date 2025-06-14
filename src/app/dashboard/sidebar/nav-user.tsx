@@ -1,24 +1,26 @@
 'use client';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-	useSidebar,
-} from '@/components/ui/sidebar';
-import { signOut, useSession } from '@/lib/auth-client';
 import { LoaderIcon, LogOutIcon, MoreVerticalIcon } from 'lucide-react';
+
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from '@/components/ui/sidebar';
+import { signOut, useSession } from '@/lib/auth-client';
 
 export function NavUser() {
   const [isPending, setIsPending] = useState(false);

@@ -1,9 +1,10 @@
 'use server';
 
-import { db } from '@/db';
-import { testimonialsTable } from '@/db/schema';
 import { revalidateTag } from 'next/cache';
 import z from 'zod/v4';
+
+import { db } from '@/db';
+import { testimonialsTable } from '@/db/schema';
 
 const createTestimonialSchema = z.strictObject({
   name: z.string().min(1, { error: 'Name is required' }).max(50, {

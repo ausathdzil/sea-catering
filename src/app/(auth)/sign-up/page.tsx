@@ -1,6 +1,7 @@
 'use client';
 
 import { LoaderIcon } from 'lucide-react';
+
 import Link from 'next/link';
 import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -8,7 +9,6 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
 import { SignUpFormState, signUpWithEmail } from '../auth-actions';
 import { PasswordInput } from '../password-input';
 

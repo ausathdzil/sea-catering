@@ -1,3 +1,5 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -24,8 +26,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { getMealPlans } from '@/db/data';
 import { MealPlan } from '@/db/schema';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import Link from 'next/link';
 
 export default async function MealPlansPage() {
   const plans = await getMealPlans();

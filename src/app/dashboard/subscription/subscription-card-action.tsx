@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -32,7 +33,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useSession } from '@/lib/auth-client';
-import { toast } from 'sonner';
 import {
   cancelSubscription,
   pauseSubscription,
