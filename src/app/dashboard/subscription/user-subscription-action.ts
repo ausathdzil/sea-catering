@@ -40,6 +40,8 @@ export async function cancelSubscription(
     .update(subscriptionsTable)
     .set({
       status: 'canceled',
+      pausedUntil: null,
+      canceledAt: new Date(),
     })
     .where(
       and(
