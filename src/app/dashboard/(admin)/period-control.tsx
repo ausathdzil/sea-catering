@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarPlusIcon } from 'lucide-react';
+import { CalendarSyncIcon } from 'lucide-react';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
@@ -11,11 +11,12 @@ import { Calendar } from '@/components/ui/calendar';
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { Label } from '@/components/ui/label';
 import { DateRange } from 'react-day-picker';
 
 const formatDate = (date: Date) => {
@@ -46,49 +47,50 @@ export function PeriodControl() {
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor="date" className="px-1">
-        Select period
-      </Label>
+      <label htmlFor="date" className="sr-only">
+        Select data period
+      </label>
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
           <Button
             variant="outline"
             id="date"
-            className="w-48 justify-between font-normal"
+            className="w-1/4 justify-between font-normal"
           >
             {range?.from && range?.to
               ? `${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`
-              : 'Select date'}
-            <CalendarPlusIcon />
+              : 'Data Period Range'}
+            <CalendarSyncIcon />
           </Button>
         </DrawerTrigger>
         <DrawerContent className="w-auto overflow-hidden p-0">
-          <DrawerHeader className="sr-only">
-            <DrawerTitle>Select period</DrawerTitle>
+          <DrawerHeader>
+            <DrawerTitle>Period</DrawerTitle>
+            <DrawerDescription>
+              Range at least 30 days to see the data.
+            </DrawerDescription>
           </DrawerHeader>
           <Calendar
             mode="range"
             selected={range}
-            captionLayout="dropdown-months"
             min={30}
             onSelect={(range) => {
               setRange(range);
               handleSearchParams();
             }}
-            className="mx-auto [--cell-size:clamp(0px,calc(100vw/7.5),52px)]"
+            className="mx-auto [--cell-size:clamp(0px,calc(100vw/7.5),48px)]"
           />
+          <DrawerFooter>
+            <Button
+              className="w-full max-w-sm mx-auto"
+              variant="outline"
+              onClick={() => setRange(undefined)}
+            >
+              Clear
+            </Button>
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
-    </div>
-  );
-}
-
-export function DatePicker() {
-  return (
-    <div className="flex flex-col gap-3">
-      <div className="text-muted-foreground px-1 text-sm">
-        This example works best on mobile.
-      </div>
     </div>
   );
 }

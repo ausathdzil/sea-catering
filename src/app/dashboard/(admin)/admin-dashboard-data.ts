@@ -23,8 +23,7 @@ export async function getNewSubscriptions(
   start?: Date,
   end?: Date
 ) {
-  if (!session) return null;
-  if (session.user.role !== 'admin') return null;
+  if (!session || session.user.role !== 'admin') return null;
 
   if (!start || !end) {
     const today = new Date();
@@ -69,8 +68,7 @@ export async function getMonthlyRecurringRevenue(
   start?: Date,
   end?: Date
 ) {
-  if (!session) return null;
-  if (session.user.role !== 'admin') return null;
+  if (!session || session.user.role !== 'admin') return null;
 
   if (!start || !end) {
     const today = new Date();
@@ -115,8 +113,7 @@ export async function getReactivations(
   start?: Date,
   end?: Date
 ) {
-  if (!session) return null;
-  if (session.user.role !== 'admin') return null;
+  if (!session || session.user.role !== 'admin') return null;
 
   if (!start || !end) {
     const today = new Date();
@@ -154,4 +151,38 @@ export async function getReactivations(
     current: Number(result.current),
     previous: Number(result.previous),
   };
+}
+
+export async function getSubscriptions(session: Session) {
+  if (!session || session.user.role !== 'admin') return null;
+
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  sixMonthsAgo.setHours(0, 0, 0, 0);
+
+  const months = await db
+    .select({
+      month: sql<string>`TO_CHAR(month_series, 'Month')`,
+      active: sql<number>`COALESCE(SUM(CASE WHEN ${subscriptionsTable.status} = 'active' THEN 1 ELSE 0 END), 0)`,
+      canceled: sql<number>`COALESCE(SUM(CASE WHEN ${subscriptionsTable.status} = 'canceled' THEN 1 ELSE 0 END), 0)`,
+    })
+    .from(
+      sql`GENERATE_SERIES(
+        DATE_TRUNC('month', ${sixMonthsAgo.toISOString()}::timestamp),
+        DATE_TRUNC('month', CURRENT_TIMESTAMP),
+        '1 month'::INTERVAL
+      ) as month_series`
+    )
+    .leftJoin(
+      subscriptionsTable,
+      sql`DATE_TRUNC('month', ${subscriptionsTable.startAt}) = month_series`
+    )
+    .groupBy(sql`month_series`)
+    .orderBy(sql`month_series`);
+
+  return months.map((sub) => ({
+    month: sub.month.trim(),
+    active: Number(sub.active),
+    canceled: Number(sub.canceled),
+  }));
 }

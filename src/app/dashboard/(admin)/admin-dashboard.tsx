@@ -19,8 +19,10 @@ import {
   getMonthlyRecurringRevenue,
   getNewSubscriptions,
   getReactivations,
-} from './dashboard-data';
+  getSubscriptions,
+} from './admin-dashboard-data';
 import { PeriodControl } from './period-control';
+import { SubscriptionsChart } from './subscriptions-chart';
 
 interface AdminDashboardProps {
   start?: string;
@@ -41,12 +43,17 @@ export async function AdminDashboard(props: AdminDashboardProps) {
   const startDate = start ? new Date(start) : undefined;
   const endDate = end ? new Date(end) : undefined;
 
-  const [newSubscriptions, monthlyRecurringRevenue, reactivations] =
-    await Promise.all([
-      getNewSubscriptions(session, startDate, endDate),
-      getMonthlyRecurringRevenue(session, startDate, endDate),
-      getReactivations(session, startDate, endDate),
-    ]);
+  const [
+    newSubscriptions,
+    monthlyRecurringRevenue,
+    reactivations,
+    subscriptions,
+  ] = await Promise.all([
+    getNewSubscriptions(session, startDate, endDate),
+    getMonthlyRecurringRevenue(session, startDate, endDate),
+    getReactivations(session, startDate, endDate),
+    getSubscriptions(session),
+  ]);
 
   return (
     <div className="flex-1 flex flex-col">
@@ -74,6 +81,9 @@ export async function AdminDashboard(props: AdminDashboardProps) {
               />
             </Suspense>
           </div>
+          <Suspense fallback={<div>Loading...</div>}>
+            <SubscriptionsChart subscriptions={subscriptions} />
+          </Suspense>
         </div>
       </main>
     </div>
