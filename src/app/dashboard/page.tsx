@@ -5,7 +5,14 @@ import { getSession } from '@/lib/auth';
 import { AdminDashboard } from './(admin)/admin-dashboard';
 import { UserDashboard } from './(user)/user-dashboard';
 
-export default async function DashboardPage() {
+interface DashboardPageProps {
+  searchParams: Promise<{
+    start?: string;
+    end?: string;
+  }>;
+}
+
+export default async function DashboardPage(props: DashboardPageProps) {
   const session = await getSession({
     headers: await headers(),
   });
@@ -16,8 +23,10 @@ export default async function DashboardPage() {
 
   const userRole = session.user.role;
 
+  const { start, end } = await props.searchParams;
+
   if (userRole === 'admin') {
-    return <AdminDashboard />;
+    return <AdminDashboard start={start} end={end} />;
   } else if (userRole === 'user') {
     return <UserDashboard />;
   } else {
