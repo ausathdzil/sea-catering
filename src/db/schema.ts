@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   boolean,
   integer,
@@ -132,9 +133,24 @@ export const subscriptionsTable = pgTable('subscriptions', {
   phoneNumber: text('phone_number').notNull(),
   mealPlan: jsonb('meal_plan').$type<CustomMealPlan>().notNull(),
   status: subscriptionStatusEnum('status').notNull().default('active'),
-  pausedUntil: timestamp('paused_until'),
-  canceledAt: timestamp('canceled_at'),
-  reactivatedAt: timestamp('reactivated_at'),
+  pausedUntil: timestamp('paused_until').$defaultFn(() => sql`null`),
+  canceledAt: timestamp('canceled_at').$defaultFn(() => sql`null`),
+  reactivatedAt: timestamp('reactivated_at').$defaultFn(() => sql`null`),
+  startAt: timestamp('start_at').$defaultFn(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    return tomorrow;
+  }),
+  dueDate: timestamp('due_date').$defaultFn(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const dueDate = new Date(tomorrow);
+    dueDate.setDate(dueDate.getDate() + 30);
+    return dueDate;
+  }),
+  reactivations: integer('reactivations').notNull().default(0),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),

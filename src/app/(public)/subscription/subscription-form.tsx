@@ -70,9 +70,11 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
     if (state && state.message) {
       if (state.success) {
         toast.success(state.message, {
-          richColors: false,
+          classNames: {
+            actionButton: '!bg-primary/10 !text-primary',
+          },
           action: {
-            label: 'View Subscriptions',
+            label: 'View Dashboard',
             onClick: () => router.push('/dashboard'),
           },
         });

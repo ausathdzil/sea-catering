@@ -25,7 +25,12 @@ export async function pauseSubscription(
   const mealPlan = subscription.mealPlan;
   let updatedPrice = mealPlan.totalPrice;
 
-  if (status === 'paused' && pausedUntil) {
+  if (
+    status === 'paused' &&
+    pausedUntil &&
+    subscription.startAt &&
+    subscription.dueDate
+  ) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
@@ -109,46 +114,20 @@ export async function cancelSubscription(
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const daysRemaining = Math.ceil(
-    (lastDayOfMonth.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-  );
-
-  const dayMap: Record<string, number> = {
-    sunday: 0,
-    monday: 1,
-    tuesday: 2,
-    wednesday: 3,
-    thursday: 4,
-    friday: 5,
-    saturday: 6,
-  };
-
-  const deliveryDayNumbers = mealPlan.deliveryDays.map((day) => dayMap[day]);
-  const pricePerDeliveryDay =
-    mealPlan.totalPrice / (deliveryDayNumbers.length * 4.3);
-
-  let remainingDeliveryDays = 0;
-  for (let i = 0; i < daysRemaining; i++) {
-    const checkDate = new Date(today);
-    checkDate.setDate(today.getDate() + i);
-    if (deliveryDayNumbers.includes(checkDate.getDay())) {
-      remainingDeliveryDays++;
-    }
-  }
-
-  const remainingPrice = pricePerDeliveryDay * remainingDeliveryDays;
-  const updatedPrice = mealPlan.totalPrice - remainingPrice;
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
 
   await db
     .update(subscriptionsTable)
     .set({
       status: 'canceled',
       pausedUntil: null,
-      canceledAt: new Date(),
+      canceledAt: tomorrow,
+      startAt: null,
+      dueDate: null,
       mealPlan: {
         ...mealPlan,
-        totalPrice: updatedPrice,
+        totalPrice: 0,
       },
     })
     .where(
@@ -186,12 +165,23 @@ export async function reactivateSubscription(
     mealPlan.deliveryDays.length *
     4.3;
 
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+
+  const dueDate = new Date(tomorrow);
+  dueDate.setDate(dueDate.getDate() + 30);
+
   await db
     .update(subscriptionsTable)
     .set({
       status: 'active',
       pausedUntil: null,
       canceledAt: null,
+      reactivatedAt: new Date(),
+      startAt: tomorrow,
+      dueDate: dueDate,
+      reactivations: subscription.reactivations + 1,
       mealPlan: {
         ...mealPlan,
         totalPrice: recalculatedPrice,

@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
+import { and, eq, gte, lte, sql } from 'drizzle-orm';
 import {
   unstable_cacheLife as cacheLife,
   unstable_cacheTag as cacheTag,
@@ -8,28 +8,11 @@ import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
 import { Session } from '@/lib/auth';
 
-export async function getSubscriptions(session: Session) {
-  'use cache';
-
-  if (!session) return null;
-  if (session.user.role !== 'admin') return null;
-
-  cacheTag('subscriptions');
-  cacheLife('hours');
-
-  const subscriptions = await db
-    .select()
-    .from(subscriptionsTable)
-    .orderBy(desc(subscriptionsTable.createdAt));
-
-  return subscriptions;
-}
-
 export async function getNewSubscriptions(
   session: Session,
   startDate: Date,
   endDate: Date
-): Promise<number | null> {
+) {
   'use cache';
 
   if (!session) return null;
@@ -38,22 +21,25 @@ export async function getNewSubscriptions(
   cacheTag('new-subscriptions');
   cacheLife('hours');
 
-  const newSubscriptions = await db
+  const result = await db
     .select({ count: sql<number>`count(*)` })
     .from(subscriptionsTable)
     .where(
       and(
-        gte(subscriptionsTable.createdAt, startDate),
-        lte(subscriptionsTable.createdAt, endDate)
+        gte(subscriptionsTable.startAt, startDate),
+        lte(subscriptionsTable.startAt, endDate),
+        eq(subscriptionsTable.status, 'active')
       )
     );
 
-  return Number(newSubscriptions[0].count);
+  return Number(result[0].count);
 }
 
 export async function getMonthlyRecurringRevenue(
-  session: Session
-): Promise<number | null> {
+  session: Session,
+  startDate: Date,
+  endDate: Date
+) {
   'use cache';
 
   if (!session) return null;
@@ -67,26 +53,85 @@ export async function getMonthlyRecurringRevenue(
       total: sql<number>`sum((${subscriptionsTable.mealPlan}->>'totalPrice')::integer)`,
     })
     .from(subscriptionsTable)
-    .where(eq(subscriptionsTable.status, 'active'));
+    .where(
+      and(
+        gte(subscriptionsTable.dueDate, startDate),
+        lte(subscriptionsTable.dueDate, endDate),
+        eq(subscriptionsTable.status, 'active')
+      )
+    );
 
-  return result[0].total ?? 0;
+  return Number(result[0].total) ?? 0;
 }
 
-export async function getActiveSubscriptions(
-  session: Session
-): Promise<number | null> {
+export async function getReactivations(
+  session: Session,
+  startDate: Date,
+  endDate: Date
+) {
   'use cache';
 
   if (!session) return null;
   if (session.user.role !== 'admin') return null;
 
-  cacheTag('active-subscriptions');
+  cacheTag('reactivations');
   cacheLife('hours');
 
-  const activeSubscriptions = await db
-    .select({ count: sql<number>`count(*)` })
+  const result = await db
+    .select({
+      total: sql<number>`sum(${subscriptionsTable.reactivations})`,
+    })
     .from(subscriptionsTable)
-    .where(eq(subscriptionsTable.status, 'active'));
+    .where(
+      and(
+        gte(subscriptionsTable.reactivatedAt, startDate),
+        lte(subscriptionsTable.reactivatedAt, endDate),
+        eq(subscriptionsTable.status, 'active')
+      )
+    );
 
-  return Number(activeSubscriptions[0].count);
+  return Number(result[0].total) ?? 0;
+}
+
+export async function getSubscriptionGrowth(
+  session: Session,
+  startDate: Date,
+  endDate: Date
+) {
+  'use cache';
+
+  if (!session) return null;
+  if (session.user.role !== 'admin') return null;
+
+  cacheTag('subscription-growth');
+  cacheLife('hours');
+
+  const [active, canceled] = await Promise.all([
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(subscriptionsTable)
+      .where(
+        and(
+          gte(subscriptionsTable.startAt, startDate),
+          lte(subscriptionsTable.startAt, endDate),
+          eq(subscriptionsTable.status, 'active')
+        )
+      ),
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(subscriptionsTable)
+      .where(
+        and(
+          gte(subscriptionsTable.canceledAt, startDate),
+          lte(subscriptionsTable.canceledAt, endDate),
+          eq(subscriptionsTable.status, 'canceled')
+        )
+      ),
+  ]);
+
+  return {
+    active: Number(active[0].count),
+    canceled: Number(canceled[0].count),
+    growth: Number(active[0].count) - Number(canceled[0].count),
+  };
 }

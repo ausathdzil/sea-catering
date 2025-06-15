@@ -109,15 +109,19 @@ export async function createSubscription(
 
   const basePlanPrice = MEAL_PLAN_PRICE[basePlan];
 
+  const uniqueMealTypes = [...new Set(mealTypes)];
+  const uniqueDeliveryDays = [...new Set(deliveryDays)];
+  const uniqueAllergies = allergies ? [...new Set(allergies)] : [];
+
   const totalPrice =
-    basePlanPrice * mealTypes.length * deliveryDays.length * 4.3;
+    basePlanPrice * uniqueMealTypes.length * uniqueDeliveryDays.length * 4.3;
 
   const mealPlan: CustomMealPlan = {
     planName,
     basePlan,
-    mealTypes,
-    deliveryDays,
-    allergies: allergies as string[],
+    mealTypes: uniqueMealTypes,
+    deliveryDays: uniqueDeliveryDays,
+    allergies: uniqueAllergies,
     totalPrice,
   };
 
@@ -133,7 +137,7 @@ export async function createSubscription(
 
   return {
     success: true,
-    message: 'Thank you for subscribing!',
+    message: 'Subscribed!',
     errors: {},
     fields: {
       name: '',

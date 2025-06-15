@@ -107,7 +107,7 @@ const signUpFormSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirmPassword'],
+    path: ['confirm-password'],
   });
 
 export async function signUpWithEmail(
@@ -118,7 +118,7 @@ export async function signUpWithEmail(
     name: formData.get('name') as string,
     email: formData.get('email') as string,
     password: formData.get('password') as string,
-    confirmPassword: formData.get('confirmPassword') as string,
+    confirmPassword: formData.get('confirm-password') as string,
   };
 
   const validatedFields = signUpFormSchema.safeParse(rawFormData);
