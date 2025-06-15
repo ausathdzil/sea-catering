@@ -18,6 +18,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { DateRange } from 'react-day-picker';
+import { Label } from '@/components/ui/label';
 
 const formatDate = (date: Date) => {
   const year = date.getFullYear();
@@ -27,8 +28,13 @@ const formatDate = (date: Date) => {
 };
 
 export function PeriodControl() {
+  const today = new Date();
+
   const [open, setOpen] = useState(false);
-  const [range, setRange] = useState<DateRange | undefined>(undefined);
+  const [range, setRange] = useState<DateRange | undefined>({
+    from: new Date(today.getFullYear(), today.getMonth(), 1),
+    to: new Date(today.getFullYear(), today.getMonth() + 1, 0),
+  });
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -47,9 +53,9 @@ export function PeriodControl() {
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor="date" className="sr-only">
+      <Label htmlFor="date" className="px-1">
         Select data period
-      </label>
+      </Label>
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
           <Button
@@ -73,7 +79,7 @@ export function PeriodControl() {
           <Calendar
             mode="range"
             selected={range}
-            min={30}
+            min={29}
             onSelect={(range) => {
               setRange(range);
               handleSearchParams();

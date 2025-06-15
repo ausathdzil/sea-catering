@@ -119,7 +119,7 @@ function NewSubscriptionsCard({
               <TrendingDownIcon />
             ) : null}
             {percentageDifference > 0 ? '+' : ''}
-            {percentageDifference}%
+            {Math.round(percentageDifference)}%
           </Badge>
         </CardAction>
       </CardHeader>
@@ -174,7 +174,7 @@ function MonthlyRevenueCard({
               <TrendingDownIcon />
             ) : null}
             {percentageDifference > 0 ? '+' : ''}
-            {percentageDifference}%
+            {Math.round(percentageDifference)}%
           </Badge>
         </CardAction>
       </CardHeader>
@@ -223,7 +223,7 @@ function ReactivationsCard({
               <TrendingDownIcon />
             ) : null}
             {percentageDifference > 0 ? '+' : ''}
-            {percentageDifference}%
+            {Math.round(percentageDifference)}%
           </Badge>
         </CardAction>
       </CardHeader>
