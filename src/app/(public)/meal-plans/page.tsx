@@ -23,9 +23,9 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getMealPlans } from '@/db/data';
 import { MealPlan } from '@/db/schema';
 import { cn } from '@/lib/utils';
+import { getMealPlans } from '../public-data';
 
 export default async function MealPlansPage() {
   const plans = await getMealPlans();
@@ -51,6 +51,7 @@ export default async function MealPlansPage() {
     </main>
   );
 }
+
 function MealPlanCard({ plan }: { plan: MealPlan }) {
   return (
     <Drawer>
@@ -99,7 +100,7 @@ function MealPlanCard({ plan }: { plan: MealPlan }) {
                 maximumFractionDigits: 0,
               }).format(plan.price)}
               <span className="text-sm font-normal text-muted-foreground ml-1">
-                / meal
+                /meal
               </span>
             </p>
           </CardContent>
@@ -113,14 +114,18 @@ function MealPlanCard({ plan }: { plan: MealPlan }) {
           <DrawerTitle className="capitalize text-xl md:text-2xl">
             {plan.name}
           </DrawerTitle>
-          <DrawerDescription className="text-sm md:text-base">
+          <DrawerDescription className="hidden md:block">
             {plan.description}
           </DrawerDescription>
         </DrawerHeader>
         <div className="px-4 space-y-6">
           <div className="space-y-4 text-center">
-            <h3 className="font-dm-sans text-lg md:text-xl font-semibold capitalize">
-              Recommended Plan
+            <h3 className="font-dm-sans text-xs md:text-base">
+              Recommended Customization:
+              <br />
+              <span className="font-semibold text-base md:text-lg capitalize">
+                {plan.recommendedCustomPlan.planName}
+              </span>
             </h3>
             <div className="grid gap-4">
               <div className="space-y-2">
@@ -170,9 +175,20 @@ function MealPlanCard({ plan }: { plan: MealPlan }) {
                   </div>
                 </div>
               )}
-              <div className="pt-2">
-                <p className="text-sm md:text-base font-medium text-muted-foreground capitalize">
-                  Total Price
+              <div className="pt-2 tabular-nums">
+                <p className="text-sm md:text-base text-muted-foreground capitalize">
+                  Total Price:{' '}
+                  <span className="font-medium">
+                    {new Intl.NumberFormat('id-ID', {
+                      style: 'currency',
+                      currency: 'IDR',
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    }).format(plan.price)}{' '}
+                    &times; {plan.recommendedCustomPlan.mealTypes.length}{' '}
+                    &times; {plan.recommendedCustomPlan.deliveryDays.length}{' '}
+                    &times; 4.3 =
+                  </span>
                 </p>
                 <p className="text-xl md:text-2xl font-semibold">
                   {new Intl.NumberFormat('id-ID', {
@@ -181,6 +197,9 @@ function MealPlanCard({ plan }: { plan: MealPlan }) {
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0,
                   }).format(plan.recommendedCustomPlan.totalPrice)}
+                  <span className="text-sm font-normal text-muted-foreground ml-1">
+                    /month
+                  </span>
                 </p>
               </div>
             </div>

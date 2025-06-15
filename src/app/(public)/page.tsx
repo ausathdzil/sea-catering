@@ -1,8 +1,4 @@
-import {
-  CheckIcon,
-  HandPlatterIcon,
-  LogInIcon
-} from 'lucide-react';
+import { CheckIcon, HandPlatterIcon, LogInIcon } from 'lucide-react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,8 +6,8 @@ import { Suspense } from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getTestimonials } from '@/db/data';
 import { cn } from '@/lib/utils';
+import { getTestimonials } from './public-data';
 import { TestimonialCarousel } from './testimonials/testimonial-carousel';
 import { TestimonialForm } from './testimonials/testimonial-form';
 

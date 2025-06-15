@@ -36,6 +36,7 @@ import { useSession } from '@/lib/auth-client';
 import {
   cancelSubscription,
   pauseSubscription,
+  reactivateSubscription,
 } from './user-subscription-action';
 
 type SubscriptionStatus = 'paused' | 'active' | 'canceled';
@@ -53,6 +54,8 @@ export function SubscriptionCardAction({
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [isPausePending, setIsPausePending] = useState<boolean>(false);
   const [isCancelPending, setIsCancelPending] = useState<boolean>(false);
+  const [isReactivatePending, setIsReactivatePending] =
+    useState<boolean>(false);
 
   const { data: session } = useSession();
   if (!session) return null;
@@ -88,6 +91,16 @@ export function SubscriptionCardAction({
     setIsCancelPending(false);
   };
 
+  const handleReactivateSubscription = async () => {
+    setIsReactivatePending(true);
+    await reactivateSubscription(subscriptionId, session);
+    toast.success('Your subscription has been reactivated', {
+      className: '[&_svg]:size-4',
+      icon: <PlayIcon />,
+    });
+    setIsReactivatePending(false);
+  };
+
   return (
     <CardAction>
       <Drawer open={open} onOpenChange={setOpen}>
@@ -97,9 +110,11 @@ export function SubscriptionCardAction({
               variant="ghost"
               size="icon"
               aria-label="Subscription actions"
-              disabled={isPausePending || isCancelPending}
+              disabled={
+                isPausePending || isCancelPending || isReactivatePending
+              }
             >
-              {isPausePending || isCancelPending ? (
+              {isPausePending || isCancelPending || isReactivatePending ? (
                 <LoaderIcon className="animate-spin" />
               ) : (
                 <MoreVerticalIcon />
@@ -124,8 +139,15 @@ export function SubscriptionCardAction({
                   Resume
                 </DropdownMenuItem>
               ) : (
-                <DropdownMenuItem>
-                  <HistoryIcon />
+                <DropdownMenuItem
+                  onClick={handleReactivateSubscription}
+                  disabled={isReactivatePending}
+                >
+                  {isReactivatePending ? (
+                    <LoaderIcon className="animate-spin" />
+                  ) : (
+                    <HistoryIcon />
+                  )}
                   Reactivate
                 </DropdownMenuItem>
               )}

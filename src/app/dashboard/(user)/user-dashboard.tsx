@@ -8,6 +8,7 @@ import {
 
 import { headers } from 'next/headers';
 import { unauthorized } from 'next/navigation';
+import { Suspense } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import {
@@ -19,11 +20,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { getUserSubscriptions } from '@/db/data';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Subscription } from '@/db/schema';
 import { getSession } from '@/lib/auth';
 import { DashboardHeader } from '../dashboard-header';
 import { SubscriptionCardAction } from './subscription/subscription-card-action';
+import { getUserSubscriptions } from './user-data';
 
 export async function UserDashboard() {
   const session = await getSession({
@@ -40,22 +42,24 @@ export async function UserDashboard() {
     <div className="flex-1 flex flex-col">
       <DashboardHeader title="Subscriptions" />
       <main className="flex-1 p-8 mx-auto w-full space-y-4">
-        {subscriptions && subscriptions.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-            {subscriptions.map((subscription) => (
-              <SubscriptionCard
-                key={subscription.id}
-                subscription={subscription}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full">
-            <p className="text-muted-foreground">
-              You don&apos;t have any subscriptions yet.
-            </p>
-          </div>
-        )}
+        <Suspense fallback={<SubscriptionSkeleton />}>
+          {subscriptions && subscriptions.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+              {subscriptions.map((subscription) => (
+                <SubscriptionCard
+                  key={subscription.id}
+                  subscription={subscription}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full">
+              <p className="text-muted-foreground">
+                You don&apos;t have any subscriptions yet.
+              </p>
+            </div>
+          )}
+        </Suspense>
       </main>
     </div>
   );
@@ -153,7 +157,7 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
                 maximumFractionDigits: 0,
               }).format(subscription.mealPlan.totalPrice)}
               <span className="text-xs text-muted-foreground font-normal ml-1">
-                /week
+                /month
               </span>
             </p>
           </div>
@@ -195,5 +199,18 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
         )}
       </CardFooter>
     </Card>
+  );
+}
+
+function SubscriptionSkeleton() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+      <Skeleton className="w-full h-[300px] rounded-lg" />
+      <Skeleton className="w-full h-[300px] rounded-lg" />
+      <Skeleton className="w-full h-[300px] rounded-lg" />
+      <Skeleton className="w-full h-[300px] rounded-lg" />
+      <Skeleton className="w-full h-[300px] rounded-lg" />
+      <Skeleton className="w-full h-[300px] rounded-lg" />
+    </div>
   );
 }

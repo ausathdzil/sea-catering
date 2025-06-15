@@ -134,6 +134,7 @@ export const subscriptionsTable = pgTable('subscriptions', {
   status: subscriptionStatusEnum('status').notNull().default('active'),
   pausedUntil: timestamp('paused_until'),
   canceledAt: timestamp('canceled_at'),
+  reactivatedAt: timestamp('reactivated_at'),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),

@@ -180,7 +180,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
                       minimumFractionDigits: 0,
                       maximumFractionDigits: 0,
                     }).format(mealPlan.price)}{' '}
-                    / meal
+                    /meal
                   </span>
                 </p>
                 <p className="text-muted-foreground text-sm">
