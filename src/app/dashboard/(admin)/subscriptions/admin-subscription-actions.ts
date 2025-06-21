@@ -2,7 +2,6 @@
 
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { headers } from 'next/headers';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
@@ -28,9 +27,7 @@ export async function editSubscription(
   prevState: EditSubscriptionStateOrNull,
   formData: FormData
 ): Promise<EditSubscriptionStateOrNull> {
-  const session = await getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (!session || session.user.role !== 'admin') return null;
 
@@ -97,7 +94,7 @@ export async function editSubscription(
     })
     .where(eq(subscriptionsTable.id, subscriptionId));
 
-  revalidatePath('dashboard', 'layout');
+  revalidatePath('/dashboard', 'layout');
 
   return {
     success: true,
@@ -107,9 +104,7 @@ export async function editSubscription(
 }
 
 export async function deleteSubscription(subscriptionId: string) {
-  const session = await getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (!session || session.user.role !== 'admin') return null;
 

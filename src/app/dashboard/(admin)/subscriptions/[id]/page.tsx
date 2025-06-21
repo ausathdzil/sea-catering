@@ -1,5 +1,3 @@
-import { headers } from 'next/headers';
-
 import { forbidden, notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -25,9 +23,7 @@ export default function SubscriptionPage(props: SubscriptionPageProps) {
 }
 
 async function EditSubscription(props: SubscriptionPageProps) {
-  const session = await getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (!session || session.user.role !== 'admin') {
     forbidden();
@@ -35,7 +31,7 @@ async function EditSubscription(props: SubscriptionPageProps) {
 
   const { id } = await props.params;
 
-  const subscription = await getSubsriptionById(id, session);
+  const subscription = await getSubsriptionById(id, session.user.role);
 
   if (!subscription) {
     notFound();

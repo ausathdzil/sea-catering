@@ -1,4 +1,3 @@
-import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -17,15 +16,13 @@ export default function SubscriptionsPage() {
 }
 
 async function Subscriptions() {
-  const session = await getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (!session || session.user.role !== 'admin') {
     forbidden();
   }
 
-  const subscriptions = await getSubscriptionsWithUsers(session);
+  const subscriptions = await getSubscriptionsWithUsers(session.user.role);
 
   return (
     <DataTable

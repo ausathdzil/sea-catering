@@ -1,7 +1,6 @@
 'use server';
 
-import { revalidatePath, revalidateTag } from 'next/cache';
-import { headers } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
@@ -65,9 +64,7 @@ export async function createSubscription(
   prevState: CreateSubscriptionStateOrNull,
   formData: FormData
 ): Promise<CreateSubscriptionStateOrNull> {
-  const session = await getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (!session) return null;
 
@@ -130,9 +127,7 @@ export async function createSubscription(
     mealPlan,
   });
 
-  revalidateTag(`user-${userId}-subscriptions`);
-  revalidateTag('subscriptions');
-  revalidatePath('/dashboard');
+  revalidatePath('/dashboard', 'layout');
 
   return {
     success: true,

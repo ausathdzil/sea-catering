@@ -65,7 +65,7 @@ export function SubscriptionCardAction({
   const handlePauseSubscription = async () => {
     setIsPausePending(true);
     await pauseSubscription(
-      session,
+      session.user.id,
       status === 'paused' ? 'active' : 'paused',
       date ?? null,
       subscriptionId
@@ -85,7 +85,7 @@ export function SubscriptionCardAction({
 
   const handleCancelSubscription = async () => {
     setIsCancelPending(true);
-    await cancelSubscription(subscriptionId, session);
+    await cancelSubscription(subscriptionId, session.user.id);
     toast.error('Your subscription has been canceled', {
       className: '[&_svg]:size-4',
       icon: <BanknoteXIcon />,
@@ -95,7 +95,7 @@ export function SubscriptionCardAction({
 
   const handleReactivateSubscription = async () => {
     setIsReactivatePending(true);
-    await reactivateSubscription(subscriptionId, session);
+    await reactivateSubscription(subscriptionId, session.user.id);
     toast.success('Your subscription has been reactivated', {
       className: '[&_svg]:size-4',
       icon: <PlayIcon />,

@@ -1,4 +1,3 @@
-import { headers } from 'next/headers';
 import { unauthorized } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -29,9 +28,7 @@ export default function DashboardPage(props: DashboardPageProps) {
 }
 
 async function Dashboard(props: DashboardPageProps) {
-  const session = await getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (!session) {
     unauthorized();
@@ -39,12 +36,10 @@ async function Dashboard(props: DashboardPageProps) {
 
   const { start, end } = await props.searchParams;
 
-  const userRole = session.user.role;
-
-  return userRole === 'admin' ? (
-    <AdminDashboard session={session} start={start} end={end} />
+  return session.user.role === 'admin' ? (
+    <AdminDashboard role={session.user.role} start={start} end={end} />
   ) : (
-    <UserDashboard session={session} />
+    <UserDashboard userId={session.user.id} />
   );
 }
 

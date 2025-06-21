@@ -1,4 +1,3 @@
-import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getSession } from './lib/auth';
@@ -13,9 +12,7 @@ export default async function middleware(req: NextRequest) {
   const isPublicRoute = publicRoutes.includes(path);
   const isAdminRoute = adminRoutes.includes(path);
 
-  const session = await getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (isProtectedRoute && !session) {
     return NextResponse.redirect(new URL('/sign-in', req.nextUrl));

@@ -1,6 +1,4 @@
-import { headers } from 'next/headers';
 import { forbidden, notFound } from 'next/navigation';
-
 import { Suspense } from 'react';
 
 import { Loading } from '@/components/loading';
@@ -25,9 +23,7 @@ export default function UserPage(props: UserPageProps) {
 }
 
 async function EditUser(props: UserPageProps) {
-  const session = await getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (!session || session.user.role !== 'admin') {
     forbidden();
@@ -35,7 +31,7 @@ async function EditUser(props: UserPageProps) {
 
   const { id } = await props.params;
 
-  const user = await getUser(id, session);
+  const user = await getUser(id, session.user.role);
 
   if (!user) {
     notFound();

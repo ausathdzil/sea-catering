@@ -1,5 +1,3 @@
-'use cache';
-
 import { eq } from 'drizzle-orm';
 import {
   unstable_cacheLife as cacheLife,
@@ -8,13 +6,14 @@ import {
 
 import { db } from '@/db';
 import { user } from '@/db/schema';
-import { Session } from '@/lib/auth';
 
-export async function getUser(id: string, session: Session) {
+export async function getUser(id: string, role: string) {
+  'use cache';
+
   cacheLife('hours');
   cacheTag(`user-${id}`);
 
-  if (!session || session.user.role !== 'admin') return null;
+  if (role !== 'admin') return null;
 
   const data = await db.select().from(user).where(eq(user.id, id));
 

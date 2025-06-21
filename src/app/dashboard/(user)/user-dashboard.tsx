@@ -17,14 +17,11 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Subscription } from '@/db/schema';
-import { Session } from '@/lib/auth';
 import { SubscriptionCardAction } from './subscription/subscription-card-action';
 import { getUserSubscriptions } from './user-data';
 
-export async function UserDashboard(props: { session: Session }) {
-  const { session } = props;
-
-  const subscriptions = await getUserSubscriptions(session);
+export async function UserDashboard({ userId }: { userId: string }) {
+  const subscriptions = await getUserSubscriptions(userId);
 
   return (
     <>

@@ -5,21 +5,17 @@ import { revalidatePath } from 'next/cache';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
-import { Session } from '@/lib/auth';
 import { getUserSubscription } from '../user-data';
 
 export async function pauseSubscription(
-  session: Session,
+  userId: string,
   status: 'paused' | 'active' | 'canceled',
   pausedUntil: Date | null,
   subscriptionId: string
 ) {
-  if (!session) return null;
+  if (!userId) return null;
 
-  const subscription = await getUserSubscription(
-    subscriptionId,
-    session.user.id
-  );
+  const subscription = await getUserSubscription(subscriptionId, userId);
   if (!subscription) return null;
 
   const mealPlan = subscription.mealPlan;
@@ -105,23 +101,20 @@ export async function pauseSubscription(
     .where(
       and(
         eq(subscriptionsTable.id, subscriptionId),
-        eq(subscriptionsTable.userId, session.user.id)
+        eq(subscriptionsTable.userId, userId)
       )
     );
 
-  revalidatePath('dashboard', 'layout');
+  revalidatePath('/dashboard', 'layout');
 }
 
 export async function cancelSubscription(
   subscriptionId: string,
-  session: Session
+  userId: string
 ) {
-  if (!session) return null;
+  if (!userId) return null;
 
-  const subscription = await getUserSubscription(
-    subscriptionId,
-    session.user.id
-  );
+  const subscription = await getUserSubscription(subscriptionId, userId);
   if (!subscription) return null;
 
   const mealPlan = subscription.mealPlan;
@@ -144,23 +137,20 @@ export async function cancelSubscription(
     .where(
       and(
         eq(subscriptionsTable.id, subscriptionId),
-        eq(subscriptionsTable.userId, session.user.id)
+        eq(subscriptionsTable.userId, userId)
       )
     );
 
-  revalidatePath('dashboard', 'layout');
+  revalidatePath('/dashboard', 'layout');
 }
 
 export async function reactivateSubscription(
   subscriptionId: string,
-  session: Session
+  userId: string
 ) {
-  if (!session) return null;
+  if (!userId) return null;
 
-  const subscription = await getUserSubscription(
-    subscriptionId,
-    session.user.id
-  );
+  const subscription = await getUserSubscription(subscriptionId, userId);
   if (!subscription) return null;
 
   const mealPlan = subscription.mealPlan;
@@ -201,9 +191,9 @@ export async function reactivateSubscription(
     .where(
       and(
         eq(subscriptionsTable.id, subscriptionId),
-        eq(subscriptionsTable.userId, session.user.id)
+        eq(subscriptionsTable.userId, userId)
       )
     );
 
-  revalidatePath('dashboard', 'layout');
+  revalidatePath('/dashboard', 'layout');
 }

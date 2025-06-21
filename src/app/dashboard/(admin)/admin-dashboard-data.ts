@@ -1,5 +1,3 @@
-'use cache';
-
 import { eq, sql, sum } from 'drizzle-orm';
 import {
   unstable_cacheLife as cacheLife,
@@ -8,17 +6,18 @@ import {
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
-import { Session } from '@/lib/auth';
 
 export async function getNewSubscriptions(
-  session: Session,
+  role: string,
   start?: Date,
   end?: Date
 ) {
+  'use cache';
+
   cacheLife('hours');
   cacheTag('new-subscriptions');
 
-  if (!session || session.user.role !== 'admin') return null;
+  if (role !== 'admin') return null;
 
   if (!start || !end) {
     const today = new Date();
@@ -50,14 +49,16 @@ export async function getNewSubscriptions(
 }
 
 export async function getMonthlyRecurringRevenue(
-  session: Session,
+  role: string,
   start?: Date,
   end?: Date
 ) {
+  'use cache';
+
   cacheLife('hours');
   cacheTag('monthly-recurring-revenue');
 
-  if (!session || session.user.role !== 'admin') return null;
+  if (role !== 'admin') return null;
 
   if (!start || !end) {
     const today = new Date();
@@ -90,15 +91,13 @@ export async function getMonthlyRecurringRevenue(
   };
 }
 
-export async function getReactivations(
-  session: Session,
-  start?: Date,
-  end?: Date
-) {
+export async function getReactivations(role: string, start?: Date, end?: Date) {
+  'use cache';
+
   cacheLife('hours');
   cacheTag('reactivations');
 
-  if (!session || session.user.role !== 'admin') return null;
+  if (role !== 'admin') return null;
 
   if (!start || !end) {
     const today = new Date();
@@ -129,11 +128,13 @@ export async function getReactivations(
   };
 }
 
-export async function getSubscriptions(session: Session) {
+export async function getSubscriptions(role: string) {
+  'use cache';
+
   cacheLife('hours');
   cacheTag('subscriptions');
 
-  if (!session || session.user.role !== 'admin') return null;
+  if (role !== 'admin') return null;
 
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);

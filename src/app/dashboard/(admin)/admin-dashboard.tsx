@@ -6,7 +6,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Session } from '@/lib/auth';
 import {
   getMonthlyRecurringRevenue,
   getNewSubscriptions,
@@ -17,13 +16,13 @@ import { PeriodControl } from './period-control';
 import { SubscriptionsChart } from './subscriptions-chart';
 
 interface AdminDashboardProps {
-  session: Session;
+  role: string;
   start?: string;
   end?: string;
 }
 
 export async function AdminDashboard(props: AdminDashboardProps) {
-  const { session, start, end } = props;
+  const { role, start, end } = props;
 
   const startDate = start ? new Date(start) : undefined;
   const endDate = end ? new Date(end) : undefined;
@@ -34,10 +33,10 @@ export async function AdminDashboard(props: AdminDashboardProps) {
     reactivations,
     subscriptions,
   ] = await Promise.all([
-    getNewSubscriptions(session, startDate, endDate),
-    getMonthlyRecurringRevenue(session, startDate, endDate),
-    getReactivations(session, startDate, endDate),
-    getSubscriptions(session),
+    getNewSubscriptions(role, startDate, endDate),
+    getMonthlyRecurringRevenue(role, startDate, endDate),
+    getReactivations(role, startDate, endDate),
+    getSubscriptions(role),
   ]);
 
   return (

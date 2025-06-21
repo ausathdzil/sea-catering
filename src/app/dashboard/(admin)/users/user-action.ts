@@ -2,7 +2,6 @@
 
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { headers } from 'next/headers';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
@@ -28,13 +27,9 @@ export async function updateUser(
   prevState: UpdateUserFormStateOrNull,
   formData: FormData
 ) {
-  const session = await getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
-  if (!session || session.user.role !== 'admin') {
-    return null;
-  }
+  if (!session || session.user.role !== 'admin') return null;
 
   const rawFormData = {
     role: formData.get('role') as string,
@@ -54,7 +49,7 @@ export async function updateUser(
 
   await db.update(user).set({ role }).where(eq(user.id, userId));
 
-  revalidatePath('dashboard', 'layout');
+  revalidatePath('/dashboard', 'layout');
 
   return {
     success: true,
