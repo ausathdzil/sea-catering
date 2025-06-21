@@ -97,7 +97,7 @@ export async function editSubscription(
     })
     .where(eq(subscriptionsTable.id, subscriptionId));
 
-  revalidatePath('/dashboard/subscriptions');
+  revalidatePath('dashboard', 'layout');
 
   return {
     success: true,
@@ -117,5 +117,5 @@ export async function deleteSubscription(subscriptionId: string) {
     .delete(subscriptionsTable)
     .where(eq(subscriptionsTable.id, subscriptionId));
 
-  revalidatePath('/dashboard/subscriptions');
+  revalidatePath('/dashboard', 'layout');
 }

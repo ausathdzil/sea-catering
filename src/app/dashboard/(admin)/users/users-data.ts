@@ -1,11 +1,19 @@
+'use cache';
+
+import { count, desc, eq, sql, sum } from 'drizzle-orm';
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from 'next/cache';
+
 import { db } from '@/db';
 import { subscriptionsTable, user } from '@/db/schema';
 import { Session } from '@/lib/auth';
-import { count, desc, eq, sql, sum } from 'drizzle-orm';
 
 export async function getUsersWithSubscriptions(session: Session) {
-  'use cache';
-  
+  cacheLife('hours');
+  cacheTag('users-with-subscriptions');
+
   if (!session || session.user.role !== 'admin') return null;
 
   const data = await db

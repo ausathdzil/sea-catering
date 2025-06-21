@@ -109,7 +109,7 @@ export async function pauseSubscription(
       )
     );
 
-  revalidatePath('/dashboard');
+  revalidatePath('dashboard', 'layout');
 }
 
 export async function cancelSubscription(
@@ -148,7 +148,7 @@ export async function cancelSubscription(
       )
     );
 
-  revalidatePath('/dashboard');
+  revalidatePath('dashboard', 'layout');
 }
 
 export async function reactivateSubscription(
@@ -205,5 +205,5 @@ export async function reactivateSubscription(
       )
     );
 
-  revalidatePath('/dashboard');
+  revalidatePath('dashboard', 'layout');
 }

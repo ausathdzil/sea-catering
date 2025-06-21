@@ -1,6 +1,10 @@
 'use cache';
 
 import { eq, sql, sum } from 'drizzle-orm';
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from 'next/cache';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
@@ -11,6 +15,9 @@ export async function getNewSubscriptions(
   start?: Date,
   end?: Date
 ) {
+  cacheLife('hours');
+  cacheTag('new-subscriptions');
+
   if (!session || session.user.role !== 'admin') return null;
 
   if (!start || !end) {
@@ -47,6 +54,9 @@ export async function getMonthlyRecurringRevenue(
   start?: Date,
   end?: Date
 ) {
+  cacheLife('hours');
+  cacheTag('monthly-recurring-revenue');
+
   if (!session || session.user.role !== 'admin') return null;
 
   if (!start || !end) {
@@ -85,6 +95,9 @@ export async function getReactivations(
   start?: Date,
   end?: Date
 ) {
+  cacheLife('hours');
+  cacheTag('reactivations');
+
   if (!session || session.user.role !== 'admin') return null;
 
   if (!start || !end) {
@@ -117,6 +130,9 @@ export async function getReactivations(
 }
 
 export async function getSubscriptions(session: Session) {
+  cacheLife('hours');
+  cacheTag('subscriptions');
+
   if (!session || session.user.role !== 'admin') return null;
 
   const sixMonthsAgo = new Date();

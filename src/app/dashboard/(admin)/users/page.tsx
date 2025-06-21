@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { Loading } from '@/components/loading';
+import { Skeleton } from '@/components/ui/skeleton';
 import { getSession } from '@/lib/auth';
 import { DataTable } from '../data-table';
 import { columns } from './columns';
@@ -10,7 +10,7 @@ import { getUsersWithSubscriptions } from './users-data';
 
 export default function UsersPage() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<UsersSkeleton />}>
       <Users />
     </Suspense>
   );
@@ -28,4 +28,13 @@ async function Users() {
   const users = await getUsersWithSubscriptions(session);
 
   return <DataTable columns={columns} data={users || []} filterKey="name" />;
+}
+
+function UsersSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <Skeleton className="h-9 w-full" />
+      <Skeleton className="h-[400px] w-full" />
+    </div>
+  );
 }

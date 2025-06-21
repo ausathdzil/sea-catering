@@ -2,14 +2,15 @@
 
 import { asc, desc } from 'drizzle-orm';
 import {
-	unstable_cacheLife as cacheLife,
-	unstable_cacheTag as cacheTag,
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
 } from 'next/cache';
 
 import { db } from '@/db';
 import { mealPlansTable, testimonialsTable } from '@/db/schema';
 
 export async function getMealPlans() {
+  cacheLife('max');
 
   const plans = await db
     .select()
@@ -20,8 +21,8 @@ export async function getMealPlans() {
 }
 
 export async function getTestimonials() {
-  cacheTag('testimonials');
   cacheLife('hours');
+  cacheTag('testimonials');
 
   const testimonials = await db
     .select()
