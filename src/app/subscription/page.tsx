@@ -19,7 +19,7 @@ export default async function SubscriptionPage() {
   const mealPlans = await getMealPlans();
 
   return (
-    <main className="grid lg:grid-cols-2 p-4 lg:p-8">
+    <main className="max-w-7xl mx-auto grid lg:grid-cols-2 p-4 lg:p-8">
       <div className="lg:col-span-2">
         <Link
           className={cn(
@@ -32,7 +32,7 @@ export default async function SubscriptionPage() {
           SEA Catering
         </Link>
       </div>
-      <div className="flex flex-col gap-4 p-8 lg:p-16">
+      <div className="flex flex-col gap-4 p-4 lg:p-8 xl:p-16">
         <div className="flex flex-col items-center justify-center gap-4">
           <h1 className="text-2xl font-semibold text-center sm:text-3xl lg:text-4xl">
             Create your own plan
@@ -41,7 +41,6 @@ export default async function SubscriptionPage() {
             Customize your meal plan to suit your lifestyle and dietary
             preferences
           </p>
-
           <div className="w-full max-w-md mt-6 p-4 bg-muted/50 rounded-lg border">
             <div className="flex items-center gap-2 mb-3">
               <Calculator className="h-4 w-4 text-primary" />
@@ -56,7 +55,7 @@ export default async function SubscriptionPage() {
                 </p>
               </div>
 
-              <div className="p-3 bg-background/80 rounded border">
+              <div className="hidden lg:block p-3 bg-background/80 rounded border">
                 <p className="font-medium mb-2">Example Calculation:</p>
                 <div className="space-y-1 text-muted-foreground">
                   <p>• Plan: Protein Plan (Rp40.000 per meal)</p>

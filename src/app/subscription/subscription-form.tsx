@@ -114,7 +114,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
 
   return (
     <form
-      className="p-16 flex flex-col gap-8 max-w-2xl mx-auto"
+      className="p-4 lg:p-8 xl:p-16 flex flex-col gap-8 max-w-2xl mx-auto"
       action={formAction}
     >
       <div className="grid gap-2">
