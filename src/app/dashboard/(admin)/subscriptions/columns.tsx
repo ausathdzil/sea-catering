@@ -4,12 +4,15 @@ import {
   CircleCheckIcon,
   CircleXIcon,
   ClockIcon,
+  LoaderIcon,
   PencilIcon,
   TrashIcon,
 } from 'lucide-react';
 
 import { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -18,6 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { deleteSubscription } from './subscription-action';
 
 interface Subscriptions {
   id: string;
@@ -111,18 +115,39 @@ export const columns: ColumnDef<Subscriptions>[] = [
               <p>Edit Subscription</p>
             </TooltipContent>
           </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <TrashIcon />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Delete Subscription</p>
-            </TooltipContent>
-          </Tooltip>
+          <DeleteSubscriptionButton subscriptionId={id} />
         </div>
       );
     },
   },
 ];
+
+function DeleteSubscriptionButton({
+  subscriptionId,
+}: {
+  subscriptionId: string;
+}) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          onClick={async () => {
+            setIsLoading(true);
+            await deleteSubscription(subscriptionId);
+            toast.error('Subscription deleted');
+            setIsLoading(false);
+          }}
+          disabled={isLoading}
+        >
+          {isLoading ? <LoaderIcon className="animate-spin" /> : <TrashIcon />}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Delete Subscription</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}

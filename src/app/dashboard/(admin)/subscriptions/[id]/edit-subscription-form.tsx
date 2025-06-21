@@ -14,7 +14,7 @@ import { Subscription } from '@/db/schema';
 import {
   editSubscription,
   EditSubscriptionStateOrNull,
-} from './edit-subscription-action';
+} from '../subscription-action';
 import { toast } from 'sonner';
 
 const initialState: EditSubscriptionStateOrNull = {

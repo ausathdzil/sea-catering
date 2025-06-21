@@ -1,6 +1,7 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod/v4';
 
@@ -58,4 +59,19 @@ export async function editSubscription(
     message: 'Subscription updated!',
     errors: {},
   };
+}
+
+export async function deleteSubscription(subscriptionId: string) {
+  const session = await getSession({
+    headers: await headers(),
+  });
+
+  if (!session || session.user.role !== 'admin') return null;
+
+  await db
+    .delete(subscriptionsTable)
+    .where(eq(subscriptionsTable.id, subscriptionId));
+
+  revalidateTag('admin-subscriptions');
+  revalidatePath('/dashboard/subscriptions');
 }

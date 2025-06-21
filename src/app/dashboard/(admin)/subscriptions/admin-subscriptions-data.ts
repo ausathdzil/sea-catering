@@ -4,6 +4,8 @@ import { Session } from '@/lib/auth';
 import { desc, eq } from 'drizzle-orm';
 
 export async function getSubscriptionsWithUsers(session: Session) {
+  'use cache';
+
   if (!session || session.user.role !== 'admin') {
     return null;
   }
