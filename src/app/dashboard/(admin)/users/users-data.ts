@@ -24,7 +24,6 @@ export async function getUsersWithSubscriptions(session: Session) {
     })
     .from(user)
     .leftJoin(subscriptionsTable, eq(user.id, subscriptionsTable.userId))
-    .where(eq(user.role, 'user'))
     .groupBy(user.id)
     .orderBy(desc(user.createdAt));
 

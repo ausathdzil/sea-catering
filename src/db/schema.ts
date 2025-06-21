@@ -171,3 +171,4 @@ export const subscriptionsTable = pgTable('subscriptions', {
 export type MealPlan = typeof mealPlansTable.$inferSelect;
 export type Testimonial = typeof testimonialsTable.$inferSelect;
 export type Subscription = typeof subscriptionsTable.$inferSelect;
+export type User = typeof user.$inferSelect;

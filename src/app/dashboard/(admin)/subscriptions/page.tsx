@@ -3,7 +3,7 @@ import { forbidden } from 'next/navigation';
 
 import { getSession } from '@/lib/auth';
 import { DataTable } from '../data-table';
-import { getSubscriptionsWithUsers } from './admin-subscriptions-data';
+import { getSubscriptionsWithUsers } from './subscriptions-data';
 import { columns } from './columns';
 
 export default async function SubscriptionsPage() {
