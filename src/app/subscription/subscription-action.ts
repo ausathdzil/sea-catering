@@ -12,7 +12,6 @@ interface CreateSubscriptionState {
   success: boolean;
   message?: string;
   errors: {
-    name?: string[] | undefined;
     planName?: string[] | undefined;
     phone?: string[] | undefined;
     basePlan?: string[] | undefined;
@@ -21,7 +20,6 @@ interface CreateSubscriptionState {
     allergies?: string[] | undefined;
   };
   fields: {
-    name: string;
     planName: string;
     phone: string;
     basePlan: string;
@@ -34,15 +32,14 @@ interface CreateSubscriptionState {
 export type CreateSubscriptionStateOrNull = CreateSubscriptionState | null;
 
 const createSubscriptionSchema = z.strictObject({
-  name: z.string().min(1, { message: 'Name is required' }),
   planName: z.string().min(1, { message: 'Plan name is required' }),
   phone: z.e164({ message: 'Invalid phone number' }),
   basePlan: z.enum(['diet', 'protein', 'royal']),
   mealTypes: z
-    .array(z.string())
+    .array(z.enum(['breakfast', 'lunch', 'dinner']))
     .min(1, { message: 'Pick at least one meal type' }),
   deliveryDays: z
-    .array(z.string())
+    .array(z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday']))
     .min(1, { message: 'Pick at least one day' }),
   allergies: z.array(z.string()).optional(),
 });
@@ -65,7 +62,6 @@ export async function createSubscription(
   if (!session) return null;
 
   const rawFormData = {
-    name: formData.get('name') as string,
     planName: formData.get('plan-name') as string,
     phone: (() => {
       const phone = formData.get('phone') as string;
@@ -86,7 +82,6 @@ export async function createSubscription(
       success: false,
       errors: z.flattenError(validatedFields.error).fieldErrors,
       fields: {
-        name: rawFormData.name,
         planName: rawFormData.planName,
         basePlan: rawFormData.basePlan,
         phone: formData.get('phone') as string,
@@ -98,7 +93,6 @@ export async function createSubscription(
   }
 
   const {
-    name,
     planName,
     phone,
     basePlan,
@@ -127,7 +121,7 @@ export async function createSubscription(
 
   await db.insert(subscriptionsTable).values({
     userId,
-    name,
+    name: session.user.name,
     phoneNumber: phone,
     mealPlan,
   });
@@ -140,7 +134,6 @@ export async function createSubscription(
     message: 'Subscribed!',
     errors: {},
     fields: {
-      name: '',
       planName: '',
       phone: '',
       basePlan: '',
