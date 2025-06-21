@@ -151,6 +151,7 @@ export const subscriptionsTable = pgTable('subscriptions', {
     return dueDate;
   }),
   reactivations: integer('reactivations').notNull().default(0),
+  numberOfPayments: integer('number_of_payments').notNull().default(0),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),

@@ -72,9 +72,8 @@ const adminNavItems = [
 
 export function DashboardSidebar() {
   const { data: session } = useSession();
-  if (!session) return null;
 
-  const items = session.user.role === 'admin' ? adminNavItems : userNavItems;
+  const items = session?.user.role === 'admin' ? adminNavItems : userNavItems;
 
   return (
     <Sidebar className="gap-0">

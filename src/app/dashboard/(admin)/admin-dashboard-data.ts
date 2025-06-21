@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, gt, sql, sum } from 'drizzle-orm';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
@@ -86,21 +86,30 @@ export async function getMonthlyRecurringRevenue(
 
   const [result] = await db
     .select({
-      current: sql<number>`SUM(CASE 
-        WHEN ${subscriptionsTable.dueDate} >= ${start} 
-        AND ${subscriptionsTable.dueDate} <= ${end} 
-        THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER 
-        ELSE 0 
-      END)`.as('current'),
-      previous: sql<number>`SUM(CASE 
-        WHEN ${subscriptionsTable.dueDate} >= ${periodDates.start} 
-        AND ${subscriptionsTable.dueDate} <= ${periodDates.end} 
-        THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER 
-        ELSE 0 
-      END)`.as('previous'),
+      current: sum(
+        sql<number>`CASE 
+          WHEN ${subscriptionsTable.updatedAt} >= ${start} 
+          AND ${subscriptionsTable.updatedAt} <= ${end}
+          THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER * ${subscriptionsTable.numberOfPayments}
+          ELSE 0 
+        END`
+      ),
+      previous: sum(
+        sql<number>`CASE 
+          WHEN ${subscriptionsTable.updatedAt} >= ${periodDates.start} 
+          AND ${subscriptionsTable.updatedAt} <= ${periodDates.end}
+          THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER * ${subscriptionsTable.numberOfPayments}
+          ELSE 0 
+        END`
+      ),
     })
     .from(subscriptionsTable)
-    .where(eq(subscriptionsTable.status, 'active'));
+    .where(
+      and(
+        eq(subscriptionsTable.status, 'active'),
+        gt(subscriptionsTable.numberOfPayments, 0)
+      )
+    );
 
   return {
     current: Number(result.current),

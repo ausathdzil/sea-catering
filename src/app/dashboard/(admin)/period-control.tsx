@@ -2,8 +2,10 @@
 
 import { CalendarSyncIcon } from 'lucide-react';
 
+import { formatDateRange } from 'little-date';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Button } from '@/components/ui/button';
@@ -17,15 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { DateRange } from 'react-day-picker';
 import { Label } from '@/components/ui/label';
-
-const formatDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
 
 export function PeriodControl() {
   const today = new Date();
@@ -42,8 +36,8 @@ export function PeriodControl() {
   const handleSearchParams = useDebouncedCallback(() => {
     const params = new URLSearchParams(searchParams);
     if (range?.from && range?.to) {
-      params.set('start', formatDate(range.from));
-      params.set('end', formatDate(range.to));
+      params.set('start', range.from.toISOString().split('T')[0]);
+      params.set('end', range.to.toISOString().split('T')[0]);
     } else {
       params.delete('start');
       params.delete('end');
@@ -61,11 +55,13 @@ export function PeriodControl() {
           <Button
             variant="outline"
             id="date"
-            className="w-1/4 justify-between font-normal"
+            className="max-w-xs justify-between font-normal"
           >
             {range?.from && range?.to
-              ? `${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`
-              : 'Data Period Range'}
+              ? formatDateRange(range.from, range.to, {
+                  includeTime: false,
+                })
+              : 'Select date'}
             <CalendarSyncIcon />
           </Button>
         </DrawerTrigger>

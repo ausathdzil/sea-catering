@@ -78,6 +78,13 @@
       "when": 1749972101610,
       "tag": "0010_neat_boomerang",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1750473620102,
+      "tag": "0011_closed_maverick",
+      "breakpoints": true
     }
   ]
 }
