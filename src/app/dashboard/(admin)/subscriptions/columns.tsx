@@ -1,15 +1,23 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
-import { ColumnDef } from '@tanstack/react-table';
 import {
   CircleCheckIcon,
   CircleXIcon,
   ClockIcon,
   PencilIcon,
+  TrashIcon,
 } from 'lucide-react';
+
+import { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
+
+import { Badge } from '@/components/ui/badge';
+import { Button, buttonVariants } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface Subscriptions {
   id: string;
@@ -89,12 +97,31 @@ export const columns: ColumnDef<Subscriptions>[] = [
     cell: ({ row }) => {
       const id = row.original.id;
       return (
-        <Link
-          className={buttonVariants({ variant: 'ghost', size: 'icon' })}
-          href={`/dashboard/subscriptions/${id}`}
-        >
-          <PencilIcon />
-        </Link>
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                className={buttonVariants({ variant: 'ghost', size: 'icon' })}
+                href={`/dashboard/subscriptions/${id}`}
+              >
+                <PencilIcon />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Edit Subscription</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <TrashIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Delete Subscription</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
       );
     },
   },

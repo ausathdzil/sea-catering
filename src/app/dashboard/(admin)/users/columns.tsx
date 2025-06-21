@@ -1,10 +1,19 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { BanIcon, PencilIcon } from 'lucide-react';
+
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontalIcon } from 'lucide-react';
+import Link from 'next/link';
+
+import { Button, buttonVariants } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface Users {
+  id: string;
   name: string;
   email: string;
   subscriptionsCount: number;
@@ -38,11 +47,34 @@ export const columns: ColumnDef<Users>[] = [
   },
   {
     id: 'actions',
-    cell: () => {
+    cell: ({ row }) => {
+      const id = row.original.id;
       return (
-        <Button variant="ghost" size="sm">
-          <MoreHorizontalIcon />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                className={buttonVariants({ variant: 'ghost', size: 'icon' })}
+                href={`/dashboard/users/${id}`}
+              >
+                <PencilIcon />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Edit User</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <BanIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Ban User</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
       );
     },
   },

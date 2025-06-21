@@ -78,7 +78,15 @@ export interface CustomMealPlan {
   planName: string;
   basePlan: 'diet' | 'protein' | 'royal';
   mealTypes: ('breakfast' | 'lunch' | 'dinner')[];
-  deliveryDays: ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday')[];
+  deliveryDays: (
+    | 'monday'
+    | 'tuesday'
+    | 'wednesday'
+    | 'thursday'
+    | 'friday'
+    | 'saturday'
+    | 'sunday'
+  )[];
   allergies: string[];
   totalPrice: number;
 }

@@ -26,8 +26,8 @@ export function PeriodControl() {
 
   const [open, setOpen] = useState(false);
   const [range, setRange] = useState<DateRange | undefined>({
-    from: new Date(today.getFullYear(), today.getMonth(), 1),
-    to: new Date(today.getFullYear(), today.getMonth() + 1, 0),
+    from: new Date(today.getFullYear(), today.getMonth() - 1, 1),
+    to: new Date(today),
   });
 
   const searchParams = useSearchParams();
@@ -81,6 +81,7 @@ export function PeriodControl() {
               handleSearchParams();
             }}
             className="mx-auto [--cell-size:clamp(0px,calc(100vw/7.5),48px)]"
+            disabled={(date) => date > today}
           />
           <DrawerFooter>
             <Button

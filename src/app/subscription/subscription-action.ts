@@ -12,20 +12,20 @@ interface CreateSubscriptionState {
   success: boolean;
   message?: string;
   errors: {
-    planName?: string[] | undefined;
     phone?: string[] | undefined;
     basePlan?: string[] | undefined;
     mealTypes?: string[] | undefined;
     deliveryDays?: string[] | undefined;
     allergies?: string[] | undefined;
+    planName?: string[] | undefined;
   };
   fields: {
-    planName: string;
     phone: string;
     basePlan: string;
     mealTypes: string[];
     deliveryDays: string[];
     allergies: string[];
+    planName: string;
   };
 }
 
@@ -39,7 +39,17 @@ const createSubscriptionSchema = z.strictObject({
     .array(z.enum(['breakfast', 'lunch', 'dinner']))
     .min(1, { message: 'Pick at least one meal type' }),
   deliveryDays: z
-    .array(z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday']))
+    .array(
+      z.enum([
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+        'sunday',
+      ])
+    )
     .min(1, { message: 'Pick at least one day' }),
   allergies: z.array(z.string()).optional(),
 });
@@ -92,14 +102,8 @@ export async function createSubscription(
     };
   }
 
-  const {
-    planName,
-    phone,
-    basePlan,
-    mealTypes,
-    deliveryDays,
-    allergies,
-  } = validatedFields.data;
+  const { planName, phone, basePlan, mealTypes, deliveryDays, allergies } =
+    validatedFields.data;
 
   const basePlanPrice = MEAL_PLAN_PRICE[basePlan];
 
@@ -134,12 +138,12 @@ export async function createSubscription(
     message: 'Subscribed!',
     errors: {},
     fields: {
-      planName: '',
       phone: '',
       basePlan: '',
       mealTypes: [],
       deliveryDays: [],
       allergies: [],
+      planName: '',
     },
   };
 }

@@ -1,7 +1,7 @@
 import { db } from '@/db';
 import { subscriptionsTable, user } from '@/db/schema';
 import { Session } from '@/lib/auth';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 export async function getSubscriptionsWithUsers(session: Session) {
   if (!session || session.user.role !== 'admin') {
@@ -18,7 +18,8 @@ export async function getSubscriptionsWithUsers(session: Session) {
       createdAt: subscriptionsTable.createdAt,
     })
     .from(subscriptionsTable)
-    .innerJoin(user, eq(subscriptionsTable.userId, user.id));
+    .innerJoin(user, eq(subscriptionsTable.userId, user.id))
+    .orderBy(desc(subscriptionsTable.createdAt));
 
   return data.map((subscription) => ({
     id: subscription.id,

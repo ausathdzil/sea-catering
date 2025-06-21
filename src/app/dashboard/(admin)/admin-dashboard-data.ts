@@ -63,8 +63,8 @@ export async function getMonthlyRecurringRevenue(
     .select({
       current: sum(
         sql<number>`CASE 
-          WHEN ${subscriptionsTable.startAt} >= ${start} 
-          AND ${subscriptionsTable.startAt} <= ${end}
+          WHEN ${subscriptionsTable.dueDate} >= ${start} 
+          AND ${subscriptionsTable.dueDate} <= ${end}
           AND ${subscriptionsTable.status} = 'active'
           THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER
           ELSE 0 

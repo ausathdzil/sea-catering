@@ -70,7 +70,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
       if (state.success) {
         toast.success(state.message, {
           classNames: {
-            actionButton: '!bg-primary/10 !text-primary',
+            actionButton: '!bg-background !text-foreground !border',
           },
           action: {
             label: 'View Dashboard',
@@ -301,6 +301,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
             minLength={1}
             maxLength={50}
             placeholder="My Meal Plan"
+            defaultValue={state?.fields.planName}
           />
           <span className="text-xs text-muted-foreground" aria-live="polite">
             Give your plan a name

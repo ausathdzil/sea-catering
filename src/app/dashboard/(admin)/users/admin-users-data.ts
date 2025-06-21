@@ -1,13 +1,14 @@
 import { db } from '@/db';
 import { subscriptionsTable, user } from '@/db/schema';
 import { Session } from '@/lib/auth';
-import { count, eq, sql, sum } from 'drizzle-orm';
+import { count, desc, eq, sql, sum } from 'drizzle-orm';
 
 export async function getUsersWithSubscriptions(session: Session) {
   if (!session || session.user.role !== 'admin') return null;
 
   const data = await db
     .select({
+      id: user.id,
       name: user.name,
       email: user.email,
       subscriptionsCount: count(subscriptionsTable.id),
@@ -22,7 +23,8 @@ export async function getUsersWithSubscriptions(session: Session) {
     .from(user)
     .leftJoin(subscriptionsTable, eq(user.id, subscriptionsTable.userId))
     .where(eq(user.role, 'user'))
-    .groupBy(user.id);
+    .groupBy(user.id)
+    .orderBy(desc(user.createdAt));
 
   return data.map((user) => ({
     ...user,
