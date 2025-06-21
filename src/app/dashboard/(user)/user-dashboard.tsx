@@ -88,7 +88,7 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
           {subscription.status === 'paused' ? (
             <p className="hidden md:block text-xs font-medium">
               until{' '}
-              <span className="text-amber-600">
+              <span className="text-warning">
                 {subscription.pausedUntil?.toLocaleDateString('en-ID', {
                   day: '2-digit',
                   month: 'long',

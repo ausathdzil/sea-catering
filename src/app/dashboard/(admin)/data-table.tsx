@@ -1,8 +1,9 @@
 'use client';
 
+import { SearchIcon } from 'lucide-react';
+
 import {
   ColumnDef,
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -21,28 +22,33 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { DataTablePagination } from './data-table-pagination';
-import { SearchIcon } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  filterKey: 'subscriptions' | 'name';
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  filterKey,
 }: DataTableProps<TData, TValue>) {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 5,
+      },
+    },
     state: {
-      columnFilters,
+      globalFilter,
     },
   });
 
@@ -51,11 +57,9 @@ export function DataTable<TData, TValue>({
       <div className="relative">
         <Input
           className="peer ps-9 pe-9"
-          placeholder="Search users..."
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
-          }
+          placeholder={`Search ${filterKey}...`}
+          value={globalFilter}
+          onChange={(event) => setGlobalFilter(event.target.value)}
         />
         <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
           <SearchIcon size={16} />

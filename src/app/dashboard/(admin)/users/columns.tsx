@@ -1,6 +1,8 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
+import { MoreHorizontalIcon } from 'lucide-react';
 
 interface Users {
   name: string;
@@ -45,6 +47,16 @@ export const columns: ColumnDef<Users>[] = [
         maximumFractionDigits: 0,
       }).format(row.original.totalPaid);
       return <div>{amount}</div>;
+    },
+  },
+  {
+    id: 'actions',
+    cell: () => {
+      return (
+        <Button variant="ghost" size="sm">
+          <MoreHorizontalIcon />
+        </Button>
+      );
     },
   },
 ];
