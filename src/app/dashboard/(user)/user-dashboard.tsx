@@ -76,7 +76,7 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
           <Badge
             variant={
               subscription.status === 'paused'
-                ? 'secondary'
+                ? 'warning'
                 : subscription.status === 'canceled'
                 ? 'destructive'
                 : 'default'
@@ -88,7 +88,7 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
           {subscription.status === 'paused' ? (
             <p className="hidden md:block text-xs font-medium">
               until{' '}
-              <span className="text-warning">
+              <span className="text-amber-600">
                 {subscription.pausedUntil?.toLocaleDateString('en-ID', {
                   day: '2-digit',
                   month: 'long',
@@ -112,6 +112,7 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
         <SubscriptionCardAction
           subscriptionId={subscription.id}
           status={subscription.status}
+          dueDate={subscription.dueDate ?? new Date()}
         />
       </CardHeader>
       <Separator />
@@ -156,9 +157,6 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
               }).format(subscription.mealPlan.totalPrice)}
-              <span className="text-xs text-muted-foreground font-normal ml-1">
-                /month
-              </span>
             </p>
           </div>
         </div>

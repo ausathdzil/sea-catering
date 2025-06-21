@@ -22,71 +22,11 @@ export async function pauseSubscription(
   );
   if (!subscription) return null;
 
-  const mealPlan = subscription.mealPlan;
-  let updatedPrice = mealPlan.totalPrice;
-
-  if (
-    status === 'paused' &&
-    pausedUntil &&
-    subscription.startAt &&
-    subscription.dueDate
-  ) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-
-    const daysDiff = Math.ceil(
-      (pausedUntil.getTime() - tomorrow.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    const dayMap: Record<string, number> = {
-      sunday: 0,
-      monday: 1,
-      tuesday: 2,
-      wednesday: 3,
-      thursday: 4,
-      friday: 5,
-      saturday: 6,
-    };
-
-    const deliveryDayNumbers = mealPlan.deliveryDays.map((day) => dayMap[day]);
-    const pricePerDeliveryDay =
-      mealPlan.totalPrice / (deliveryDayNumbers.length * 4.3);
-
-    let deliveryDaysAffected = 0;
-    for (let i = 0; i < daysDiff; i++) {
-      const checkDate = new Date(tomorrow);
-      checkDate.setDate(tomorrow.getDate() + i);
-      if (deliveryDayNumbers.includes(checkDate.getDay())) {
-        deliveryDaysAffected++;
-      }
-    }
-
-    updatedPrice =
-      mealPlan.totalPrice - pricePerDeliveryDay * deliveryDaysAffected;
-  } else if (status === 'active') {
-    const basePlanPrice = {
-      diet: 30000,
-      protein: 40000,
-      royal: 60000,
-    }[mealPlan.basePlan as 'diet' | 'protein' | 'royal'];
-
-    updatedPrice =
-      basePlanPrice *
-      mealPlan.mealTypes.length *
-      mealPlan.deliveryDays.length *
-      4.3;
-  }
-
   await db
     .update(subscriptionsTable)
     .set({
       status,
       pausedUntil,
-      mealPlan: {
-        ...mealPlan,
-        totalPrice: updatedPrice,
-      },
     })
     .where(
       and(
@@ -110,11 +50,7 @@ export async function cancelSubscription(
   );
   if (!subscription) return null;
 
-  const mealPlan = subscription.mealPlan;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const tomorrow = new Date(today);
+  const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   await db
@@ -125,10 +61,6 @@ export async function cancelSubscription(
       canceledAt: tomorrow,
       startAt: null,
       dueDate: null,
-      mealPlan: {
-        ...mealPlan,
-        totalPrice: 0,
-      },
     })
     .where(
       and(
@@ -152,19 +84,6 @@ export async function reactivateSubscription(
   );
   if (!subscription) return null;
 
-  const mealPlan = subscription.mealPlan;
-  const basePlanPrice = {
-    diet: 30000,
-    protein: 40000,
-    royal: 60000,
-  }[mealPlan.basePlan as 'diet' | 'protein' | 'royal'];
-
-  const recalculatedPrice =
-    basePlanPrice *
-    mealPlan.mealTypes.length *
-    mealPlan.deliveryDays.length *
-    4.3;
-
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow.setHours(0, 0, 0, 0);
@@ -182,10 +101,6 @@ export async function reactivateSubscription(
       startAt: tomorrow,
       dueDate: dueDate,
       reactivations: subscription.reactivations + 1,
-      mealPlan: {
-        ...mealPlan,
-        totalPrice: recalculatedPrice,
-      },
     })
     .where(
       and(

@@ -76,9 +76,9 @@ export const verification = pgTable('verification', {
 
 export interface CustomMealPlan {
   planName: string;
-  basePlan: string | null;
-  mealTypes: string[];
-  deliveryDays: string[];
+  basePlan: 'diet' | 'protein' | 'royal';
+  mealTypes: ('breakfast' | 'lunch' | 'dinner')[];
+  deliveryDays: ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday')[];
   allergies: string[];
   totalPrice: number;
 }
@@ -151,7 +151,6 @@ export const subscriptionsTable = pgTable('subscriptions', {
     return dueDate;
   }),
   reactivations: integer('reactivations').notNull().default(0),
-  numberOfPayments: integer('number_of_payments').notNull().default(0),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),

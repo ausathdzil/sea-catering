@@ -1,22 +1,8 @@
-import { and, eq, gt, sql, sum } from 'drizzle-orm';
+import { eq, sql, sum } from 'drizzle-orm';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
 import { Session } from '@/lib/auth';
-
-function getPreviousPeriod(start: Date, end: Date) {
-  const previousStart = new Date(start.getFullYear(), start.getMonth() - 1, 1);
-  const previousEnd = new Date(
-    end.getFullYear(),
-    end.getMonth() - 1,
-    end.getDate()
-  );
-
-  return {
-    start: previousStart,
-    end: previousEnd,
-  };
-}
 
 export async function getNewSubscriptions(
   session: Session,
@@ -37,8 +23,6 @@ export async function getNewSubscriptions(
     end = lastDayOfMonth;
   }
 
-  const periodDates = getPreviousPeriod(start, end);
-
   const [result] = await db
     .select({
       current: sql<number>`SUM(CASE 
@@ -47,19 +31,12 @@ export async function getNewSubscriptions(
         THEN 1 
         ELSE 0 
       END)`.as('current'),
-      previous: sql<number>`SUM(CASE 
-        WHEN ${subscriptionsTable.startAt} >= ${periodDates.start} 
-        AND ${subscriptionsTable.startAt} <= ${periodDates.end} 
-        THEN 1 
-        ELSE 0 
-      END)`.as('previous'),
     })
     .from(subscriptionsTable)
     .where(eq(subscriptionsTable.status, 'active'));
 
   return {
     current: Number(result.current),
-    previous: Number(result.previous),
   };
 }
 
@@ -82,38 +59,22 @@ export async function getMonthlyRecurringRevenue(
     end = lastDayOfMonth;
   }
 
-  const periodDates = getPreviousPeriod(start, end);
-
   const [result] = await db
     .select({
       current: sum(
         sql<number>`CASE 
-          WHEN ${subscriptionsTable.updatedAt} >= ${start} 
-          AND ${subscriptionsTable.updatedAt} <= ${end}
-          THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER * ${subscriptionsTable.numberOfPayments}
-          ELSE 0 
-        END`
-      ),
-      previous: sum(
-        sql<number>`CASE 
-          WHEN ${subscriptionsTable.updatedAt} >= ${periodDates.start} 
-          AND ${subscriptionsTable.updatedAt} <= ${periodDates.end}
-          THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER * ${subscriptionsTable.numberOfPayments}
+          WHEN ${subscriptionsTable.startAt} >= ${start} 
+          AND ${subscriptionsTable.startAt} <= ${end}
+          AND ${subscriptionsTable.status} = 'active'
+          THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER
           ELSE 0 
         END`
       ),
     })
-    .from(subscriptionsTable)
-    .where(
-      and(
-        eq(subscriptionsTable.status, 'active'),
-        gt(subscriptionsTable.numberOfPayments, 0)
-      )
-    );
+    .from(subscriptionsTable);
 
   return {
     current: Number(result.current),
-    previous: Number(result.previous),
   };
 }
 
@@ -136,8 +97,6 @@ export async function getReactivations(
     end = lastDayOfMonth;
   }
 
-  const periodDates = getPreviousPeriod(start, end);
-
   const [result] = await db
     .select({
       current: sql<number>`SUM(CASE 
@@ -146,19 +105,12 @@ export async function getReactivations(
         THEN ${subscriptionsTable.reactivations} 
         ELSE 0 
       END)`.as('current'),
-      previous: sql<number>`SUM(CASE 
-        WHEN ${subscriptionsTable.reactivatedAt} >= ${periodDates.start} 
-        AND ${subscriptionsTable.reactivatedAt} <= ${periodDates.end} 
-        THEN ${subscriptionsTable.reactivations} 
-        ELSE 0 
-      END)`.as('previous'),
     })
     .from(subscriptionsTable)
     .where(eq(subscriptionsTable.status, 'active'));
 
   return {
     current: Number(result.current),
-    previous: Number(result.previous),
   };
 }
 
@@ -184,7 +136,13 @@ export async function getSubscriptions(session: Session) {
     )
     .leftJoin(
       subscriptionsTable,
-      sql`DATE_TRUNC('month', ${subscriptionsTable.startAt}) = month_series`
+      sql`(
+        DATE_TRUNC('month', ${subscriptionsTable.startAt}) = month_series
+        OR (
+          ${subscriptionsTable.status} = 'canceled' 
+          AND DATE_TRUNC('month', ${subscriptionsTable.canceledAt}) = month_series
+        )
+      )`
     )
     .groupBy(sql`month_series`)
     .orderBy(sql`month_series`);

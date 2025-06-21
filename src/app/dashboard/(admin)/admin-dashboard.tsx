@@ -2,10 +2,8 @@ import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { Badge } from '@/components/ui/badge';
 import {
   Card,
-  CardAction,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -13,7 +11,6 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { getSession } from '@/lib/auth';
-import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 import { DashboardHeader } from '../dashboard-header';
 import {
   getMonthlyRecurringRevenue,
@@ -64,20 +61,17 @@ export async function AdminDashboard(props: AdminDashboardProps) {
           <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:bg-gradient-to-t grid grid-cols-1 gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-3">
             <Suspense fallback={<div>Loading...</div>}>
               <NewSubscriptionsCard
-                newSubscriptions={
-                  newSubscriptions ?? { current: 0, previous: 0 }
-                }
+                newSubscriptions={newSubscriptions ?? { current: 0 }}
               />
               <MonthlyRevenueCard
                 monthlyRecurringRevenue={
                   monthlyRecurringRevenue ?? {
                     current: 0,
-                    previous: 0,
                   }
                 }
               />
               <ReactivationsCard
-                reactivations={reactivations ?? { current: 0, previous: 0 }}
+                reactivations={reactivations ?? { current: 0 }}
               />
             </Suspense>
           </div>
@@ -95,15 +89,8 @@ function NewSubscriptionsCard({
 }: {
   newSubscriptions: {
     current: number;
-    previous: number;
   };
 }) {
-  const percentageDifference =
-    newSubscriptions.previous === 0
-      ? 0
-      : (newSubscriptions.current - newSubscriptions.previous) /
-        newSubscriptions.previous;
-
   return (
     <Card>
       <CardHeader>
@@ -111,31 +98,12 @@ function NewSubscriptionsCard({
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
           {newSubscriptions.current}
         </CardTitle>
-        <CardAction>
-          <Badge variant="outline">
-            {percentageDifference > 0 ? (
-              <TrendingUpIcon />
-            ) : percentageDifference < 0 ? (
-              <TrendingDownIcon />
-            ) : null}
-            {percentageDifference > 0 ? '+' : ''}
-            {Math.round(percentageDifference)}%
-          </Badge>
-        </CardAction>
       </CardHeader>
       <Separator />
       <CardFooter className="text-sm">
         {newSubscriptions.current === 0
           ? 'No new subscriptions'
-          : percentageDifference > 20
-          ? 'Rapid customer acquisition'
-          : percentageDifference > 0
-          ? 'Growing customer base'
-          : percentageDifference < -20
-          ? 'Significant drop in new customers'
-          : percentageDifference < 0
-          ? 'Slower customer acquisition'
-          : 'Stable customer growth'}
+          : 'New subscriptions this period'}
       </CardFooter>
     </Card>
   );
@@ -146,15 +114,8 @@ function MonthlyRevenueCard({
 }: {
   monthlyRecurringRevenue: {
     current: number;
-    previous: number;
   };
 }) {
-  const percentageDifference =
-    monthlyRecurringRevenue.previous === 0
-      ? 0
-      : (monthlyRecurringRevenue.current - monthlyRecurringRevenue.previous) /
-        monthlyRecurringRevenue.previous;
-
   return (
     <Card>
       <CardHeader>
@@ -166,29 +127,12 @@ function MonthlyRevenueCard({
             maximumFractionDigits: 0,
           }).format(monthlyRecurringRevenue.current)}
         </CardTitle>
-        <CardAction>
-          <Badge variant="outline">
-            {percentageDifference > 0 ? (
-              <TrendingUpIcon />
-            ) : percentageDifference < 0 ? (
-              <TrendingDownIcon />
-            ) : null}
-            {percentageDifference > 0 ? '+' : ''}
-            {Math.round(percentageDifference)}%
-          </Badge>
-        </CardAction>
       </CardHeader>
       <Separator />
       <CardFooter className="text-sm">
-        {percentageDifference > 10
-          ? 'Exceptional revenue growth'
-          : percentageDifference > 0
-          ? 'Steady revenue growth'
-          : percentageDifference < -10
-          ? 'Significant revenue decline'
-          : percentageDifference < 0
-          ? 'Slight revenue decline'
-          : 'Stable revenue'}
+        {monthlyRecurringRevenue.current === 0
+          ? 'No revenue this period'
+          : 'Revenue from active subscriptions'}
       </CardFooter>
     </Card>
   );
@@ -199,15 +143,8 @@ function ReactivationsCard({
 }: {
   reactivations: {
     current: number;
-    previous: number;
   };
 }) {
-  const percentageDifference =
-    reactivations.previous === 0
-      ? 0
-      : (reactivations.current - reactivations.previous) /
-        reactivations.previous;
-
   return (
     <Card>
       <CardHeader>
@@ -215,31 +152,12 @@ function ReactivationsCard({
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
           {reactivations.current}
         </CardTitle>
-        <CardAction>
-          <Badge variant="outline">
-            {percentageDifference > 0 ? (
-              <TrendingUpIcon />
-            ) : percentageDifference < 0 ? (
-              <TrendingDownIcon />
-            ) : null}
-            {percentageDifference > 0 ? '+' : ''}
-            {Math.round(percentageDifference)}%
-          </Badge>
-        </CardAction>
       </CardHeader>
       <Separator />
       <CardFooter className="text-sm">
         {reactivations.current === 0
           ? 'No customer reactivations'
-          : percentageDifference > 15
-          ? 'Strong customer retention'
-          : percentageDifference > 0
-          ? 'Good customer retention'
-          : percentageDifference < -15
-          ? 'Declining customer retention'
-          : percentageDifference < 0
-          ? 'Slight retention decline'
-          : 'Stable customer retention'}
+          : 'Customer reactivations this period'}
       </CardFooter>
     </Card>
   );

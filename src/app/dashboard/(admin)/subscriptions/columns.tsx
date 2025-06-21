@@ -5,8 +5,9 @@ import { buttonVariants } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
 import {
   CircleCheckIcon,
+  CircleXIcon,
   ClockIcon,
-  PencilIcon
+  PencilIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -63,15 +64,20 @@ export const columns: ColumnDef<Subscriptions>[] = [
       const status = row.original.status;
       return (
         <div>
-          {status === 'paid' ? (
+          {status === 'active' ? (
             <Badge>
               <CircleCheckIcon />
-              Paid
+              Active
             </Badge>
-          ) : (
+          ) : status === 'paused' ? (
             <Badge variant="warning">
               <ClockIcon />
-              Pending
+              Paused
+            </Badge>
+          ) : (
+            <Badge variant="destructive">
+              <CircleXIcon />
+              Canceled
             </Badge>
           )}
         </div>

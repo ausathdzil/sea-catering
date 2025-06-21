@@ -8,8 +8,7 @@ interface Users {
   name: string;
   email: string;
   subscriptionsCount: number;
-  totalPending: number;
-  totalPaid: number;
+  totalRevenue: number;
 }
 
 export const columns: ColumnDef<Users>[] = [
@@ -23,29 +22,17 @@ export const columns: ColumnDef<Users>[] = [
   },
   {
     accessorKey: 'subscriptionsCount',
-    header: 'Total Subscriptions',
+    header: 'Subscriptions',
   },
   {
-    accessorKey: 'totalPending',
-    header: 'Total Pending',
+    accessorKey: 'totalRevenue',
+    header: 'Revenue',
     cell: ({ row }) => {
       const amount = new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',
         maximumFractionDigits: 0,
-      }).format(row.original.totalPending);
-      return <div>{amount}</div>;
-    },
-  },
-  {
-    accessorKey: 'totalPaid',
-    header: 'Total Paid',
-    cell: ({ row }) => {
-      const amount = new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        maximumFractionDigits: 0,
-      }).format(row.original.totalPaid);
+      }).format(row.original.totalRevenue);
       return <div>{amount}</div>;
     },
   },

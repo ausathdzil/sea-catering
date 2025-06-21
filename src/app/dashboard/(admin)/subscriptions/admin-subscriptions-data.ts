@@ -14,7 +14,6 @@ export async function getSubscriptionsWithUsers(session: Session) {
       userName: user.name,
       userEmail: user.email,
       mealPlan: subscriptionsTable.mealPlan,
-      numberOfPayments: subscriptionsTable.numberOfPayments,
       status: subscriptionsTable.status,
       createdAt: subscriptionsTable.createdAt,
     })
@@ -27,6 +26,6 @@ export async function getSubscriptionsWithUsers(session: Session) {
     email: subscription.userEmail,
     amount: subscription.mealPlan.totalPrice,
     date: subscription.createdAt,
-    status: subscription.numberOfPayments > 0 ? 'paid' : 'pending',
+    status: subscription.status,
   }));
 }

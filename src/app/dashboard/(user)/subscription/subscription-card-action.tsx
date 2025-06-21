@@ -44,11 +44,13 @@ type SubscriptionStatus = 'paused' | 'active' | 'canceled';
 interface SubscriptionCardActionProps {
   subscriptionId: string;
   status: SubscriptionStatus;
+  dueDate: Date;
 }
 
 export function SubscriptionCardAction({
   subscriptionId,
   status,
+  dueDate,
 }: SubscriptionCardActionProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -184,7 +186,7 @@ export function SubscriptionCardAction({
               }}
               required
               className="mx-auto"
-              disabled={(date) => date < new Date()}
+              disabled={(date) => date < new Date() || date > dueDate}
             />
             <DrawerFooter>
               <Button

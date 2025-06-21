@@ -11,16 +11,9 @@ export async function getUsersWithSubscriptions(session: Session) {
       name: user.name,
       email: user.email,
       subscriptionsCount: count(subscriptionsTable.id),
-      totalPending: sum(
+      totalRevenue: sum(
         sql`CASE 
-          WHEN ${subscriptionsTable.numberOfPayments} = 0 
-          THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER
-          ELSE 0 
-        END`
-      ),
-      totalPaid: sum(
-        sql`CASE 
-          WHEN ${subscriptionsTable.numberOfPayments} > 0 
+          WHEN ${subscriptionsTable.status} = 'active' 
           THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER
           ELSE 0 
         END`
@@ -34,7 +27,6 @@ export async function getUsersWithSubscriptions(session: Session) {
   return data.map((user) => ({
     ...user,
     subscriptionsCount: Number(user.subscriptionsCount),
-    totalPending: Number(user.totalPending) || 0,
-    totalPaid: Number(user.totalPaid) || 0,
+    totalRevenue: Number(user.totalRevenue) || 0,
   }));
 }
