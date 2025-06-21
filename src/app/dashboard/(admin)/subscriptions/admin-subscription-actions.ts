@@ -49,9 +49,52 @@ export async function editSubscription(
 
   const { status } = validatedFields.data;
 
+  const subscription = await db
+    .select()
+    .from(subscriptionsTable)
+    .where(eq(subscriptionsTable.id, subscriptionId));
+
+  if (!subscription[0]) {
+    return {
+      success: false,
+      message: 'Subscription not found',
+      errors: {},
+    };
+  }
+
+  const mealPlan = subscription[0].mealPlan;
+  let updatedPrice = mealPlan.totalPrice;
+
+  if (status === 'canceled') {
+    updatedPrice = 0;
+  } else if (status === 'active') {
+    const basePlanPrice = {
+      diet: 30000,
+      protein: 40000,
+      royal: 60000,
+    }[mealPlan.basePlan as 'diet' | 'protein' | 'royal'];
+
+    updatedPrice =
+      basePlanPrice *
+      mealPlan.mealTypes.length *
+      mealPlan.deliveryDays.length *
+      4.3;
+  }
+
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
   await db
     .update(subscriptionsTable)
-    .set({ status })
+    .set({
+      status,
+      mealPlan: {
+        ...mealPlan,
+        totalPrice: updatedPrice,
+      },
+      canceledAt: status === 'canceled' ? tomorrow : null,
+      pausedUntil: null,
+    })
     .where(eq(subscriptionsTable.id, subscriptionId));
 
   return {
