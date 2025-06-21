@@ -49,14 +49,14 @@ const adminNavItems = [
     icon: GaugeIcon,
   },
   {
-    title: 'Users',
-    url: '/dashboard/users',
-    icon: UsersRoundIcon,
-  },
-  {
     title: 'Subscriptions',
     url: '/dashboard/subscriptions',
     icon: ChefHatIcon,
+  },
+  {
+    title: 'Users',
+    url: '/dashboard/users',
+    icon: UsersRoundIcon,
   },
   {
     title: 'Account',

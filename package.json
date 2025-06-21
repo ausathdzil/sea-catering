@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
+    "@tanstack/react-table": "^8.21.3",
     "bcryptjs": "^3.0.2",
     "better-auth": "^1.2.9",
     "class-variance-authority": "^0.7.1",
@@ -22,6 +23,7 @@
     "lucide-react": "^0.514.0",
     "next": "15.4.0-canary.87",
     "next-themes": "^0.4.6",
+    "radix-ui": "latest",
     "react": "19.1.0",
     "react-day-picker": "^9.7.0",
     "react-dom": "19.1.0",
@@ -30,8 +32,7 @@
     "tailwind-merge": "^3.3.1",
     "use-debounce": "^10.0.5",
     "vaul": "^1.1.2",
-    "zod": "^3.25.63",
-    "radix-ui": "latest"
+    "zod": "^3.25.63"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
