@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod/v4';
 
@@ -132,6 +132,7 @@ export async function createSubscription(
 
   revalidateTag(`user-${userId}-subscriptions`);
   revalidateTag('subscriptions');
+  revalidatePath('/dashboard');
 
   return {
     success: true,

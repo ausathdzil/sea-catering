@@ -5,8 +5,18 @@ import { getSession } from '@/lib/auth';
 import { DataTable } from '../data-table';
 import { getSubscriptionsWithUsers } from './subscriptions-data';
 import { columns } from './columns';
+import { Suspense } from 'react';
+import { Loading } from '@/components/loading';
 
-export default async function SubscriptionsPage() {
+export default function SubscriptionsPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <Subscriptions />
+    </Suspense>
+  );
+}
+
+async function Subscriptions() {
   const session = await getSession({
     headers: await headers(),
   });

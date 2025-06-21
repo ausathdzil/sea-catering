@@ -21,8 +21,6 @@ export const metadata: Metadata = {
   description: 'Healthy Meals, Anytime, Anywhere.',
 };
 
-export const experimental_ppr = true;
-
 export default function RootLayout({
   children,
 }: Readonly<{

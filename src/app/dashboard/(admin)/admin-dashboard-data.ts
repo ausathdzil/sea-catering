@@ -1,3 +1,5 @@
+'use cache';
+
 import { eq, sql, sum } from 'drizzle-orm';
 
 import { db } from '@/db';

@@ -1,8 +1,6 @@
+'use cache';
+
 import { and, desc, eq } from 'drizzle-orm';
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from 'next/cache';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
@@ -12,12 +10,7 @@ export async function getUserSubscription(
   subscriptionId: string,
   userId: string
 ) {
-  'use cache';
-
   if (!userId) return null;
-
-  cacheTag(`user-${userId}-subscription-${subscriptionId}`);
-  cacheLife('hours');
 
   const subscription = await db
     .select()
@@ -33,18 +26,13 @@ export async function getUserSubscription(
   return subscription[0];
 }
 
-export async function getUserSubscriptions(userId: string, session: Session) {
-  'use cache';
-
+export async function getUserSubscriptions(session: Session) {
   if (!session) return null;
-
-  cacheTag(`user-${userId}-subscriptions`);
-  cacheLife('hours');
 
   const subscriptions = await db
     .select()
     .from(subscriptionsTable)
-    .where(eq(subscriptionsTable.userId, userId))
+    .where(eq(subscriptionsTable.userId, session.user.id))
     .orderBy(desc(subscriptionsTable.createdAt));
 
   return subscriptions;

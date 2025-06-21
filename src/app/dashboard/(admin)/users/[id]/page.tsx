@@ -1,9 +1,12 @@
 import { headers } from 'next/headers';
 import { forbidden, notFound } from 'next/navigation';
 
+import { Suspense } from 'react';
+
+import { Loading } from '@/components/loading';
 import { getSession } from '@/lib/auth';
-import { getUser } from './user-data';
 import { EditUserForm } from './edit-user-form';
+import { getUser } from './user-data';
 
 interface UserPageProps {
   params: Promise<{
@@ -11,7 +14,17 @@ interface UserPageProps {
   }>;
 }
 
-export default async function UserPage(props: UserPageProps) {
+export default function UserPage(props: UserPageProps) {
+  return (
+    <div className="w-full flex justify-center">
+      <Suspense fallback={<Loading />}>
+        <EditUser params={props.params} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function EditUser(props: UserPageProps) {
   const session = await getSession({
     headers: await headers(),
   });
@@ -28,9 +41,5 @@ export default async function UserPage(props: UserPageProps) {
     notFound();
   }
 
-  return (
-    <div className="w-full flex justify-center">
-      <EditUserForm user={user} />
-    </div>
-  );
+  return <EditUserForm user={user} />;
 }

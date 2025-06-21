@@ -43,9 +43,7 @@ const features = [
   },
 ];
 
-export default async function Home() {
-  const testimonials = await getTestimonials();
-
+export default function Home() {
   return (
     <main className="flex-1 flex flex-col items-center gap-8 md:gap-16 py-8 md:py-12 px-8 md:px-0">
       <div className="flex flex-col lg:flex-row items-center justify-center gap-8 md:gap-16">
@@ -112,14 +110,9 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className="hidden xl:flex flex-col items-center justify-center gap-8 py-12">
-        <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
-          What Our Customers Say
-        </h2>
-        <Suspense fallback={<TestimonialSkeleton />}>
-          <TestimonialCarousel testimonials={testimonials} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<TestimonialSkeleton />}>
+        <TestimnialSection />
+      </Suspense>
 
       <div className="w-full max-w-2xl flex flex-col items-center justify-center gap-8 py-12">
         <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
@@ -128,6 +121,19 @@ export default async function Home() {
         <TestimonialForm />
       </div>
     </main>
+  );
+}
+
+async function TestimnialSection() {
+  const testimonials = await getTestimonials();
+
+  return (
+    <div className="hidden xl:flex flex-col items-center justify-center gap-8 py-12">
+      <h2 className="text-xl md:text-4xl font-dm-sans font-semibold">
+        What Our Customers Say
+      </h2>
+      <TestimonialCarousel testimonials={testimonials} />
+    </div>
   );
 }
 

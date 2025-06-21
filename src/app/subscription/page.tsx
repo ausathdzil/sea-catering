@@ -11,13 +11,7 @@ import { cn } from '@/lib/utils';
 import { getMealPlans } from '../(public)/public-data';
 import { SubscriptionForm } from './subscription-form';
 
-export default async function SubscriptionPage() {
-  const session = await getSession({
-    headers: await headers(),
-  });
-
-  const mealPlans = await getMealPlans();
-
+export default function SubscriptionPage() {
   return (
     <main className="max-w-7xl mx-auto grid lg:grid-cols-2 p-4 lg:p-8">
       <div className="lg:col-span-2">
@@ -79,28 +73,34 @@ export default async function SubscriptionPage() {
           </div>
         </div>
       </div>
-      {session ? (
-        <Suspense fallback={<SubscriptionSkeleton />}>
-          <SubscriptionForm mealPlans={mealPlans} />
-        </Suspense>
-      ) : (
-        <div className="flex flex-col items-center justify-center gap-4">
-          <p className="text-sm text-muted-foreground text-center sm:text-base">
-            You need to sign in to create a subscription plan.
-          </p>
-          <Link className={buttonVariants()} href="/sign-in">
-            Sign In
-          </Link>
-        </div>
-      )}
+      <Suspense fallback={<SubscriptionSkeleton />}>
+        <SubscriptionSection />
+      </Suspense>
     </main>
   );
 }
 
-function SubscriptionSkeleton() {
-  return (
-    <div className="max-w-2xl mx-auto p-16">
-      <Skeleton className="w-full h-[600px] rounded-lg" />
+async function SubscriptionSection() {
+  const session = await getSession({
+    headers: await headers(),
+  });
+
+  const mealPlans = await getMealPlans();
+
+  return session ? (
+    <SubscriptionForm mealPlans={mealPlans} />
+  ) : (
+    <div className="flex flex-col items-center justify-center gap-4">
+      <p className="text-sm text-muted-foreground text-center sm:text-base">
+        You need to sign in to create a subscription plan.
+      </p>
+      <Link className={buttonVariants()} href="/sign-in">
+        Sign In
+      </Link>
     </div>
   );
+}
+
+function SubscriptionSkeleton() {
+  return <Skeleton className="size-full rounded-lg" />;
 }

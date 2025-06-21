@@ -1,12 +1,22 @@
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
+import { Suspense } from 'react';
 
+import { Loading } from '@/components/loading';
 import { getSession } from '@/lib/auth';
 import { DataTable } from '../data-table';
-import { getUsersWithSubscriptions } from './users-data';
 import { columns } from './columns';
+import { getUsersWithSubscriptions } from './users-data';
 
-export default async function UsersPage() {
+export default function UsersPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <Users />
+    </Suspense>
+  );
+}
+
+async function Users() {
   const session = await getSession({
     headers: await headers(),
   });

@@ -1,7 +1,7 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod/v4';
 
@@ -97,6 +97,8 @@ export async function editSubscription(
     })
     .where(eq(subscriptionsTable.id, subscriptionId));
 
+  revalidatePath('/dashboard/subscriptions');
+
   return {
     success: true,
     message: 'Subscription updated!',
@@ -115,6 +117,5 @@ export async function deleteSubscription(subscriptionId: string) {
     .delete(subscriptionsTable)
     .where(eq(subscriptionsTable.id, subscriptionId));
 
-  revalidateTag('admin-subscriptions');
   revalidatePath('/dashboard/subscriptions');
 }
