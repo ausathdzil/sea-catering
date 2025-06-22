@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import z from 'zod/v4';
 
 import { db } from '@/db';
@@ -60,14 +61,13 @@ export async function createTestimonial(
 
   const { name, message, rating } = validatedFields.data;
 
-  await db
-    .insert(testimonialsTable)
-    .values({
-      name,
-      message,
-      rating,
-    })
-    .returning();
+  await db.insert(testimonialsTable).values({
+    name,
+    message,
+    rating,
+  });
+
+  revalidatePath('/');
 
   return {
     success: true,

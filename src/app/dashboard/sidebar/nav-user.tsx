@@ -2,7 +2,6 @@
 
 import { LoaderIcon, LogOutIcon, MoreVerticalIcon } from 'lucide-react';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -25,7 +24,6 @@ import { signOut, useSession } from '@/lib/auth-client';
 export function NavUser() {
   const [isPending, setIsPending] = useState(false);
 
-  const router = useRouter();
   const { isMobile } = useSidebar();
   const { data: session } = useSession();
 
@@ -79,12 +77,13 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
+              disabled={isPending}
               onClick={async () =>
                 await signOut({
                   fetchOptions: {
                     onRequest: () => setIsPending(true),
                     onSuccess: () => {
-                      router.push('/sign-in');
+                      window.location.href = '/sign-in';
                       setIsPending(false);
                     },
                   },
