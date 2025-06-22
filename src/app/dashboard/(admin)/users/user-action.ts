@@ -5,6 +5,7 @@ import { z } from 'zod/v4';
 
 import { db } from '@/db';
 import { user } from '@/db/schema';
+import { revalidatePath } from 'next/cache';
 
 interface UpdateUserFormState {
   success: boolean;
@@ -42,6 +43,8 @@ export async function updateUser(
   const { role } = validatedFields.data;
 
   await db.update(user).set({ role }).where(eq(user.id, userId));
+
+  revalidatePath(`/dashboard/users/${userId}`);
 
   return {
     success: true,

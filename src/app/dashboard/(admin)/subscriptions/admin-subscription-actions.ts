@@ -5,6 +5,7 @@ import { z } from 'zod/v4';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
+import { revalidatePath } from 'next/cache';
 
 interface EditSubscriptionState {
   success: boolean;
@@ -88,6 +89,8 @@ export async function editSubscription(
     })
     .where(eq(subscriptionsTable.id, subscriptionId));
 
+  revalidatePath(`/dashboard/subscriptions/${subscriptionId}`);
+
   return {
     success: true,
     message: 'Subscription updated!',
@@ -99,4 +102,6 @@ export async function deleteSubscription(subscriptionId: string) {
   await db
     .delete(subscriptionsTable)
     .where(eq(subscriptionsTable.id, subscriptionId));
+
+  revalidatePath('/dashboard/subscriptions');
 }

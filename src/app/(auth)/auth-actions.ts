@@ -1,6 +1,7 @@
 'use server';
 
 import { APIError } from 'better-auth/api';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod/v4';
 
@@ -27,7 +28,7 @@ const signInFormSchema = z.object({
 export async function signInWithEmail(
   prevState: SignInFormState,
   formData: FormData
-): Promise<SignInFormState> {
+) {
   const rawFormData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
@@ -51,7 +52,6 @@ export async function signInWithEmail(
   try {
     await auth.api.signInEmail({
       body: { email, password },
-      asResponse: true,
     });
   } catch (error) {
     if (error instanceof APIError) {
@@ -119,7 +119,7 @@ const signUpFormSchema = z
 export async function signUpWithEmail(
   prevState: SignUpFormState,
   formData: FormData
-): Promise<SignUpFormState> {
+) {
   const rawFormData = {
     name: formData.get('name') as string,
     email: formData.get('email') as string,
@@ -147,7 +147,6 @@ export async function signUpWithEmail(
   try {
     await auth.api.signUpEmail({
       body: { name, email, password },
-      asResponse: true,
     });
   } catch (error) {
     if (error instanceof APIError) {
@@ -174,5 +173,6 @@ export async function signUpWithEmail(
     };
   }
 
+  revalidatePath('/dashboard/users');
   redirect('/');
 }

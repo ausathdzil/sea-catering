@@ -5,6 +5,7 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
 import { getUserSubscription } from '../user-data';
+import { revalidatePath } from 'next/cache';
 
 export async function pauseSubscription(
   userId: string,
@@ -101,6 +102,8 @@ export async function pauseSubscription(
         eq(subscriptionsTable.userId, userId)
       )
     );
+
+  revalidatePath('/dashboard');
 }
 
 export async function cancelSubscription(
@@ -133,6 +136,8 @@ export async function cancelSubscription(
         eq(subscriptionsTable.userId, userId)
       )
     );
+
+  revalidatePath('/dashboard');
 }
 
 export async function reactivateSubscription(
@@ -183,4 +188,6 @@ export async function reactivateSubscription(
         eq(subscriptionsTable.userId, userId)
       )
     );
+
+  revalidatePath('/dashboard');
 }
