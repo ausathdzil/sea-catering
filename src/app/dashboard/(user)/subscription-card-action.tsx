@@ -1,17 +1,21 @@
 'use client';
 
-import {
-  BanknoteXIcon,
-  HistoryIcon,
-  LoaderIcon,
-  MoreVerticalIcon,
-  PauseIcon,
-  PlayIcon,
-} from 'lucide-react';
+import { BanknoteXIcon, LoaderIcon, PauseIcon, PlayIcon } from 'lucide-react';
 
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { CardAction } from '@/components/ui/card';
@@ -26,13 +30,11 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useSession } from '@/lib/auth-client';
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Session, useSession } from '@/lib/auth-client';
 import {
   cancelSubscription,
   pauseSubscription,
@@ -47,23 +49,49 @@ interface SubscriptionCardActionProps {
   dueDate: Date;
 }
 
-export function SubscriptionCardAction({
-  subscriptionId,
-  status,
-  dueDate,
-}: SubscriptionCardActionProps) {
-  const [open, setOpen] = useState<boolean>(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [isPausePending, setIsPausePending] = useState<boolean>(false);
-  const [isCancelPending, setIsCancelPending] = useState<boolean>(false);
-  const [isReactivatePending, setIsReactivatePending] =
-    useState<boolean>(false);
+export function SubscriptionCardAction(props: SubscriptionCardActionProps) {
+  const { subscriptionId, status, dueDate } = props;
 
   const { data: session } = useSession();
   if (!session) return null;
 
+  return (
+    <CardAction>
+      <PauseSubscription
+        session={session}
+        subscriptionId={subscriptionId}
+        status={status}
+        dueDate={dueDate}
+      />
+      {status === 'canceled' ? (
+        <ReactivateSubscription
+          session={session}
+          subscriptionId={subscriptionId}
+        />
+      ) : (
+        <CancelSubscription session={session} subscriptionId={subscriptionId} />
+      )}
+    </CardAction>
+  );
+}
+
+function PauseSubscription({
+  session,
+  subscriptionId,
+  status,
+  dueDate,
+}: {
+  session: Session;
+  subscriptionId: string;
+  status: SubscriptionStatus;
+  dueDate: Date;
+}) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [open, setOpen] = useState<boolean>(false);
+
   const handlePauseSubscription = async () => {
-    setIsPausePending(true);
+    setIsLoading(true);
     await pauseSubscription(
       session.user.id,
       status === 'paused' ? 'active' : 'paused',
@@ -79,133 +107,160 @@ export function SubscriptionCardAction({
         icon: status === 'paused' ? <PlayIcon /> : <PauseIcon />,
       }
     );
-    setIsPausePending(false);
+    setIsLoading(false);
     setOpen(false);
   };
 
+  return status === 'paused' ? (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          onClick={handlePauseSubscription}
+          variant="ghost"
+          size="icon"
+          disabled={isLoading}
+        >
+          {isLoading ? <LoaderIcon className="animate-spin" /> : <PlayIcon />}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>Resume subscription</TooltipContent>
+    </Tooltip>
+  ) : (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <Button
+          disabled={isLoading || status === 'canceled'}
+          variant="ghost"
+          size="icon"
+        >
+          {isLoading ? <LoaderIcon className="animate-spin" /> : <PauseIcon />}
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <div className="mx-auto w-full max-w-sm">
+          <DrawerHeader>
+            <DrawerTitle>Pause Subscription</DrawerTitle>
+            <DrawerDescription className="sr-only md:not-sr-only">
+              Pause your subscription to stop receiving meals. You can resume
+              your subscription at any time.
+            </DrawerDescription>
+          </DrawerHeader>
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(date) => {
+              setDate(date);
+            }}
+            required
+            className="mx-auto"
+            disabled={(date) => date < new Date() || date > dueDate}
+          />
+          <DrawerFooter>
+            <Button
+              onClick={handlePauseSubscription}
+              disabled={isLoading || !date}
+            >
+              {isLoading ? <LoaderIcon className="animate-spin" /> : 'Pause'}
+            </Button>
+            <DrawerClose asChild>
+              <Button variant="secondary">Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+function CancelSubscription({
+  session,
+  subscriptionId,
+}: {
+  session: Session;
+  subscriptionId: string;
+}) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const handleCancelSubscription = async () => {
-    setIsCancelPending(true);
+    setIsLoading(true);
     await cancelSubscription(subscriptionId, session.user.id);
     toast.error('Your subscription has been canceled', {
       className: '[&_svg]:size-4',
       icon: <BanknoteXIcon />,
     });
-    setIsCancelPending(false);
+    setIsLoading(false);
   };
 
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button disabled={isLoading} variant="ghost" size="icon">
+          {isLoading ? (
+            <LoaderIcon className="animate-spin" />
+          ) : (
+            <BanknoteXIcon />
+          )}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Cancel subscription</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to cancel your subscription? You can
+            reactivate it at any time.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleCancelSubscription}>
+            {isLoading ? <LoaderIcon className="animate-spin" /> : 'Continue'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+function ReactivateSubscription({
+  session,
+  subscriptionId,
+}: {
+  session: Session;
+  subscriptionId: string;
+}) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const handleReactivateSubscription = async () => {
-    setIsReactivatePending(true);
+    setIsLoading(true);
     await reactivateSubscription(subscriptionId, session.user.id);
     toast.success('Your subscription has been reactivated', {
       className: '[&_svg]:size-4',
       icon: <PlayIcon />,
     });
-    setIsReactivatePending(false);
+    setIsLoading(false);
   };
 
   return (
-    <CardAction>
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Subscription actions"
-              disabled={
-                isPausePending || isCancelPending || isReactivatePending
-              }
-            >
-              {isPausePending || isCancelPending || isReactivatePending ? (
-                <LoaderIcon className="animate-spin" />
-              ) : (
-                <MoreVerticalIcon />
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              {status === 'active' ? (
-                <DrawerTrigger asChild>
-                  <DropdownMenuItem>
-                    <PauseIcon />
-                    Pause
-                  </DropdownMenuItem>
-                </DrawerTrigger>
-              ) : status === 'paused' ? (
-                <DropdownMenuItem
-                  onClick={handlePauseSubscription}
-                  disabled={isPausePending}
-                >
-                  <PlayIcon />
-                  Resume
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem
-                  onClick={handleReactivateSubscription}
-                  disabled={isReactivatePending}
-                >
-                  {isReactivatePending ? (
-                    <LoaderIcon className="animate-spin" />
-                  ) : (
-                    <HistoryIcon />
-                  )}
-                  Reactivate
-                </DropdownMenuItem>
-              )}
-              {status !== 'canceled' && (
-                <DropdownMenuItem
-                  onClick={handleCancelSubscription}
-                  disabled={isCancelPending}
-                >
-                  {isCancelPending ? (
-                    <LoaderIcon className="animate-spin" />
-                  ) : (
-                    <BanknoteXIcon />
-                  )}
-                  Cancel
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DrawerContent>
-          <div className="mx-auto w-full max-w-sm">
-            <DrawerHeader>
-              <DrawerTitle>Pause Subscription</DrawerTitle>
-              <DrawerDescription className="sr-only md:not-sr-only">
-                Pause your subscription to stop receiving meals. You can resume
-                your subscription at any time.
-              </DrawerDescription>
-            </DrawerHeader>
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(date) => {
-                setDate(date);
-              }}
-              required
-              className="mx-auto"
-              disabled={(date) => date < new Date() || date > dueDate}
-            />
-            <DrawerFooter>
-              <Button
-                onClick={handlePauseSubscription}
-                disabled={isPausePending || !date}
-              >
-                {isPausePending ? (
-                  <LoaderIcon className="animate-spin" />
-                ) : (
-                  'Pause'
-                )}
-              </Button>
-              <DrawerClose asChild>
-                <Button variant="secondary">Cancel</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </div>
-        </DrawerContent>
-      </Drawer>
-    </CardAction>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button disabled={isLoading} variant="ghost" size="icon">
+          {isLoading ? <LoaderIcon className="animate-spin" /> : <PlayIcon />}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Reactivate subscription</AlertDialogTitle>
+          <AlertDialogDescription>
+            Continue to reactivate your subscription.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleReactivateSubscription}>
+            {isLoading ? <LoaderIcon className="animate-spin" /> : 'Continue'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
