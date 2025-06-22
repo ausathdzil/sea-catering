@@ -1,7 +1,7 @@
 'use server';
 
 import { and, eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
@@ -13,8 +13,6 @@ export async function pauseSubscription(
   pausedUntil: Date | null,
   subscriptionId: string
 ) {
-  if (!userId) return null;
-
   const subscription = await getUserSubscription(subscriptionId, userId);
   if (!subscription) return null;
 
@@ -105,15 +103,19 @@ export async function pauseSubscription(
       )
     );
 
-  revalidatePath('/dashboard', 'layout');
+  revalidateTag('new-subscriptions');
+  revalidateTag('monthly-recurring-revenue');
+  revalidateTag('reactivations');
+  revalidateTag('subscriptions');
+  revalidateTag('subscriptions-with-users');
+  revalidateTag('users-with-subscriptions');
+  revalidateTag('user-subscriptions');
 }
 
 export async function cancelSubscription(
   subscriptionId: string,
   userId: string
 ) {
-  if (!userId) return null;
-
   const subscription = await getUserSubscription(subscriptionId, userId);
   if (!subscription) return null;
 
@@ -141,15 +143,19 @@ export async function cancelSubscription(
       )
     );
 
-  revalidatePath('/dashboard', 'layout');
+  revalidateTag('new-subscriptions');
+  revalidateTag('monthly-recurring-revenue');
+  revalidateTag('reactivations');
+  revalidateTag('subscriptions');
+  revalidateTag('subscriptions-with-users');
+  revalidateTag('users-with-subscriptions');
+  revalidateTag('user-subscriptions');
 }
 
 export async function reactivateSubscription(
   subscriptionId: string,
   userId: string
 ) {
-  if (!userId) return null;
-
   const subscription = await getUserSubscription(subscriptionId, userId);
   if (!subscription) return null;
 
@@ -195,5 +201,11 @@ export async function reactivateSubscription(
       )
     );
 
-  revalidatePath('/dashboard', 'layout');
+  revalidateTag('new-subscriptions');
+  revalidateTag('monthly-recurring-revenue');
+  revalidateTag('reactivations');
+  revalidateTag('subscriptions');
+  revalidateTag('subscriptions-with-users');
+  revalidateTag('users-with-subscriptions');
+  revalidateTag('user-subscriptions');
 }

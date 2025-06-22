@@ -37,7 +37,7 @@ async function Dashboard(props: DashboardPageProps) {
   const { start, end } = await props.searchParams;
 
   return session.user.role === 'admin' ? (
-    <AdminDashboard role={session.user.role} start={start} end={end} />
+    <AdminDashboard start={start} end={end} />
   ) : (
     <UserDashboard userId={session.user.id} />
   );

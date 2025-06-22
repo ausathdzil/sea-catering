@@ -1,7 +1,7 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
@@ -49,7 +49,7 @@ export async function updateUser(
 
   await db.update(user).set({ role }).where(eq(user.id, userId));
 
-  revalidatePath('/dashboard', 'layout');
+  revalidateTag(`user-${userId}`);
 
   return {
     success: true,

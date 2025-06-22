@@ -7,13 +7,11 @@ import {
 import { db } from '@/db';
 import { user } from '@/db/schema';
 
-export async function getUser(id: string, role: string) {
+export async function getUser(id: string) {
   'use cache';
 
   cacheLife('hours');
   cacheTag(`user-${id}`);
-
-  if (role !== 'admin') return null;
 
   const data = await db.select().from(user).where(eq(user.id, id));
 

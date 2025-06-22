@@ -8,7 +8,6 @@ import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
 
 export async function getNewSubscriptions(
-  role: string,
   start?: Date,
   end?: Date
 ) {
@@ -16,8 +15,6 @@ export async function getNewSubscriptions(
 
   cacheLife('hours');
   cacheTag('new-subscriptions');
-
-  if (role !== 'admin') return null;
 
   if (!start || !end) {
     const today = new Date();
@@ -49,7 +46,6 @@ export async function getNewSubscriptions(
 }
 
 export async function getMonthlyRecurringRevenue(
-  role: string,
   start?: Date,
   end?: Date
 ) {
@@ -57,8 +53,6 @@ export async function getMonthlyRecurringRevenue(
 
   cacheLife('hours');
   cacheTag('monthly-recurring-revenue');
-
-  if (role !== 'admin') return null;
 
   if (!start || !end) {
     const today = new Date();
@@ -91,13 +85,11 @@ export async function getMonthlyRecurringRevenue(
   };
 }
 
-export async function getReactivations(role: string, start?: Date, end?: Date) {
+export async function getReactivations(start?: Date, end?: Date) {
   'use cache';
 
   cacheLife('hours');
   cacheTag('reactivations');
-
-  if (role !== 'admin') return null;
 
   if (!start || !end) {
     const today = new Date();
@@ -128,13 +120,11 @@ export async function getReactivations(role: string, start?: Date, end?: Date) {
   };
 }
 
-export async function getSubscriptions(role: string) {
+export async function getSubscriptions() {
   'use cache';
 
   cacheLife('hours');
   cacheTag('subscriptions');
-
-  if (role !== 'admin') return null;
 
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);

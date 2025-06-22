@@ -22,7 +22,7 @@ async function Users() {
     forbidden();
   }
 
-  const users = await getUsersWithSubscriptions(session.user.role);
+  const users = await getUsersWithSubscriptions();
 
   return <DataTable columns={columns} data={users || []} filterKey="name" />;
 }

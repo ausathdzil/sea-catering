@@ -16,8 +16,6 @@ export async function getUserSubscription(
   cacheLife('hours');
   cacheTag(`user-subscription-${subscriptionId}`);
 
-  if (!userId) return null;
-
   const subscription = await db
     .select()
     .from(subscriptionsTable)
@@ -37,8 +35,6 @@ export async function getUserSubscriptions(userId: string) {
 
   cacheLife('hours');
   cacheTag('user-subscriptions');
-
-  if (!userId) return null;
 
   const subscriptions = await db
     .select()

@@ -1,7 +1,7 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
@@ -94,7 +94,14 @@ export async function editSubscription(
     })
     .where(eq(subscriptionsTable.id, subscriptionId));
 
-  revalidatePath('/dashboard', 'layout');
+  revalidateTag(`subscription-${subscriptionId}`);
+  revalidateTag('new-subscriptions');
+  revalidateTag('monthly-recurring-revenue');
+  revalidateTag('reactivations');
+  revalidateTag('subscriptions');
+  revalidateTag('subscriptions-with-users');
+  revalidateTag('users-with-subscriptions');
+  revalidateTag('user-subscriptions');
 
   return {
     success: true,
@@ -112,5 +119,11 @@ export async function deleteSubscription(subscriptionId: string) {
     .delete(subscriptionsTable)
     .where(eq(subscriptionsTable.id, subscriptionId));
 
-  revalidatePath('/dashboard', 'layout');
+  revalidateTag('new-subscriptions');
+  revalidateTag('monthly-recurring-revenue');
+  revalidateTag('reactivations');
+  revalidateTag('subscriptions');
+  revalidateTag('subscriptions-with-users');
+  revalidateTag('users-with-subscriptions');
+  revalidateTag('user-subscriptions');
 }

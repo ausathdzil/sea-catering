@@ -31,7 +31,7 @@ async function EditUser(props: UserPageProps) {
 
   const { id } = await props.params;
 
-  const user = await getUser(id, session.user.role);
+  const user = await getUser(id);
 
   if (!user) {
     notFound();

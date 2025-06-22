@@ -113,7 +113,7 @@ const signUpFormSchema = z
 export async function signUpWithEmail(
   prevState: SignUpFormState,
   formData: FormData
-) {
+): Promise<SignUpFormState> {
   const rawFormData = {
     name: formData.get('name') as string,
     email: formData.get('email') as string,

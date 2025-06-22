@@ -22,7 +22,7 @@ async function Subscriptions() {
     forbidden();
   }
 
-  const subscriptions = await getSubscriptionsWithUsers(session.user.role);
+  const subscriptions = await getSubscriptionsWithUsers();
 
   return (
     <DataTable

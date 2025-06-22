@@ -31,7 +31,7 @@ async function EditSubscription(props: SubscriptionPageProps) {
 
   const { id } = await props.params;
 
-  const subscription = await getSubsriptionById(id, session.user.role);
+  const subscription = await getSubsriptionById(id);
 
   if (!subscription) {
     notFound();

@@ -16,13 +16,12 @@ import { PeriodControl } from './period-control';
 import { SubscriptionsChart } from './subscriptions-chart';
 
 interface AdminDashboardProps {
-  role: string;
   start?: string;
   end?: string;
 }
 
 export async function AdminDashboard(props: AdminDashboardProps) {
-  const { role, start, end } = props;
+  const { start, end } = props;
 
   const startDate = start ? new Date(start) : undefined;
   const endDate = end ? new Date(end) : undefined;
@@ -33,10 +32,10 @@ export async function AdminDashboard(props: AdminDashboardProps) {
     reactivations,
     subscriptions,
   ] = await Promise.all([
-    getNewSubscriptions(role, startDate, endDate),
-    getMonthlyRecurringRevenue(role, startDate, endDate),
-    getReactivations(role, startDate, endDate),
-    getSubscriptions(role),
+    getNewSubscriptions(startDate, endDate),
+    getMonthlyRecurringRevenue(startDate, endDate),
+    getReactivations(startDate, endDate),
+    getSubscriptions(),
   ]);
 
   return (

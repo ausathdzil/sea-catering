@@ -7,13 +7,11 @@ import {
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
 
-export async function getSubsriptionById(id: string, role: string) {
+export async function getSubsriptionById(id: string) {
   'use cache';
 
   cacheLife('hours');
   cacheTag(`subscription-${id}`);
-
-  if (role !== 'admin') return null;
 
   const data = await db
     .select()
