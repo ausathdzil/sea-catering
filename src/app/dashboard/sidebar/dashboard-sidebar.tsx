@@ -32,12 +32,12 @@ const userNavItems = [
   },
   {
     title: 'Account',
-    url: '/dashboard/account',
+    url: '#',
     icon: BookUserIcon,
   },
   {
     title: 'Security',
-    url: '/dashboard/security',
+    url: '#',
     icon: LockIcon,
   },
 ];
@@ -60,12 +60,12 @@ const adminNavItems = [
   },
   {
     title: 'Account',
-    url: '/dashboard/account',
+    url: '#',
     icon: BookUserIcon,
   },
   {
     title: 'Security',
-    url: '/dashboard/security',
+    url: '#',
     icon: LockIcon,
   },
 ];
