@@ -14,6 +14,17 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
@@ -130,24 +141,44 @@ function DeleteSubscriptionButton({
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          variant="ghost"
-          onClick={async () => {
-            setIsLoading(true);
-            await deleteSubscription(subscriptionId);
-            toast.error('Subscription deleted');
-            setIsLoading(false);
-          }}
-          disabled={isLoading}
-        >
-          {isLoading ? <LoaderIcon className="animate-spin" /> : <TrashIcon />}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>Delete Subscription</p>
-      </TooltipContent>
-    </Tooltip>
+    <AlertDialog>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" disabled={isLoading}>
+              {isLoading ? (
+                <LoaderIcon className="animate-spin" />
+              ) : (
+                <TrashIcon />
+              )}
+            </Button>
+          </AlertDialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Delete Subscription</p>
+        </TooltipContent>
+      </Tooltip>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Subscription</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete this subscription?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={async () => {
+              setIsLoading(true);
+              await deleteSubscription(subscriptionId);
+              toast.error('Subscription deleted');
+              setIsLoading(false);
+            }}
+          >
+            {isLoading ? <LoaderIcon className="animate-spin" /> : 'Delete'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

@@ -1,6 +1,12 @@
 'use client';
 
-import { BanknoteXIcon, LoaderIcon, PauseIcon, PlayIcon } from 'lucide-react';
+import {
+  BanknoteXIcon,
+  HistoryIcon,
+  LoaderIcon,
+  PauseIcon,
+  PlayIcon,
+} from 'lucide-react';
 
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -127,15 +133,24 @@ function PauseSubscription({
     </Tooltip>
   ) : (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button
-          disabled={isLoading || status === 'canceled'}
-          variant="ghost"
-          size="icon"
-        >
-          {isLoading ? <LoaderIcon className="animate-spin" /> : <PauseIcon />}
-        </Button>
-      </DrawerTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DrawerTrigger asChild>
+            <Button
+              disabled={isLoading || status === 'canceled'}
+              variant="ghost"
+              size="icon"
+            >
+              {isLoading ? (
+                <LoaderIcon className="animate-spin" />
+              ) : (
+                <PauseIcon />
+              )}
+            </Button>
+          </DrawerTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Pause subscription</TooltipContent>
+      </Tooltip>
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
@@ -193,15 +208,20 @@ function CancelSubscription({
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button disabled={isLoading} variant="ghost" size="icon">
-          {isLoading ? (
-            <LoaderIcon className="animate-spin" />
-          ) : (
-            <BanknoteXIcon />
-          )}
-        </Button>
-      </AlertDialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <AlertDialogTrigger asChild>
+            <Button disabled={isLoading} variant="ghost" size="icon">
+              {isLoading ? (
+                <LoaderIcon className="animate-spin" />
+              ) : (
+                <BanknoteXIcon />
+              )}
+            </Button>
+          </AlertDialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Cancel subscription</TooltipContent>
+      </Tooltip>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Cancel subscription</AlertDialogTitle>
@@ -235,18 +255,27 @@ function ReactivateSubscription({
     await reactivateSubscription(subscriptionId, session.user.id);
     toast.success('Your subscription has been reactivated', {
       className: '[&_svg]:size-4',
-      icon: <PlayIcon />,
+      icon: <HistoryIcon />,
     });
     setIsLoading(false);
   };
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button disabled={isLoading} variant="ghost" size="icon">
-          {isLoading ? <LoaderIcon className="animate-spin" /> : <PlayIcon />}
-        </Button>
-      </AlertDialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <AlertDialogTrigger asChild>
+            <Button disabled={isLoading} variant="ghost" size="icon">
+              {isLoading ? (
+                <LoaderIcon className="animate-spin" />
+              ) : (
+                <HistoryIcon />
+              )}
+            </Button>
+          </AlertDialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Reactivate subscription</TooltipContent>
+      </Tooltip>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Reactivate subscription</AlertDialogTitle>
