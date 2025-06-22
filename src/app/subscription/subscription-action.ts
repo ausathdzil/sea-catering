@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
+import { headers } from 'next/headers';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
@@ -64,7 +65,9 @@ export async function createSubscription(
   prevState: CreateSubscriptionStateOrNull,
   formData: FormData
 ): Promise<CreateSubscriptionStateOrNull> {
-  const session = await getSession();
+  const session = await getSession({
+    headers: await headers(),
+  });
 
   if (!session) return null;
 

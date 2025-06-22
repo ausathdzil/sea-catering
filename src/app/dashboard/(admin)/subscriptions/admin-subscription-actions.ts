@@ -6,7 +6,6 @@ import { z } from 'zod/v4';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
-import { getSession } from '@/lib/auth';
 
 interface EditSubscriptionState {
   success: boolean;
@@ -27,10 +26,6 @@ export async function editSubscription(
   prevState: EditSubscriptionStateOrNull,
   formData: FormData
 ): Promise<EditSubscriptionStateOrNull> {
-  const session = await getSession();
-
-  if (!session || session.user.role !== 'admin') return null;
-
   const rawFormData = {
     status: formData.get('status') as string,
   };
@@ -111,10 +106,6 @@ export async function editSubscription(
 }
 
 export async function deleteSubscription(subscriptionId: string) {
-  const session = await getSession();
-
-  if (!session || session.user.role !== 'admin') return null;
-
   await db
     .delete(subscriptionsTable)
     .where(eq(subscriptionsTable.id, subscriptionId));

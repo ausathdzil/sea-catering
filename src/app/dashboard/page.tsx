@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { unauthorized } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -28,7 +29,9 @@ export default function DashboardPage(props: DashboardPageProps) {
 }
 
 async function Dashboard(props: DashboardPageProps) {
-  const session = await getSession();
+  const session = await getSession({
+    headers: await headers(),
+  });
 
   if (!session) {
     unauthorized();

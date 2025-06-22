@@ -1,5 +1,6 @@
 import { ArrowLeftIcon, Calculator, InfoIcon } from 'lucide-react';
 
+import { headers } from 'next/headers';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
@@ -80,7 +81,9 @@ export default function SubscriptionPage() {
 }
 
 async function SubscriptionSection() {
-  const session = await getSession();
+  const session = await getSession({
+    headers: await headers(),
+  });
 
   const mealPlans = await getMealPlans();
 

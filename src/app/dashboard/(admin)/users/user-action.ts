@@ -6,7 +6,6 @@ import { z } from 'zod/v4';
 
 import { db } from '@/db';
 import { user } from '@/db/schema';
-import { getSession } from '@/lib/auth';
 
 interface UpdateUserFormState {
   success: boolean;
@@ -27,10 +26,6 @@ export async function updateUser(
   prevState: UpdateUserFormStateOrNull,
   formData: FormData
 ) {
-  const session = await getSession();
-
-  if (!session || session.user.role !== 'admin') return null;
-
   const rawFormData = {
     role: formData.get('role') as string,
   };
