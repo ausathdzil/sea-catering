@@ -4,7 +4,6 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { nextCookies } from 'better-auth/next-js';
 import { admin } from 'better-auth/plugins';
 import { headers } from 'next/headers';
-import { cache } from 'react';
 
 import { db } from '@/db';
 import * as schema from '@/db/schema';
@@ -38,9 +37,9 @@ export const auth = betterAuth({
   plugins: [admin(), nextCookies()],
 });
 
-export const getSession = cache(async () => {
+export async function getSession() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
   return session;
-});
+}

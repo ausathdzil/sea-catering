@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     authInterrupts: true,
     dynamicIO: true,
     ppr: true,
+    nodeMiddleware: true,
   },
 };
 
