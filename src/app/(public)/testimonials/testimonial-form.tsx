@@ -89,7 +89,11 @@ export function TestimonialForm() {
       </div>
 
       <div className="flex justify-end">
-        <Button className="min-w-20" type="submit" disabled={isPending}>
+        <Button
+          className="min-w-20 cursor-pointer"
+          type="submit"
+          disabled={isPending}
+        >
           {isPending ? <LoaderIcon className="animate-spin" /> : 'Submit'}
         </Button>
       </div>

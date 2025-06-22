@@ -107,7 +107,11 @@ export default function SignUpPage() {
           )}
         </div>
 
-        <Button className="w-full" type="submit" disabled={isPending}>
+        <Button
+          className="w-full cursor-pointer"
+          type="submit"
+          disabled={isPending}
+        >
           {isPending ? <LoaderIcon className="animate-spin" /> : 'Sign Up'}
         </Button>
       </div>

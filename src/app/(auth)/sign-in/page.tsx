@@ -70,7 +70,11 @@ export default function SignInPage() {
             </span>
           )}
         </div>
-        <Button className="w-full" type="submit" disabled={isPending}>
+        <Button
+          className="w-full cursor-pointer"
+          type="submit"
+          disabled={isPending}
+        >
           {isPending ? <LoaderIcon className="animate-spin" /> : 'Sign In'}
         </Button>
       </div>

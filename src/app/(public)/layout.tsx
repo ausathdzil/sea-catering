@@ -1,4 +1,4 @@
-import { GitHub, Instagram, XformerlyTwitter } from '@/components/icons';
+import { GitHub, Instagram, XformerlyTwitter } from '@/app/(public)/icons';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ArrowRightIcon, TelescopeIcon } from 'lucide-react';

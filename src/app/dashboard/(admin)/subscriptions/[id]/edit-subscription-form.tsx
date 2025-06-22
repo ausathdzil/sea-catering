@@ -114,7 +114,11 @@ export default function EditSubscriptionForm({
         <Button variant="secondary" type="button" disabled={isPending} asChild>
           <Link href={`/dashboard/subscriptions`}>Cancel</Link>
         </Button>
-        <Button className="min-w-20" type="submit" disabled={isPending}>
+        <Button
+          className="min-w-20 cursor-pointer"
+          type="submit"
+          disabled={isPending}
+        >
           {isPending ? <LoaderIcon className="animate-spin" /> : 'Save'}
         </Button>
       </div>
