@@ -7,7 +7,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { useSession } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 
-export function AuthHeader() {
+export function AuthButtons() {
   const { data: session } = useSession();
 
   return session ? (

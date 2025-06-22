@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { auth } from '@/lib/auth';
-import { AdminDashboard } from './(admin)/admin-dashboard';
+import { AdminDashboard } from './(admin)/dashboard/admin-dashboard';
 import { UserDashboard } from './(user)/user-dashboard';
 import { DashboardHeader } from './dashboard-header';
 

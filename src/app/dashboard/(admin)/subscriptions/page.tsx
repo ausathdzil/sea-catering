@@ -3,9 +3,10 @@ import { Suspense } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import { getSubscriptionsWithUsers } from '../admin-data';
 import { DataTable } from '../data-table';
 import { columns } from './columns';
-import { getSubscriptionsWithUsers } from './subscriptions-data';
 
 export default function SubscriptionsPage() {
   return (
@@ -20,7 +21,9 @@ async function Subscriptions() {
     headers: await headers(),
   });
 
-  if (!session || session.user.role !== 'admin') return null;
+  if (!session || session.user.role !== 'admin') {
+    redirect('/dashboard');
+  }
 
   const subscriptions = await getSubscriptionsWithUsers();
 

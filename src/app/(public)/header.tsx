@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/drawer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { AuthHeader } from './auth-header';
+import { AuthButtons } from './auth-buttons';
 
 const navItems = [
   {
@@ -81,7 +81,7 @@ export function Header() {
         </div>
         <MobileNav />
         <Suspense fallback={<AuthSkeleton />}>
-          <AuthHeader />
+          <AuthButtons />
         </Suspense>
       </div>
     </header>

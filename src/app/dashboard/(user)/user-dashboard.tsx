@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Subscription } from '@/db/schema';
-import { SubscriptionCardAction } from './subscription/subscription-card-action';
+import { SubscriptionCardAction } from './subscription-card-action';
 import { getUserSubscriptions } from './user-data';
 
 export async function UserDashboard({ userId }: { userId: string }) {

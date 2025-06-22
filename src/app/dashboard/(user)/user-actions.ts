@@ -4,8 +4,8 @@ import { and, eq } from 'drizzle-orm';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
-import { getUserSubscription } from '../user-data';
 import { revalidatePath } from 'next/cache';
+import { getUserSubscription } from './user-data';
 
 export async function pauseSubscription(
   userId: string,

@@ -1,11 +1,10 @@
 'use server';
 
-import { headers } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
 import { CustomMealPlan, subscriptionsTable } from '@/db/schema';
-import { auth } from '@/lib/auth';
 
 interface CreateSubscriptionState {
   success: boolean;
@@ -31,6 +30,7 @@ interface CreateSubscriptionState {
 export type CreateSubscriptionStateOrNull = CreateSubscriptionState | null;
 
 const createSubscriptionSchema = z.strictObject({
+  name: z.string(),
   planName: z.string().min(1, { message: 'Plan name is required' }),
   phone: z.e164({ message: 'Invalid phone number' }),
   basePlan: z.enum(['diet', 'protein', 'royal']),
@@ -64,13 +64,8 @@ export async function createSubscription(
   prevState: CreateSubscriptionStateOrNull,
   formData: FormData
 ): Promise<CreateSubscriptionStateOrNull> {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) return null;
-
   const rawFormData = {
+    name: formData.get('name') as string,
     planName: formData.get('plan-name') as string,
     phone: (() => {
       const phone = formData.get('phone') as string;
@@ -101,8 +96,15 @@ export async function createSubscription(
     };
   }
 
-  const { planName, phone, basePlan, mealTypes, deliveryDays, allergies } =
-    validatedFields.data;
+  const {
+    name,
+    planName,
+    phone,
+    basePlan,
+    mealTypes,
+    deliveryDays,
+    allergies,
+  } = validatedFields.data;
 
   const basePlanPrice = MEAL_PLAN_PRICE[basePlan];
 
@@ -124,10 +126,12 @@ export async function createSubscription(
 
   await db.insert(subscriptionsTable).values({
     userId,
-    name: session.user.name,
+    name,
     phoneNumber: phone,
     mealPlan,
   });
+
+  revalidatePath('/');
 
   return {
     success: true,

@@ -46,7 +46,13 @@ const initialState: CreateSubscriptionStateOrNull = {
   },
 };
 
-export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
+export function SubscriptionForm({
+  name,
+  mealPlans,
+}: {
+  name: string;
+  mealPlans: MealPlan[];
+}) {
   const [mealTypes, setMealTypes] = useState<string[]>([]);
   const [deliveryDays, setDeliveryDays] = useState<string[]>([]);
   const [allergies, setAllergies] = useState<Tag[]>([]);
@@ -117,6 +123,8 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
       className="p-4 lg:p-8 xl:p-16 flex flex-col gap-8 max-w-2xl mx-auto"
       action={formAction}
     >
+      <input type="hidden" name="name" value={name} />
+
       <div className="grid gap-2">
         <Label htmlFor="phone">Phone Number</Label>
         <div className="relative">

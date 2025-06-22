@@ -11,7 +11,7 @@ import {
   getNewSubscriptions,
   getReactivations,
   getSubscriptions,
-} from './admin-dashboard-data';
+} from '../admin-data';
 import { PeriodControl } from './period-control';
 import { SubscriptionsChart } from './subscriptions-chart';
 

@@ -1,11 +1,11 @@
-import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
+import { notFound, redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { Loading } from '@/components/loading';
+import { Skeleton } from '@/components/ui/skeleton';
 import { auth } from '@/lib/auth';
-import { headers } from 'next/headers';
+import { getSubsriptionById } from '../../admin-data';
 import EditSubscriptionForm from './edit-subscription-form';
-import { getSubsriptionById } from './subscription-data';
 
 interface SubscriptionPageProps {
   params: Promise<{
@@ -16,7 +16,7 @@ interface SubscriptionPageProps {
 export default function SubscriptionPage(props: SubscriptionPageProps) {
   return (
     <div className="w-full flex justify-center">
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<EditSubscriptionSkeleton />}>
         <EditSubscription params={props.params} />
       </Suspense>
     </div>
@@ -28,7 +28,9 @@ async function EditSubscription(props: SubscriptionPageProps) {
     headers: await headers(),
   });
 
-  if (!session || session.user.role !== 'admin') return null;
+  if (!session || session.user.role !== 'admin') {
+    redirect('/dashboard');
+  }
 
   const { id } = await props.params;
 
@@ -39,4 +41,12 @@ async function EditSubscription(props: SubscriptionPageProps) {
   }
 
   return <EditSubscriptionForm subscription={subscription} />;
+}
+
+function EditSubscriptionSkeleton() {
+  return (
+    <div className="w-full max-w-xl">
+      <Skeleton className="h-[400px] w-full" />
+    </div>
+  );
 }

@@ -1,11 +1,11 @@
 import { headers } from 'next/headers';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { Loading } from '@/components/loading';
+import { Skeleton } from '@/components/ui/skeleton';
 import { auth } from '@/lib/auth';
+import { getUser } from '../../admin-data';
 import { EditUserForm } from './edit-user-form';
-import { getUser } from './user-data';
 
 interface UserPageProps {
   params: Promise<{
@@ -16,7 +16,7 @@ interface UserPageProps {
 export default function UserPage(props: UserPageProps) {
   return (
     <div className="w-full flex justify-center">
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<EditUserSkeleton />}>
         <EditUser params={props.params} />
       </Suspense>
     </div>
@@ -28,7 +28,9 @@ async function EditUser(props: UserPageProps) {
     headers: await headers(),
   });
 
-  if (!session || session.user.role !== 'admin') return null;
+  if (!session || session.user.role !== 'admin') {
+    redirect('/dashboard');
+  }
 
   const { id } = await props.params;
 
@@ -39,4 +41,12 @@ async function EditUser(props: UserPageProps) {
   }
 
   return <EditUserForm user={user} />;
+}
+
+function EditUserSkeleton() {
+  return (
+    <div className="w-full max-w-md">
+      <Skeleton className="h-[300px] w-full" />
+    </div>
+  );
 }

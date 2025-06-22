@@ -16,7 +16,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { getSubscriptions } from './admin-dashboard-data';
+import { getSubscriptions } from '../admin-data';
 
 const chartConfig = {
   count: {

@@ -88,7 +88,7 @@ async function SubscriptionSection() {
   const mealPlans = await getMealPlans();
 
   return session ? (
-    <SubscriptionForm mealPlans={mealPlans} />
+    <SubscriptionForm name={session.user.name} mealPlans={mealPlans} />
   ) : (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-sm text-muted-foreground text-center sm:text-base">

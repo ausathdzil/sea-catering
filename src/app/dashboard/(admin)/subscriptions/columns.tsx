@@ -21,7 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { deleteSubscription } from './admin-subscription-actions';
+import { deleteSubscription } from '../admin-actions';
 
 interface Subscriptions {
   id: string;

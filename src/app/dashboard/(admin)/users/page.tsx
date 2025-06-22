@@ -1,11 +1,12 @@
 import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { auth } from '@/lib/auth';
+import { getUsersWithSubscriptions } from '../admin-data';
 import { DataTable } from '../data-table';
 import { columns } from './columns';
-import { getUsersWithSubscriptions } from './users-data';
 
 export default function UsersPage() {
   return (
@@ -20,7 +21,9 @@ async function Users() {
     headers: await headers(),
   });
 
-  if (!session || session.user.role !== 'admin') return null;
+  if (!session || session.user.role !== 'admin') {
+    redirect('/dashboard');
+  }
 
   const users = await getUsersWithSubscriptions();
 

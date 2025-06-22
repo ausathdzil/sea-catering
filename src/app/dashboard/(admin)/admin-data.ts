@@ -1,7 +1,7 @@
-import { eq, sql, sum } from 'drizzle-orm';
+import { count, desc, eq, sql, sum } from 'drizzle-orm';
 
 import { db } from '@/db';
-import { subscriptionsTable } from '@/db/schema';
+import { subscriptionsTable, user } from '@/db/schema';
 
 export async function getNewSubscriptions(start?: Date, end?: Date) {
   if (!start || !end) {
@@ -130,5 +130,71 @@ export async function getSubscriptions() {
     month: sub.month.trim(),
     active: Number(sub.active),
     canceled: Number(sub.canceled),
+  }));
+}
+
+export async function getSubsriptionById(id: string) {
+  const data = await db
+    .select()
+    .from(subscriptionsTable)
+    .where(eq(subscriptionsTable.id, id));
+
+  return data[0];
+}
+
+export async function getSubscriptionsWithUsers() {
+  const data = await db
+    .select({
+      id: subscriptionsTable.id,
+      userName: user.name,
+      userEmail: user.email,
+      mealPlan: subscriptionsTable.mealPlan,
+      status: subscriptionsTable.status,
+      createdAt: subscriptionsTable.createdAt,
+    })
+    .from(subscriptionsTable)
+    .innerJoin(user, eq(subscriptionsTable.userId, user.id))
+    .orderBy(desc(subscriptionsTable.createdAt));
+
+  return data.map((subscription) => ({
+    id: subscription.id,
+    user: subscription.userName,
+    email: subscription.userEmail,
+    amount: subscription.mealPlan.totalPrice,
+    date: subscription.createdAt,
+    status: subscription.status,
+  }));
+}
+
+export async function getUser(id: string) {
+  const data = await db.select().from(user).where(eq(user.id, id));
+
+  return data[0];
+}
+
+export async function getUsersWithSubscriptions() {
+  const data = await db
+    .select({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      subscriptionsCount: count(subscriptionsTable.id),
+      totalRevenue: sum(
+        sql`CASE 
+          WHEN ${subscriptionsTable.status} = 'active' 
+          THEN (${subscriptionsTable.mealPlan}->>'totalPrice')::INTEGER
+          ELSE 0 
+        END`
+      ),
+    })
+    .from(user)
+    .leftJoin(subscriptionsTable, eq(user.id, subscriptionsTable.userId))
+    .groupBy(user.id)
+    .orderBy(desc(user.createdAt));
+
+  return data.map((user) => ({
+    ...user,
+    subscriptionsCount: Number(user.subscriptionsCount),
+    totalRevenue: Number(user.totalRevenue) || 0,
   }));
 }

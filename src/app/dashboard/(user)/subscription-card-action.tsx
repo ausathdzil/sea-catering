@@ -37,7 +37,7 @@ import {
   cancelSubscription,
   pauseSubscription,
   reactivateSubscription,
-} from './user-subscription-actions';
+} from './user-actions';
 
 type SubscriptionStatus = 'paused' | 'active' | 'canceled';
 

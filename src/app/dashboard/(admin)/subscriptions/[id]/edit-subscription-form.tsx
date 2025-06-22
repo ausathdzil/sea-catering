@@ -4,6 +4,7 @@ import { CircleCheckIcon, CircleXIcon, LoaderIcon } from 'lucide-react';
 
 import Link from 'next/link';
 import { useActionState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,11 +12,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Subscription } from '@/db/schema';
-import { toast } from 'sonner';
 import {
   editSubscription,
   EditSubscriptionStateOrNull,
-} from '../admin-subscription-actions';
+} from '../../admin-actions';
 
 const initialState: EditSubscriptionStateOrNull = {
   success: false,

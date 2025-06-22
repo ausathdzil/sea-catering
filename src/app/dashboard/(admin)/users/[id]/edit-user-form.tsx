@@ -2,6 +2,7 @@
 
 import { LoaderIcon } from 'lucide-react';
 
+import Link from 'next/link';
 import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -16,8 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { User } from '@/db/schema';
-import Link from 'next/link';
-import { updateUser, UpdateUserFormStateOrNull } from '../user-action';
+import { updateUser, UpdateUserFormStateOrNull } from '../../admin-actions';
 
 const initialState: UpdateUserFormStateOrNull = {
   success: false,
