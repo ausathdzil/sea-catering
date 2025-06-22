@@ -90,7 +90,7 @@ function TestimonialCard({
   rating: number;
 }) {
   return (
-    <Card>
+    <Card className="border-primary/5 border-3 hover:bg-primary/5 transition-colors">
       <CardHeader>
         <div className="flex flex-row items-center gap-2">
           <Avatar className="size-10">

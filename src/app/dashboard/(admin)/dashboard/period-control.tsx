@@ -87,7 +87,10 @@ export function PeriodControl() {
             <Button
               className="w-full max-w-sm mx-auto"
               variant="outline"
-              onClick={() => setRange(undefined)}
+              onClick={() => {
+                setRange(undefined);
+                handleSearchParams();
+              }}
             >
               Clear
             </Button>

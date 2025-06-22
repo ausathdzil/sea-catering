@@ -167,8 +167,8 @@ function PauseSubscription({
               setDate(date);
             }}
             required
-            className="mx-auto"
-            disabled={(date) => date < new Date() || date > dueDate}
+            className="mx-auto [--cell-size:clamp(0px,calc(100vw/7.5),40px)]"
+            disabled={(date) => date < new Date() || date >= dueDate}
           />
           <DrawerFooter>
             <Button

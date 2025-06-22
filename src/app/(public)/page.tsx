@@ -57,7 +57,7 @@ export default function Home() {
           className="w-[250px] md:w-[400px]"
         />
         <div className="flex flex-col justify-center gap-4 text-left md:text-center">
-          <h1 className="flex flex-col text-2xl md:text-5xl font-dm-sans font-semibold leading-12">
+          <h1 className="flex flex-col text-2xl md:text-5xl font-dm-sans font-semibold md:leading-12">
             Healthy meals <br /> anytime, anywhere.
           </h1>
           <p className="flex flex-col text-xs md:text-lg font-medium">
