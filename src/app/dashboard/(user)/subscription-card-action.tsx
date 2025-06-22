@@ -232,7 +232,10 @@ function CancelSubscription({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleCancelSubscription}>
+          <AlertDialogAction
+            variant="destructive"
+            onClick={handleCancelSubscription}
+          >
             {isLoading ? <LoaderIcon className="animate-spin" /> : 'Continue'}
           </AlertDialogAction>
         </AlertDialogFooter>

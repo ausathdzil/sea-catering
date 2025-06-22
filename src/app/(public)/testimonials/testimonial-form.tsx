@@ -89,11 +89,7 @@ export function TestimonialForm() {
       </div>
 
       <div className="flex justify-end">
-        <Button
-          className="min-w-20 cursor-pointer"
-          type="submit"
-          disabled={isPending}
-        >
+        <Button className="min-w-20" type="submit" disabled={isPending}>
           {isPending ? <LoaderIcon className="animate-spin" /> : 'Submit'}
         </Button>
       </div>
@@ -120,7 +116,7 @@ function RatingField({ state }: { state: CreateTestimonialState }) {
         {['1', '2', '3', '4', '5'].map((value) => (
           <label
             key={value}
-            className="group has-focus-visible:border-ring has-focus-visible:ring-ring/50 relative cursor-pointer rounded p-0.5 outline-none has-focus-visible:ring-[3px]"
+            className="group has-focus-visible:border-ring has-focus-visible:ring-ring/50 relative rounded p-0.5 outline-none has-focus-visible:ring-[3px]"
             onMouseEnter={() => setHoverRating(value)}
             onMouseLeave={() => setHoverRating('')}
           >

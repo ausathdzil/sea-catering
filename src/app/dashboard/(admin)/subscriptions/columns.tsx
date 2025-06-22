@@ -168,6 +168,7 @@ function DeleteSubscriptionButton({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
+            variant="destructive"
             onClick={async () => {
               setIsLoading(true);
               await deleteSubscription(subscriptionId);

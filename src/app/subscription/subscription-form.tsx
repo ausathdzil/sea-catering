@@ -318,11 +318,7 @@ export function SubscriptionForm({
       </div>
 
       <div className="col-span-2">
-        <Button
-          className="w-full cursor-pointer"
-          disabled={isPending}
-          type="submit"
-        >
+        <Button className="w-full" disabled={isPending} type="submit">
           {isPending ? <LoaderIcon className="animate-spin" /> : 'Subscribe'}
         </Button>
       </div>
