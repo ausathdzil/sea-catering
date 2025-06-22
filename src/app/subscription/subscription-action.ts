@@ -1,12 +1,11 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
 import { CustomMealPlan, subscriptionsTable } from '@/db/schema';
-import { getSession } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 
 interface CreateSubscriptionState {
   success: boolean;
@@ -65,7 +64,7 @@ export async function createSubscription(
   prevState: CreateSubscriptionStateOrNull,
   formData: FormData
 ): Promise<CreateSubscriptionStateOrNull> {
-  const session = await getSession({
+  const session = await auth.api.getSession({
     headers: await headers(),
   });
 
@@ -129,14 +128,6 @@ export async function createSubscription(
     phoneNumber: phone,
     mealPlan,
   });
-
-  revalidateTag('new-subscriptions');
-  revalidateTag('monthly-recurring-revenue');
-  revalidateTag('reactivations');
-  revalidateTag('subscriptions');
-  revalidateTag('subscriptions-with-users');
-  revalidateTag('users-with-subscriptions');
-  revalidateTag('user-subscriptions');
 
   return {
     success: true,

@@ -1,9 +1,8 @@
 import { headers } from 'next/headers';
-import { forbidden } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
-import { getSession } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { DataTable } from '../data-table';
 import { columns } from './columns';
 import { getUsersWithSubscriptions } from './users-data';
@@ -17,13 +16,11 @@ export default function UsersPage() {
 }
 
 async function Users() {
-  const session = await getSession({
+  const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session || session.user.role !== 'admin') {
-    forbidden();
-  }
+  if (!session || session.user.role !== 'admin') return null;
 
   const users = await getUsersWithSubscriptions();
 

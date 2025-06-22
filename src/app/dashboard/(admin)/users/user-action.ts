@@ -1,7 +1,6 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
-import { revalidateTag } from 'next/cache';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
@@ -43,8 +42,6 @@ export async function updateUser(
   const { role } = validatedFields.data;
 
   await db.update(user).set({ role }).where(eq(user.id, userId));
-
-  revalidateTag(`user-${userId}`);
 
   return {
     success: true,

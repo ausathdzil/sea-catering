@@ -1,9 +1,8 @@
 import { headers } from 'next/headers';
-import { unauthorized } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
-import { getSession } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { AdminDashboard } from './(admin)/admin-dashboard';
 import { UserDashboard } from './(user)/user-dashboard';
 import { DashboardHeader } from './dashboard-header';
@@ -29,13 +28,11 @@ export default function DashboardPage(props: DashboardPageProps) {
 }
 
 async function Dashboard(props: DashboardPageProps) {
-  const session = await getSession({
+  const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session) {
-    unauthorized();
-  }
+  if (!session) return null;
 
   const { start, end } = await props.searchParams;
 

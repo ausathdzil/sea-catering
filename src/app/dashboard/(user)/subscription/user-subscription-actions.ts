@@ -1,7 +1,6 @@
 'use server';
 
 import { and, eq } from 'drizzle-orm';
-import { revalidateTag } from 'next/cache';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
@@ -102,14 +101,6 @@ export async function pauseSubscription(
         eq(subscriptionsTable.userId, userId)
       )
     );
-
-  revalidateTag('new-subscriptions');
-  revalidateTag('monthly-recurring-revenue');
-  revalidateTag('reactivations');
-  revalidateTag('subscriptions');
-  revalidateTag('subscriptions-with-users');
-  revalidateTag('users-with-subscriptions');
-  revalidateTag('user-subscriptions');
 }
 
 export async function cancelSubscription(
@@ -142,14 +133,6 @@ export async function cancelSubscription(
         eq(subscriptionsTable.userId, userId)
       )
     );
-
-  revalidateTag('new-subscriptions');
-  revalidateTag('monthly-recurring-revenue');
-  revalidateTag('reactivations');
-  revalidateTag('subscriptions');
-  revalidateTag('subscriptions-with-users');
-  revalidateTag('users-with-subscriptions');
-  revalidateTag('user-subscriptions');
 }
 
 export async function reactivateSubscription(
@@ -200,12 +183,4 @@ export async function reactivateSubscription(
         eq(subscriptionsTable.userId, userId)
       )
     );
-
-  revalidateTag('new-subscriptions');
-  revalidateTag('monthly-recurring-revenue');
-  revalidateTag('reactivations');
-  revalidateTag('subscriptions');
-  revalidateTag('subscriptions-with-users');
-  revalidateTag('users-with-subscriptions');
-  revalidateTag('user-subscriptions');
 }

@@ -1,8 +1,8 @@
-import { forbidden, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { Loading } from '@/components/loading';
-import { getSession } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import EditSubscriptionForm from './edit-subscription-form';
 import { getSubsriptionById } from './subscription-data';
@@ -24,13 +24,11 @@ export default function SubscriptionPage(props: SubscriptionPageProps) {
 }
 
 async function EditSubscription(props: SubscriptionPageProps) {
-  const session = await getSession({
+  const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session || session.user.role !== 'admin') {
-    forbidden();
-  }
+  if (!session || session.user.role !== 'admin') return null;
 
   const { id } = await props.params;
 

@@ -1,7 +1,6 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
-import { revalidateTag } from 'next/cache';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
@@ -89,15 +88,6 @@ export async function editSubscription(
     })
     .where(eq(subscriptionsTable.id, subscriptionId));
 
-  revalidateTag(`subscription-${subscriptionId}`);
-  revalidateTag('new-subscriptions');
-  revalidateTag('monthly-recurring-revenue');
-  revalidateTag('reactivations');
-  revalidateTag('subscriptions');
-  revalidateTag('subscriptions-with-users');
-  revalidateTag('users-with-subscriptions');
-  revalidateTag('user-subscriptions');
-
   return {
     success: true,
     message: 'Subscription updated!',
@@ -109,12 +99,4 @@ export async function deleteSubscription(subscriptionId: string) {
   await db
     .delete(subscriptionsTable)
     .where(eq(subscriptionsTable.id, subscriptionId));
-
-  revalidateTag('new-subscriptions');
-  revalidateTag('monthly-recurring-revenue');
-  revalidateTag('reactivations');
-  revalidateTag('subscriptions');
-  revalidateTag('subscriptions-with-users');
-  revalidateTag('users-with-subscriptions');
-  revalidateTag('user-subscriptions');
 }

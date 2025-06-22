@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getSession } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { getMealPlans } from '../(public)/public-data';
 import { SubscriptionForm } from './subscription-form';
@@ -81,7 +81,7 @@ export default function SubscriptionPage() {
 }
 
 async function SubscriptionSection() {
-  const session = await getSession({
+  const session = await auth.api.getSession({
     headers: await headers(),
   });
 

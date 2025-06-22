@@ -1,7 +1,10 @@
+'use server';
+
+import { APIError } from 'better-auth/api';
 import { redirect } from 'next/navigation';
 import { z } from 'zod/v4';
 
-import { signIn, signUp } from '@/lib/auth-client';
+import { auth } from '@/lib/auth';
 
 export interface SignInFormState {
   success: boolean;
@@ -46,13 +49,12 @@ export async function signInWithEmail(
   const { email, password } = validatedFields.data;
 
   try {
-    const { error } = await signIn.email({ email, password });
-
-    if (error) {
-      throw new Error(error.message);
-    }
+    await auth.api.signInEmail({
+      body: { email, password },
+      asResponse: true,
+    });
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof APIError) {
       return {
         success: false,
         message: error.message,
@@ -65,6 +67,10 @@ export async function signInWithEmail(
     return {
       success: false,
       message: 'An unexpected error occurred',
+      fields: {
+        email: rawFormData.email,
+        password: rawFormData.password,
+      },
     };
   }
 
@@ -139,17 +145,12 @@ export async function signUpWithEmail(
   const { name, email, password } = validatedFields.data;
 
   try {
-    const { error } = await signUp.email({
-      name,
-      email,
-      password,
+    await auth.api.signUpEmail({
+      body: { name, email, password },
+      asResponse: true,
     });
-
-    if (error) {
-      throw new Error(error.message);
-    }
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof APIError) {
       return {
         success: false,
         message: error.message,
@@ -164,6 +165,12 @@ export async function signUpWithEmail(
     return {
       success: false,
       message: 'An unexpected error occurred',
+      fields: {
+        name: rawFormData.name,
+        email: rawFormData.email,
+        password: rawFormData.password,
+        confirmPassword: rawFormData.confirmPassword,
+      },
     };
   }
 

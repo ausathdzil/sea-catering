@@ -1,21 +1,9 @@
 import { eq, sql, sum } from 'drizzle-orm';
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from 'next/cache';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
 
-export async function getNewSubscriptions(
-  start?: Date,
-  end?: Date
-) {
-  'use cache';
-
-  cacheLife('hours');
-  cacheTag('new-subscriptions');
-
+export async function getNewSubscriptions(start?: Date, end?: Date) {
   if (!start || !end) {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -45,15 +33,7 @@ export async function getNewSubscriptions(
   };
 }
 
-export async function getMonthlyRecurringRevenue(
-  start?: Date,
-  end?: Date
-) {
-  'use cache';
-
-  cacheLife('hours');
-  cacheTag('monthly-recurring-revenue');
-
+export async function getMonthlyRecurringRevenue(start?: Date, end?: Date) {
   if (!start || !end) {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -86,11 +66,6 @@ export async function getMonthlyRecurringRevenue(
 }
 
 export async function getReactivations(start?: Date, end?: Date) {
-  'use cache';
-
-  cacheLife('hours');
-  cacheTag('reactivations');
-
   if (!start || !end) {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -121,11 +96,6 @@ export async function getReactivations(start?: Date, end?: Date) {
 }
 
 export async function getSubscriptions() {
-  'use cache';
-
-  cacheLife('hours');
-  cacheTag('subscriptions');
-
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
   sixMonthsAgo.setHours(0, 0, 0, 0);

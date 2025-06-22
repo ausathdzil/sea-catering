@@ -1,17 +1,15 @@
+import { getSessionCookie } from 'better-auth/cookies';
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from './lib/auth';
 
 const protectedRoutes = ['/dashboard'];
 const publicRoutes = ['/sign-in', '/sign-up'];
 
-export default async function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
 
-  const session = await getSession({
-    headers: req.headers,
-  });
+  const session = getSessionCookie(req);
 
   if (isProtectedRoute && !session) {
     return NextResponse.redirect(new URL('/sign-in', req.nextUrl));
@@ -29,6 +27,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  runtime: 'nodejs',
   matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
 };

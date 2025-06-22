@@ -1,18 +1,9 @@
 import { desc, eq } from 'drizzle-orm';
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from 'next/cache';
 
 import { db } from '@/db';
 import { subscriptionsTable, user } from '@/db/schema';
 
 export async function getSubscriptionsWithUsers() {
-  'use cache';
-
-  cacheLife('hours');
-  cacheTag('subscriptions-with-users');
-
   const data = await db
     .select({
       id: subscriptionsTable.id,

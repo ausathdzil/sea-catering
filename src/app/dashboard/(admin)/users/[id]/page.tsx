@@ -1,9 +1,9 @@
 import { headers } from 'next/headers';
-import { forbidden, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { Loading } from '@/components/loading';
-import { getSession } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { EditUserForm } from './edit-user-form';
 import { getUser } from './user-data';
 
@@ -24,13 +24,11 @@ export default function UserPage(props: UserPageProps) {
 }
 
 async function EditUser(props: UserPageProps) {
-  const session = await getSession({
+  const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session || session.user.role !== 'admin') {
-    forbidden();
-  }
+  if (!session || session.user.role !== 'admin') return null;
 
   const { id } = await props.params;
 
