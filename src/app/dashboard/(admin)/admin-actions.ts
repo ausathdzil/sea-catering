@@ -180,7 +180,6 @@ export async function updateUser(
 
   await db.update(user).set({ role }).where(eq(user.id, userId));
 
-  revalidatePath('/dashboard');
   revalidatePath(`/dashboard/users`);
   revalidatePath(`/dashboard/users/${userId}`);
 

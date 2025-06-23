@@ -55,12 +55,12 @@ async function NewSubscriptionsCard({
       <CardHeader>
         <CardDescription>New Subscriptions</CardDescription>
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-          {newSubscriptions.current}
+          {newSubscriptions}
         </CardTitle>
       </CardHeader>
       <Separator />
       <CardFooter className="text-sm">
-        {newSubscriptions.current === 0
+        {newSubscriptions === 0
           ? 'No new subscriptions'
           : 'New subscriptions this period'}
       </CardFooter>
@@ -89,12 +89,12 @@ async function MonthlyRevenueCard({
             style: 'currency',
             currency: 'IDR',
             maximumFractionDigits: 0,
-          }).format(monthlyRecurringRevenue.current)}
+          }).format(monthlyRecurringRevenue ?? 0)}
         </CardTitle>
       </CardHeader>
       <Separator />
       <CardFooter className="text-sm">
-        {monthlyRecurringRevenue.current === 0
+        {monthlyRecurringRevenue === 0
           ? 'No revenue this period'
           : 'Revenue from active subscriptions'}
       </CardFooter>
@@ -116,12 +116,12 @@ async function ReactivationsCard({
       <CardHeader>
         <CardDescription>Reactivations</CardDescription>
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-          {reactivations.current}
+          {reactivations}
         </CardTitle>
       </CardHeader>
       <Separator />
       <CardFooter className="text-sm">
-        {reactivations.current === 0
+        {reactivations === 0
           ? 'No customer reactivations'
           : 'Customer reactivations this period'}
       </CardFooter>

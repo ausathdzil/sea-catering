@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
@@ -124,16 +124,20 @@ export async function createSubscription(
     totalPrice,
   };
 
-  await db.insert(subscriptionsTable).values({
-    userId,
-    name,
-    phoneNumber: phone,
-    mealPlan,
-  });
+  const subscription = await db
+    .insert(subscriptionsTable)
+    .values({
+      userId,
+      name,
+      phoneNumber: phone,
+      mealPlan,
+    })
+    .returning();
 
-  revalidateTag('subscriptions-with-users');
-  revalidateTag('users-with-subscriptions');
-  revalidateTag(`user-subscriptions-${userId}`);
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/subscriptions');
+  revalidatePath(`/dashboard/subscriptions/${subscription[0].id}`);
+  revalidatePath(`/dashboard/users`);
 
   return {
     success: true,

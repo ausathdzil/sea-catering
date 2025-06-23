@@ -2,8 +2,13 @@ import { count, desc, eq, sql, sum } from 'drizzle-orm';
 
 import { db } from '@/db';
 import { subscriptionsTable, user } from '@/db/schema';
+import { verifySession } from '@/lib/dal';
 
 export async function getNewSubscriptions(start?: Date, end?: Date) {
+  const session = await verifySession();
+
+  if (!session || session.role !== 'admin') return null;
+
   if (!start || !end) {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -28,12 +33,14 @@ export async function getNewSubscriptions(start?: Date, end?: Date) {
     .from(subscriptionsTable)
     .where(eq(subscriptionsTable.status, 'active'));
 
-  return {
-    current: Number(result.current),
-  };
+  return Number(result.current);
 }
 
 export async function getMonthlyRecurringRevenue(start?: Date, end?: Date) {
+  const session = await verifySession();
+
+  if (!session || session.role !== 'admin') return null;
+
   if (!start || !end) {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -60,12 +67,14 @@ export async function getMonthlyRecurringRevenue(start?: Date, end?: Date) {
     })
     .from(subscriptionsTable);
 
-  return {
-    current: Number(result.current),
-  };
+  return Number(result.current);
 }
 
 export async function getReactivations(start?: Date, end?: Date) {
+  const session = await verifySession();
+
+  if (!session || session.role !== 'admin') return null;
+
   if (!start || !end) {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -90,12 +99,14 @@ export async function getReactivations(start?: Date, end?: Date) {
     .from(subscriptionsTable)
     .where(eq(subscriptionsTable.status, 'active'));
 
-  return {
-    current: Number(result.current),
-  };
+  return Number(result.current);
 }
 
 export async function getSubscriptions() {
+  const session = await verifySession();
+
+  if (!session || session.role !== 'admin') return null;
+
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
   sixMonthsAgo.setHours(0, 0, 0, 0);
@@ -134,6 +145,10 @@ export async function getSubscriptions() {
 }
 
 export async function getSubsriptionById(id: string) {
+  const session = await verifySession();
+
+  if (!session || session.role !== 'admin') return null;
+
   const data = await db
     .select()
     .from(subscriptionsTable)
@@ -143,6 +158,10 @@ export async function getSubsriptionById(id: string) {
 }
 
 export async function getSubscriptionsWithUsers() {
+  const session = await verifySession();
+
+  if (!session || session.role !== 'admin') return null;
+
   const data = await db
     .select({
       id: subscriptionsTable.id,
@@ -167,12 +186,20 @@ export async function getSubscriptionsWithUsers() {
 }
 
 export async function getUser(id: string) {
+  const session = await verifySession();
+
+  if (!session || session.role !== 'admin') return null;
+
   const data = await db.select().from(user).where(eq(user.id, id));
 
   return data[0];
 }
 
 export async function getUsersWithSubscriptions() {
+  const session = await verifySession();
+
+  if (!session || session.role !== 'admin') return null;
+
   const data = await db
     .select({
       id: user.id,

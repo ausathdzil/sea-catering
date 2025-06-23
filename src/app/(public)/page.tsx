@@ -126,9 +126,13 @@ export default function Home() {
 }
 
 async function TestimnialSection() {
-  const getCachedTestimonials = cache(async () => {
-    return getTestimonials();
-  });
+  const getCachedTestimonials = cache(
+    async () => {
+      return getTestimonials();
+    },
+    ['testimonials'],
+    { tags: ['testimonials'], revalidate: 3600 }
+  );
 
   const testimonials = await getCachedTestimonials();
 
