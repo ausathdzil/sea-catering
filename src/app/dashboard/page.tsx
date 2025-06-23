@@ -1,7 +1,5 @@
 import { headers } from 'next/headers';
-import { Suspense } from 'react';
 
-import { Skeleton } from '@/components/ui/skeleton';
 import { auth } from '@/lib/auth';
 import { AdminDashboard } from './(admin)/dashboard/admin-dashboard';
 import { UserDashboard } from './(user)/user-dashboard';
@@ -19,9 +17,7 @@ export default function DashboardPage(props: DashboardPageProps) {
     <div className="flex-1 flex flex-col">
       <DashboardHeader title="Dashboard" />
       <main className="@container/main flex-1 p-8 mx-auto w-full space-y-4">
-        <Suspense fallback={<DashboardSkeleton />}>
-          <Dashboard searchParams={props.searchParams} />
-        </Suspense>
+        <Dashboard searchParams={props.searchParams} />
       </main>
     </div>
   );
@@ -40,15 +36,5 @@ async function Dashboard(props: DashboardPageProps) {
     <AdminDashboard start={start} end={end} />
   ) : (
     <UserDashboard userId={session.user.id} />
-  );
-}
-
-async function DashboardSkeleton() {
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <Skeleton key={index} className="h-52 w-full" />
-      ))}
-    </div>
   );
 }

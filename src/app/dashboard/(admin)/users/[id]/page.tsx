@@ -1,8 +1,6 @@
 import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
-import { Suspense } from 'react';
 
-import { Skeleton } from '@/components/ui/skeleton';
 import { auth } from '@/lib/auth';
 import { getUser } from '../../admin-data';
 import { EditUserForm } from './edit-user-form';
@@ -13,17 +11,7 @@ interface UserPageProps {
   }>;
 }
 
-export default function UserPage(props: UserPageProps) {
-  return (
-    <div className="w-full flex justify-center">
-      <Suspense fallback={<EditUserSkeleton />}>
-        <EditUser params={props.params} />
-      </Suspense>
-    </div>
-  );
-}
-
-async function EditUser(props: UserPageProps) {
+export default async function UserPage(props: UserPageProps) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -40,13 +28,9 @@ async function EditUser(props: UserPageProps) {
     notFound();
   }
 
-  return <EditUserForm user={user} />;
-}
-
-function EditUserSkeleton() {
   return (
-    <div className="w-full max-w-md">
-      <Skeleton className="h-[300px] w-full" />
+    <div className="w-full flex justify-center">
+      <EditUserForm user={user} />
     </div>
   );
 }
