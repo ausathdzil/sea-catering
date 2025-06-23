@@ -1,4 +1,3 @@
-import { unstable_cache as cache } from 'next/cache';
 import { notFound } from 'next/navigation';
 
 import { getSubsriptionById } from '../../admin-data';
@@ -13,18 +12,7 @@ interface SubscriptionPageProps {
 export default async function SubscriptionPage(props: SubscriptionPageProps) {
   const { id } = await props.params;
 
-  const getCachedSubscription = cache(
-    async () => {
-      return getSubsriptionById(id);
-    },
-    [`subscription-${id}`],
-    {
-      tags: [`subscription-${id}`],
-      revalidate: 3600,
-    }
-  );
-
-  const subscription = await getCachedSubscription();
+  const subscription = await getSubsriptionById(id);
 
   if (!subscription) {
     notFound();

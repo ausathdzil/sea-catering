@@ -1,7 +1,7 @@
+import { unstable_cache as cache } from 'next/cache';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { unstable_cache as cache } from 'next/cache';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import {

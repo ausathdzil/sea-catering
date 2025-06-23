@@ -1,6 +1,4 @@
-import { headers } from 'next/headers';
-
-import { auth } from '@/lib/auth';
+import { verifySession } from '@/lib/dal';
 import { AdminDashboard } from './(admin)/dashboard/admin-dashboard';
 import { UserDashboard } from './(user)/user-dashboard';
 import { DashboardHeader } from './dashboard-header';
@@ -24,17 +22,13 @@ export default function DashboardPage(props: DashboardPageProps) {
 }
 
 async function Dashboard(props: DashboardPageProps) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) return null;
+  const session = await verifySession();
 
   const { start, end } = await props.searchParams;
 
-  return session.user.role === 'admin' ? (
+  return session.role === 'admin' ? (
     <AdminDashboard start={start} end={end} />
   ) : (
-    <UserDashboard userId={session.user.id} />
+    <UserDashboard userId={session.userId} />
   );
 }

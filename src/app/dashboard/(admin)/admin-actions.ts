@@ -1,11 +1,12 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
 import { subscriptionsTable, user } from '@/db/schema';
+import { verifySession } from '@/lib/dal';
 
 export interface EditSubscriptionState {
   success: boolean;
@@ -24,6 +25,16 @@ export async function editSubscription(
   prevState: EditSubscriptionState,
   formData: FormData
 ): Promise<EditSubscriptionState> {
+  const session = await verifySession();
+
+  if (session.role !== 'admin') {
+    return {
+      success: false,
+      message: 'You are not authorized to edit this subscription',
+      errors: {},
+    };
+  }
+
   const rawFormData = {
     status: formData.get('status') as string,
   };
@@ -87,9 +98,10 @@ export async function editSubscription(
     })
     .where(eq(subscriptionsTable.id, subscriptionId));
 
-  revalidateTag(`subscription-${subscriptionId}`);
-  revalidateTag('subscriptions-with-users');
-  revalidateTag('users-with-subscriptions');
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/subscriptions');
+  revalidatePath(`/dashboard/subscriptions/${subscriptionId}`);
+  revalidatePath(`/dashboard/users`);
 
   return {
     success: true,
@@ -99,13 +111,31 @@ export async function editSubscription(
 }
 
 export async function deleteSubscription(subscriptionId: string) {
-  await db
-    .delete(subscriptionsTable)
-    .where(eq(subscriptionsTable.id, subscriptionId));
+  const session = await verifySession();
 
-  revalidateTag(`subscription-${subscriptionId}`);
-  revalidateTag('subscriptions-with-users');
-  revalidateTag('users-with-subscriptions');
+  if (session.role !== 'admin') {
+    return {
+      success: false,
+      message: 'You are not authorized to delete this subscription',
+      errors: {},
+    };
+  }
+
+  const [subscription] = await db
+    .delete(subscriptionsTable)
+    .where(eq(subscriptionsTable.id, subscriptionId))
+    .returning();
+
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/subscriptions');
+  revalidatePath(`/dashboard/subscriptions/${subscriptionId}`);
+  revalidatePath(`/dashboard/users`);
+
+  return {
+    success: true,
+    message: 'Subscription deleted successfully',
+    errors: {},
+  };
 }
 
 export interface UpdateUserFormState {
@@ -125,6 +155,16 @@ export async function updateUser(
   prevState: UpdateUserFormState,
   formData: FormData
 ): Promise<UpdateUserFormState> {
+  const session = await verifySession();
+
+  if (session.role !== 'admin') {
+    return {
+      success: false,
+      message: 'You are not authorized to update this user',
+      errors: {},
+    };
+  }
+
   const rawFormData = {
     role: formData.get('role') as string,
   };
@@ -143,10 +183,9 @@ export async function updateUser(
 
   await db.update(user).set({ role }).where(eq(user.id, userId));
 
-  revalidateTag(`user-${userId}`);
-  revalidateTag(`user-subscriptions-${userId}`);
-  revalidateTag('subscriptions-with-users');
-  revalidateTag('users-with-subscriptions');
+  revalidatePath('/dashboard');
+  revalidatePath(`/dashboard/users`);
+  revalidatePath(`/dashboard/users/${userId}`);
 
   return {
     success: true,

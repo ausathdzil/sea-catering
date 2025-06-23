@@ -1,13 +1,11 @@
 import { ArrowLeftIcon, Calculator, InfoIcon } from 'lucide-react';
 
-import { headers } from 'next/headers';
 import Link from 'next/link';
-import { unstable_cache as cache } from 'next/cache';
 import { Suspense } from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { auth } from '@/lib/auth';
+import { verifySession } from '@/lib/dal';
 import { cn } from '@/lib/utils';
 import { getMealPlans } from '../(public)/public-data';
 import { SubscriptionForm } from './subscription-form';
@@ -82,18 +80,12 @@ export default function SubscriptionPage() {
 }
 
 async function SubscriptionSection() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await verifySession();
 
-  const getCachedMealPlans = cache(async () => {
-    return getMealPlans();
-  });
-  
-  const mealPlans = await getCachedMealPlans();
+  const mealPlans = await getMealPlans();
 
-  return session ? (
-    <SubscriptionForm name={session.user.name} mealPlans={mealPlans} />
+  return session.isAuth ? (
+    <SubscriptionForm mealPlans={mealPlans} />
   ) : (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-sm text-muted-foreground text-center sm:text-base">

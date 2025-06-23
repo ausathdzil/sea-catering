@@ -27,5 +27,11 @@ export const auth = betterAuth({
       },
     },
   },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 3600,
+    },
+  },
   plugins: [admin(), nextCookies()],
 });

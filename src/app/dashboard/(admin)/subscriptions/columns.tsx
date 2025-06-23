@@ -171,8 +171,10 @@ function DeleteSubscriptionButton({
             variant="destructive"
             onClick={async () => {
               setIsLoading(true);
-              await deleteSubscription(subscriptionId);
-              toast.error('Subscription deleted');
+              const result = await deleteSubscription(subscriptionId);
+              if (result) {
+                toast.error(result.message);
+              }
               setIsLoading(false);
             }}
           >

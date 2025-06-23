@@ -1,8 +1,6 @@
-
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { auth } from '@/lib/auth';
+import { verifySession } from '@/lib/dal';
 import { DashboardHeader } from '../../dashboard-header';
 
 export default async function SubscriptionsDashboardLayout({
@@ -10,11 +8,9 @@ export default async function SubscriptionsDashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await verifySession();
 
-  if (!session || session.user.role !== 'admin') {
+  if (session.role !== 'admin') {
     redirect('/dashboard');
   }
 

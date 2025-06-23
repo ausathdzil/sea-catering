@@ -20,54 +20,36 @@ interface AdminDashboardProps {
   end?: string;
 }
 
-export async function AdminDashboard(props: AdminDashboardProps) {
+export function AdminDashboard(props: AdminDashboardProps) {
   const { start, end } = props;
 
   const startDate = start ? new Date(start) : undefined;
   const endDate = end ? new Date(end) : undefined;
-
-  const [
-    newSubscriptions,
-    monthlyRecurringRevenue,
-    reactivations,
-    subscriptions,
-  ] = await Promise.all([
-    getNewSubscriptions(startDate, endDate),
-    getMonthlyRecurringRevenue(startDate, endDate),
-    getReactivations(startDate, endDate),
-    getSubscriptions(),
-  ]);
 
   return (
     <>
       <PeriodControl />
       <div className="flex flex-col gap-4 md:gap-6">
         <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:bg-gradient-to-t grid grid-cols-1 gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-3">
-          <NewSubscriptionsCard
-            newSubscriptions={newSubscriptions ?? { current: 0 }}
-          />
-          <MonthlyRevenueCard
-            monthlyRecurringRevenue={
-              monthlyRecurringRevenue ?? {
-                current: 0,
-              }
-            }
-          />
-          <ReactivationsCard reactivations={reactivations ?? { current: 0 }} />
+          <NewSubscriptionsCard startDate={startDate} endDate={endDate} />
+          <MonthlyRevenueCard startDate={startDate} endDate={endDate} />
+          <ReactivationsCard startDate={startDate} endDate={endDate} />
         </div>
-        <SubscriptionsChart subscriptions={subscriptions} />
+        <SubscriptionsCard />
       </div>
     </>
   );
 }
 
-function NewSubscriptionsCard({
-  newSubscriptions,
+async function NewSubscriptionsCard({
+  startDate,
+  endDate,
 }: {
-  newSubscriptions: {
-    current: number;
-  };
+  startDate?: Date;
+  endDate?: Date;
 }) {
+  const newSubscriptions = await getNewSubscriptions(startDate, endDate);
+
   return (
     <Card>
       <CardHeader>
@@ -86,13 +68,18 @@ function NewSubscriptionsCard({
   );
 }
 
-function MonthlyRevenueCard({
-  monthlyRecurringRevenue,
+async function MonthlyRevenueCard({
+  startDate,
+  endDate,
 }: {
-  monthlyRecurringRevenue: {
-    current: number;
-  };
+  startDate?: Date;
+  endDate?: Date;
 }) {
+  const monthlyRecurringRevenue = await getMonthlyRecurringRevenue(
+    startDate,
+    endDate
+  );
+
   return (
     <Card>
       <CardHeader>
@@ -115,13 +102,15 @@ function MonthlyRevenueCard({
   );
 }
 
-function ReactivationsCard({
-  reactivations,
+async function ReactivationsCard({
+  startDate,
+  endDate,
 }: {
-  reactivations: {
-    current: number;
-  };
+  startDate?: Date;
+  endDate?: Date;
 }) {
+  const reactivations = await getReactivations(startDate, endDate);
+
   return (
     <Card>
       <CardHeader>
@@ -138,4 +127,10 @@ function ReactivationsCard({
       </CardFooter>
     </Card>
   );
+}
+
+async function SubscriptionsCard() {
+  const subscriptions = await getSubscriptions();
+
+  return <SubscriptionsChart subscriptions={subscriptions} />;
 }

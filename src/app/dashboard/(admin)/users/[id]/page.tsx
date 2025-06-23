@@ -1,4 +1,3 @@
-import { unstable_cache as cache } from 'next/cache';
 import { notFound } from 'next/navigation';
 
 import { getUser } from '../../admin-data';
@@ -13,18 +12,7 @@ interface UserPageProps {
 export default async function UserPage(props: UserPageProps) {
   const { id } = await props.params;
 
-  const getCachedUser = cache(
-    async () => {
-      return getUser(id);
-    },
-    [`user-${id}`],
-    {
-      tags: [`user-${id}`],
-      revalidate: 3600,
-    }
-  );
-
-  const user = await getCachedUser();
+  const user = await getUser(id);
 
   if (!user) {
     notFound();
