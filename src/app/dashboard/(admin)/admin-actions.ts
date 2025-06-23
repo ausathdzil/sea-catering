@@ -117,14 +117,12 @@ export async function deleteSubscription(subscriptionId: string) {
     return {
       success: false,
       message: 'You are not authorized to delete this subscription',
-      errors: {},
     };
   }
 
-  const [subscription] = await db
+  await db
     .delete(subscriptionsTable)
-    .where(eq(subscriptionsTable.id, subscriptionId))
-    .returning();
+    .where(eq(subscriptionsTable.id, subscriptionId));
 
   revalidatePath('/dashboard');
   revalidatePath('/dashboard/subscriptions');
@@ -134,7 +132,6 @@ export async function deleteSubscription(subscriptionId: string) {
   return {
     success: true,
     message: 'Subscription deleted successfully',
-    errors: {},
   };
 }
 
