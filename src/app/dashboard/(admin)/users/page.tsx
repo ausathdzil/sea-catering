@@ -1,21 +1,22 @@
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { unstable_cache as cache } from 'next/cache';
 
-import { auth } from '@/lib/auth';
 import { getUsersWithSubscriptions } from '../admin-data';
 import { DataTable } from '../data-table';
 import { columns } from './columns';
 
 export default async function UsersPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const getCachedUsers = cache(
+    async () => {
+      return getUsersWithSubscriptions();
+    },
+    ['users-with-subscriptions'],
+    {
+      tags: ['users-with-subscriptions'],
+      revalidate: 3600,
+    }
+  );
 
-  if (!session || session.user.role !== 'admin') {
-    redirect('/dashboard');
-  }
-
-  const users = await getUsersWithSubscriptions();
+  const users = await getCachedUsers();
 
   return <DataTable columns={columns} data={users || []} filterKey="name" />;
 }

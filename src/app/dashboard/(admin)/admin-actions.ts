@@ -1,13 +1,13 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
 import { subscriptionsTable, user } from '@/db/schema';
 
-interface EditSubscriptionState {
+export interface EditSubscriptionState {
   success: boolean;
   message?: string;
   errors: {
@@ -15,17 +15,15 @@ interface EditSubscriptionState {
   };
 }
 
-export type EditSubscriptionStateOrNull = EditSubscriptionState | null;
-
 const editSubscriptionSchema = z.object({
   status: z.enum(['active', 'canceled']),
 });
 
 export async function editSubscription(
   subscriptionId: string,
-  prevState: EditSubscriptionStateOrNull,
+  prevState: EditSubscriptionState,
   formData: FormData
-): Promise<EditSubscriptionStateOrNull> {
+): Promise<EditSubscriptionState> {
   const rawFormData = {
     status: formData.get('status') as string,
   };
@@ -89,7 +87,9 @@ export async function editSubscription(
     })
     .where(eq(subscriptionsTable.id, subscriptionId));
 
-  revalidatePath(`/dashboard/subscriptions/${subscriptionId}`);
+  revalidateTag(`subscription-${subscriptionId}`);
+  revalidateTag('subscriptions-with-users');
+  revalidateTag('users-with-subscriptions');
 
   return {
     success: true,
@@ -103,10 +103,12 @@ export async function deleteSubscription(subscriptionId: string) {
     .delete(subscriptionsTable)
     .where(eq(subscriptionsTable.id, subscriptionId));
 
-  revalidatePath('/dashboard/subscriptions');
+  revalidateTag(`subscription-${subscriptionId}`);
+  revalidateTag('subscriptions-with-users');
+  revalidateTag('users-with-subscriptions');
 }
 
-interface UpdateUserFormState {
+export interface UpdateUserFormState {
   success: boolean;
   message?: string;
   errors: {
@@ -114,17 +116,15 @@ interface UpdateUserFormState {
   };
 }
 
-export type UpdateUserFormStateOrNull = UpdateUserFormState | null;
-
 const updateUserFormSchema = z.object({
   role: z.enum(['user', 'admin']),
 });
 
 export async function updateUser(
   userId: string,
-  prevState: UpdateUserFormStateOrNull,
+  prevState: UpdateUserFormState,
   formData: FormData
-) {
+): Promise<UpdateUserFormState> {
   const rawFormData = {
     role: formData.get('role') as string,
   };
@@ -143,7 +143,10 @@ export async function updateUser(
 
   await db.update(user).set({ role }).where(eq(user.id, userId));
 
-  revalidatePath(`/dashboard/users/${userId}`);
+  revalidateTag(`user-${userId}`);
+  revalidateTag(`user-subscriptions-${userId}`);
+  revalidateTag('subscriptions-with-users');
+  revalidateTag('users-with-subscriptions');
 
   return {
     success: true,

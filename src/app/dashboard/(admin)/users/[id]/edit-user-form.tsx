@@ -17,9 +17,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { User } from '@/db/schema';
-import { updateUser, UpdateUserFormStateOrNull } from '../../admin-actions';
+import { updateUser, UpdateUserFormState } from '../../admin-actions';
 
-const initialState: UpdateUserFormStateOrNull = {
+const initialState: UpdateUserFormState = {
   success: false,
   message: '',
   errors: {},

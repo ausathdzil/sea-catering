@@ -1,10 +1,10 @@
 'use server';
 
 import { and, eq } from 'drizzle-orm';
+import { revalidateTag } from 'next/cache';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
-import { revalidatePath } from 'next/cache';
 import { getUserSubscription } from './user-data';
 
 export async function pauseSubscription(
@@ -103,7 +103,7 @@ export async function pauseSubscription(
       )
     );
 
-  revalidatePath('/dashboard');
+  revalidateTag(`user-subscriptions-${userId}`);
 }
 
 export async function cancelSubscription(
@@ -137,7 +137,7 @@ export async function cancelSubscription(
       )
     );
 
-  revalidatePath('/dashboard');
+  revalidateTag(`user-subscriptions-${userId}`);
 }
 
 export async function reactivateSubscription(
@@ -189,5 +189,5 @@ export async function reactivateSubscription(
       )
     );
 
-  revalidatePath('/dashboard');
+  revalidateTag(`user-subscriptions-${userId}`);
 }

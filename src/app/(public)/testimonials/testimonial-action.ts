@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import z from 'zod/v4';
 
 import { db } from '@/db';
@@ -67,7 +67,7 @@ export async function createTestimonial(
     rating,
   });
 
-  revalidatePath('/');
+  revalidateTag('testimonials');
 
   return {
     success: true,

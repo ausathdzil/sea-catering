@@ -1,7 +1,6 @@
-import { headers } from 'next/headers';
-import { notFound, redirect } from 'next/navigation';
+import { unstable_cache as cache } from 'next/cache';
+import { notFound } from 'next/navigation';
 
-import { auth } from '@/lib/auth';
 import { getSubsriptionById } from '../../admin-data';
 import EditSubscriptionForm from './edit-subscription-form';
 
@@ -12,17 +11,20 @@ interface SubscriptionPageProps {
 }
 
 export default async function SubscriptionPage(props: SubscriptionPageProps) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session || session.user.role !== 'admin') {
-    redirect('/dashboard');
-  }
-
   const { id } = await props.params;
 
-  const subscription = await getSubsriptionById(id);
+  const getCachedSubscription = cache(
+    async () => {
+      return getSubsriptionById(id);
+    },
+    [`subscription-${id}`],
+    {
+      tags: [`subscription-${id}`],
+      revalidate: 3600,
+    }
+  );
+
+  const subscription = await getCachedSubscription();
 
   if (!subscription) {
     notFound();

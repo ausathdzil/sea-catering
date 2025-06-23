@@ -1,5 +1,6 @@
 import { CheckIcon, HandPlatterIcon, LogInIcon } from 'lucide-react';
 
+import { unstable_cache as cache } from 'next/cache';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -125,7 +126,11 @@ export default function Home() {
 }
 
 async function TestimnialSection() {
-  const testimonials = await getTestimonials();
+  const getCachedTestimonials = cache(async () => {
+    return getTestimonials();
+  });
+
+  const testimonials = await getCachedTestimonials();
 
   return (
     <div className="hidden xl:flex flex-col items-center justify-center gap-8 py-12">

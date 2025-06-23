@@ -1,7 +1,6 @@
-import { headers } from 'next/headers';
-import { notFound, redirect } from 'next/navigation';
+import { unstable_cache as cache } from 'next/cache';
+import { notFound } from 'next/navigation';
 
-import { auth } from '@/lib/auth';
 import { getUser } from '../../admin-data';
 import { EditUserForm } from './edit-user-form';
 
@@ -12,17 +11,20 @@ interface UserPageProps {
 }
 
 export default async function UserPage(props: UserPageProps) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session || session.user.role !== 'admin') {
-    redirect('/dashboard');
-  }
-
   const { id } = await props.params;
 
-  const user = await getUser(id);
+  const getCachedUser = cache(
+    async () => {
+      return getUser(id);
+    },
+    [`user-${id}`],
+    {
+      tags: [`user-${id}`],
+      revalidate: 3600,
+    }
+  );
+
+  const user = await getCachedUser();
 
   if (!user) {
     notFound();

@@ -2,6 +2,7 @@ import { ArrowLeftIcon, Calculator, InfoIcon } from 'lucide-react';
 
 import { headers } from 'next/headers';
 import Link from 'next/link';
+import { unstable_cache as cache } from 'next/cache';
 import { Suspense } from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
@@ -85,7 +86,11 @@ async function SubscriptionSection() {
     headers: await headers(),
   });
 
-  const mealPlans = await getMealPlans();
+  const getCachedMealPlans = cache(async () => {
+    return getMealPlans();
+  });
+  
+  const mealPlans = await getCachedMealPlans();
 
   return session ? (
     <SubscriptionForm name={session.user.name} mealPlans={mealPlans} />

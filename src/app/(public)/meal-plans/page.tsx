@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
+import { unstable_cache as cache } from 'next/cache';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
@@ -46,7 +47,11 @@ export default function MealPlansPage() {
 }
 
 async function MealPlanCard() {
-  const plans = await getMealPlans();
+  const getCachedMealPlans = cache(async () => {
+    return getMealPlans();
+  });
+
+  const plans = await getCachedMealPlans();
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

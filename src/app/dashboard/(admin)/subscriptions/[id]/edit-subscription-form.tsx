@@ -12,12 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Subscription } from '@/db/schema';
-import {
-  editSubscription,
-  EditSubscriptionStateOrNull,
-} from '../../admin-actions';
+import { editSubscription, EditSubscriptionState } from '../../admin-actions';
 
-const initialState: EditSubscriptionStateOrNull = {
+const initialState: EditSubscriptionState = {
   success: false,
   message: '',
   errors: {},

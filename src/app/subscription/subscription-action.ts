@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import { z } from 'zod/v4';
 
 import { db } from '@/db';
@@ -131,7 +131,9 @@ export async function createSubscription(
     mealPlan,
   });
 
-  revalidatePath('/');
+  revalidateTag('subscriptions-with-users');
+  revalidateTag('users-with-subscriptions');
+  revalidateTag(`user-subscriptions-${userId}`);
 
   return {
     success: true,
