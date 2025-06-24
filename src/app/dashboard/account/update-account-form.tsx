@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader, SaveIcon } from 'lucide-react';
+import { LoaderIcon, SaveIcon } from 'lucide-react';
 
 import { redirect } from 'next/navigation';
 import { useActionState, useEffect } from 'react';
@@ -10,14 +10,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useSession } from '@/lib/auth-client';
-import { editAccount, EditAccountFormStateOrNull } from './edit-account-action';
+import {
+  updateAccount,
+  UpdateAccountFormStateOrNull,
+} from './update-account-action';
 
-export function EditAccountForm() {
+export function UpdateAccountForm() {
   const { data: session } = useSession();
 
   if (!session) redirect('/sign-in');
 
-  const initialState: EditAccountFormStateOrNull = {
+  const initialState: UpdateAccountFormStateOrNull = {
     success: false,
     message: '',
     errors: {},
@@ -26,17 +29,26 @@ export function EditAccountForm() {
     },
   };
 
-  const editAccountWithId = editAccount.bind(null, session.user.id);
+  const updateAccountWithId = updateAccount.bind(null, session.user.id);
   const [state, formAction, isPending] = useActionState(
-    editAccountWithId,
+    updateAccountWithId,
     initialState
   );
 
   useEffect(() => {
     if (state && state.message) {
       if (state.success) {
-        toast.success(state.message);
-        window.location.reload();
+        toast.success(state.message, {
+          classNames: {
+            actionButton: '!bg-primary !text-primary-foreground',
+          },
+          action: {
+            label: 'Reload',
+            onClick: () => {
+              window.location.reload();
+            },
+          },
+        });
       } else {
         toast.error(state.message);
       }
@@ -63,7 +75,7 @@ export function EditAccountForm() {
 
       <div className="flex justify-end">
         <Button type="submit" disabled={isPending}>
-          {isPending ? <Loader className="animate-spin" /> : <SaveIcon />}
+          {isPending ? <LoaderIcon className="animate-spin" /> : <SaveIcon />}
           Save
         </Button>
       </div>

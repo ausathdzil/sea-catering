@@ -172,13 +172,20 @@ function DeleteSubscriptionButton({
             onClick={async () => {
               setIsLoading(true);
               const result = await deleteSubscription(subscriptionId);
-              if (result) {
-                toast.error(result.message);
+              if (result && result.success) {
+                toast.success(result.message);
+              } else {
+                toast.error('Failed to delete subscription');
               }
               setIsLoading(false);
             }}
           >
-            {isLoading ? <LoaderIcon className="animate-spin" /> : 'Delete'}
+            {isLoading ? (
+              <LoaderIcon className="animate-spin" />
+            ) : (
+              <TrashIcon />
+            )}
+            Delete
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

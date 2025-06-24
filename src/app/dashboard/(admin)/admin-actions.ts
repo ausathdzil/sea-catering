@@ -8,7 +8,7 @@ import { db } from '@/db';
 import { subscriptionsTable, user } from '@/db/schema';
 import { verifySession } from '@/lib/dal';
 
-export interface EditSubscriptionState {
+interface UpdateSubscriptionState {
   success: boolean;
   message?: string;
   errors: {
@@ -16,30 +16,25 @@ export interface EditSubscriptionState {
   };
 }
 
-const editSubscriptionSchema = z.object({
+export type UpdateSubscriptionStateOrNull = UpdateSubscriptionState | null;
+
+const updateSubscriptionSchema = z.object({
   status: z.enum(['active', 'canceled']),
 });
 
-export async function editSubscription(
+export async function updateSubscription(
   subscriptionId: string,
-  prevState: EditSubscriptionState,
+  prevState: UpdateSubscriptionStateOrNull,
   formData: FormData
-): Promise<EditSubscriptionState> {
+): Promise<UpdateSubscriptionStateOrNull> {
   const session = await verifySession();
-
-  if (session.role !== 'admin') {
-    return {
-      success: false,
-      message: 'You are not authorized to edit this subscription',
-      errors: {},
-    };
-  }
+  if (session.role !== 'admin') return null;
 
   const rawFormData = {
     status: formData.get('status') as string,
   };
 
-  const validatedFields = editSubscriptionSchema.safeParse(rawFormData);
+  const validatedFields = updateSubscriptionSchema.safeParse(rawFormData);
 
   if (!validatedFields.success) {
     return {
@@ -112,13 +107,7 @@ export async function editSubscription(
 
 export async function deleteSubscription(subscriptionId: string) {
   const session = await verifySession();
-
-  if (session.role !== 'admin') {
-    return {
-      success: false,
-      message: 'You are not authorized to delete this subscription',
-    };
-  }
+  if (session.role !== 'admin') return null;
 
   await db
     .delete(subscriptionsTable)
@@ -135,7 +124,7 @@ export async function deleteSubscription(subscriptionId: string) {
   };
 }
 
-export interface UpdateUserFormState {
+interface UpdateUserFormState {
   success: boolean;
   message?: string;
   errors: {
@@ -143,24 +132,19 @@ export interface UpdateUserFormState {
   };
 }
 
+export type UpdateUserFormStateOrNull = UpdateUserFormState | null;
+
 const updateUserFormSchema = z.object({
   role: z.enum(['user', 'admin']),
 });
 
 export async function updateUser(
   userId: string,
-  prevState: UpdateUserFormState,
+  prevState: UpdateUserFormStateOrNull,
   formData: FormData
-): Promise<UpdateUserFormState> {
+): Promise<UpdateUserFormStateOrNull> {
   const session = await verifySession();
-
-  if (session.role !== 'admin') {
-    return {
-      success: false,
-      message: 'You are not authorized to update this user',
-      errors: {},
-    };
-  }
+  if (session.role !== 'admin') return null;
 
   const rawFormData = {
     role: formData.get('role') as string,

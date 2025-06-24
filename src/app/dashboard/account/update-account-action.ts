@@ -7,7 +7,7 @@ import { verifySession } from '@/lib/dal';
 import { APIError } from 'better-auth/api';
 import { headers } from 'next/headers';
 
-interface EditAccountFormState {
+interface UpdateAccountFormState {
   success: boolean;
   message?: string;
   errors: {
@@ -18,20 +18,20 @@ interface EditAccountFormState {
   };
 }
 
-export type EditAccountFormStateOrNull = EditAccountFormState | null;
+export type UpdateAccountFormStateOrNull = UpdateAccountFormState | null;
 
-const editAccountSchema = z.object({
+const updateAccountSchema = z.object({
   name: z
     .string()
     .min(1, { message: 'Name is required' })
     .max(50, { message: 'Name must be less than 50 characters' }),
 });
 
-export async function editAccount(
+export async function updateAccount(
   userId: string,
-  prevState: EditAccountFormStateOrNull,
+  prevState: UpdateAccountFormStateOrNull,
   formData: FormData
-): Promise<EditAccountFormStateOrNull> {
+): Promise<UpdateAccountFormStateOrNull> {
   const session = await verifySession();
   if (!session) return null;
 
@@ -39,7 +39,7 @@ export async function editAccount(
     name: formData.get('name') as string,
   };
 
-  const validatedFields = editAccountSchema.safeParse(rawFormData);
+  const validatedFields = updateAccountSchema.safeParse(rawFormData);
 
   if (!validatedFields.success) {
     return {

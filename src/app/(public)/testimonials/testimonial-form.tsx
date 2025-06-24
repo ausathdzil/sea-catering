@@ -1,6 +1,6 @@
 'use client';
 
-import { LoaderIcon, StarIcon } from 'lucide-react';
+import { LoaderIcon, MessageCircleHeartIcon, StarIcon } from 'lucide-react';
 
 import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -89,8 +89,13 @@ export function TestimonialForm() {
       </div>
 
       <div className="flex justify-end">
-        <Button className="min-w-20" type="submit" disabled={isPending}>
-          {isPending ? <LoaderIcon className="animate-spin" /> : 'Submit'}
+        <Button type="submit" disabled={isPending}>
+          {isPending ? (
+            <LoaderIcon className="animate-spin" />
+          ) : (
+            <MessageCircleHeartIcon />
+          )}
+          Submit
         </Button>
       </div>
     </form>

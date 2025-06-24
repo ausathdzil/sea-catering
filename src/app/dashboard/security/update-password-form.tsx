@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader, LockIcon } from 'lucide-react';
+import { LoaderIcon, LockIcon } from 'lucide-react';
 
 import { redirect } from 'next/navigation';
 import { useActionState, useEffect } from 'react';
@@ -91,7 +91,7 @@ export function UpdatePasswordForm() {
 
       <div className="flex justify-end">
         <Button type="submit" disabled={isPending}>
-          {isPending ? <Loader className="animate-spin" /> : <LockIcon />}
+          {isPending ? <LoaderIcon className="animate-spin" /> : <LockIcon />}
           Update Password
         </Button>
       </div>

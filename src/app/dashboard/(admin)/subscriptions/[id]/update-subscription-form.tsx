@@ -1,6 +1,11 @@
 'use client';
 
-import { CircleCheckIcon, CircleXIcon, LoaderIcon } from 'lucide-react';
+import {
+  CircleCheckIcon,
+  CircleXIcon,
+  LoaderIcon,
+  SaveIcon,
+} from 'lucide-react';
 
 import Link from 'next/link';
 import { useActionState, useEffect } from 'react';
@@ -12,22 +17,28 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Subscription } from '@/db/schema';
-import { editSubscription, EditSubscriptionState } from '../../admin-actions';
+import {
+  updateSubscription,
+  UpdateSubscriptionStateOrNull,
+} from '../../admin-actions';
 
-const initialState: EditSubscriptionState = {
+const initialState: UpdateSubscriptionStateOrNull = {
   success: false,
   message: '',
   errors: {},
 };
 
-export default function EditSubscriptionForm({
+export function UpdateSubscriptionForm({
   subscription,
 }: {
   subscription: Subscription;
 }) {
-  const editSubscriptionWithId = editSubscription.bind(null, subscription.id);
+  const updateSubscriptionWithId = updateSubscription.bind(
+    null,
+    subscription.id
+  );
   const [state, formAction, isPending] = useActionState(
-    editSubscriptionWithId,
+    updateSubscriptionWithId,
     initialState
   );
 
@@ -111,8 +122,9 @@ export default function EditSubscriptionForm({
         <Button variant="secondary" type="button" disabled={isPending} asChild>
           <Link href={`/dashboard/subscriptions`}>Cancel</Link>
         </Button>
-        <Button className="min-w-" type="submit" disabled={isPending}>
-          {isPending ? <LoaderIcon className="animate-spin" /> : 'Save'}
+        <Button type="submit" disabled={isPending}>
+          {isPending ? <LoaderIcon className="animate-spin" /> : <SaveIcon />}
+          Save
         </Button>
       </div>
     </form>

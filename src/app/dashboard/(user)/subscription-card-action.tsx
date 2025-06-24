@@ -5,7 +5,7 @@ import {
   HistoryIcon,
   LoaderIcon,
   PauseIcon,
-  PlayIcon,
+  PlayIcon
 } from 'lucide-react';
 
 import { useState } from 'react';
@@ -236,7 +236,12 @@ function CancelSubscription({
             variant="destructive"
             onClick={handleCancelSubscription}
           >
-            {isLoading ? <LoaderIcon className="animate-spin" /> : 'Continue'}
+            {isLoading ? (
+              <LoaderIcon className="animate-spin" />
+            ) : (
+              <BanknoteXIcon />
+            )}
+            Continue
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

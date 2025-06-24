@@ -1,6 +1,6 @@
 'use client';
 
-import { LoaderIcon } from 'lucide-react';
+import { LoaderIcon, SaveIcon } from 'lucide-react';
 
 import Link from 'next/link';
 import { useActionState, useEffect, useState } from 'react';
@@ -17,15 +17,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { User } from '@/db/schema';
-import { updateUser, UpdateUserFormState } from '../../admin-actions';
+import { updateUser, UpdateUserFormStateOrNull } from '../../admin-actions';
 
-const initialState: UpdateUserFormState = {
+const initialState: UpdateUserFormStateOrNull = {
   success: false,
   message: '',
   errors: {},
 };
 
-export function EditUserForm({ user }: { user: User }) {
+export function UpdateUserForm({ user }: { user: User }) {
   const updateUserWithId = updateUser.bind(null, user.id);
   const [state, formAction, isPending] = useActionState(
     updateUserWithId,
@@ -74,8 +74,9 @@ export function EditUserForm({ user }: { user: User }) {
         <Button variant="secondary" type="button" disabled={isPending} asChild>
           <Link href={`/dashboard/users`}>Cancel</Link>
         </Button>
-        <Button className="min-w-20" type="submit" disabled={isPending}>
-          {isPending ? <LoaderIcon className="animate-spin" /> : 'Save'}
+        <Button type="submit" disabled={isPending}>
+          {isPending ? <LoaderIcon className="animate-spin" /> : <SaveIcon />}
+          Save
         </Button>
       </div>
     </form>

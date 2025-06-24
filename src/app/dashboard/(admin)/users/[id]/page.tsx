@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { getCachedUserById } from '../../admin-data';
-import { EditUserForm } from './edit-user-form';
+import { UpdateUserForm } from './update-user-form';
 
 interface UserPageProps {
   params: Promise<{
@@ -20,7 +20,7 @@ export default async function UserPage(props: UserPageProps) {
 
   return (
     <div className="w-full flex justify-center">
-      <EditUserForm user={user} />
+      <UpdateUserForm user={user} />
     </div>
   );
 }

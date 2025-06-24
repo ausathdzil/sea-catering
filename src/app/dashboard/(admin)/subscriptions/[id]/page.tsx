@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { getCachedSubsriptionById } from '../../admin-data';
-import EditSubscriptionForm from './edit-subscription-form';
+import { UpdateSubscriptionForm } from './update-subscription-form';
 
 interface SubscriptionPageProps {
   params: Promise<{
@@ -20,7 +20,7 @@ export default async function SubscriptionPage(props: SubscriptionPageProps) {
 
   return (
     <div className="w-full flex justify-center">
-      <EditSubscriptionForm subscription={subscription} />
+      <UpdateSubscriptionForm subscription={subscription} />
     </div>
   );
 }
