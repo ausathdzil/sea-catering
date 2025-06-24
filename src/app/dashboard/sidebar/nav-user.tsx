@@ -77,6 +77,7 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
+              className="cursor-pointer"
               disabled={isPending}
               onClick={async () =>
                 await signOut({

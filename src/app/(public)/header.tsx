@@ -127,6 +127,13 @@ function MobileNav() {
             <DrawerTitle className="sr-only">Menu</DrawerTitle>
           </DrawerHeader>
           <nav className="p-4 flex flex-col gap-4">
+            <Link
+              href="/"
+              onClick={handleNavigation}
+              className={cn(pathname === '/' && 'text-primary', 'font-medium')}
+            >
+              Home
+            </Link>
             {navItems.map((item) => (
               <Link
                 key={item.href}

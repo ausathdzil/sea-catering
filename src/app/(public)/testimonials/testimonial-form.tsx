@@ -43,7 +43,7 @@ export function TestimonialForm() {
   }, [state]);
 
   return (
-    <form className="w-full max-w-2xl space-y-6" action={formAction}>
+    <form className="w-full max-w-2xl space-y-8" action={formAction}>
       <div className="grid gap-2">
         <Label htmlFor="name">Name</Label>
         <Input
@@ -64,6 +64,7 @@ export function TestimonialForm() {
       <div className="grid gap-2">
         <Label htmlFor="message">Message</Label>
         <Textarea
+          className="resize-none"
           id="message"
           name="message"
           defaultValue={state.fields.message}
@@ -79,7 +80,7 @@ export function TestimonialForm() {
         )}
       </div>
 
-      <div className="grid gap-2">
+      <div className="flex flex-col items-center gap-2">
         <RatingField state={state} />
         {state.errors?.rating && (
           <span className="text-destructive text-sm">
@@ -88,8 +89,8 @@ export function TestimonialForm() {
         )}
       </div>
 
-      <div className="flex justify-end">
-        <Button type="submit" disabled={isPending}>
+      <div className="flex justify-center">
+        <Button type="submit" size="lg" disabled={isPending}>
           {isPending ? (
             <LoaderIcon className="animate-spin" />
           ) : (
@@ -108,7 +109,7 @@ function RatingField({ state }: { state: CreateTestimonialState }) {
 
   return (
     <fieldset className="space-y-2">
-      <legend className="text-foreground text-sm leading-none font-medium">
+      <legend className="text-foreground text-sm leading-none font-medium text-center">
         Rate your experience
       </legend>
       <RadioGroup
@@ -121,7 +122,7 @@ function RatingField({ state }: { state: CreateTestimonialState }) {
         {['1', '2', '3', '4', '5'].map((value) => (
           <label
             key={value}
-            className="group has-focus-visible:border-ring has-focus-visible:ring-ring/50 relative rounded p-0.5 outline-none has-focus-visible:ring-[3px]"
+            className="group has-focus-visible:border-ring has-focus-visible:ring-ring/50 relative rounded p-0.5 outline-none has-focus-visible:ring-[3px] cursor-pointer"
             onMouseEnter={() => setHoverRating(value)}
             onMouseLeave={() => setHoverRating('')}
           >
@@ -131,7 +132,7 @@ function RatingField({ state }: { state: CreateTestimonialState }) {
               className="sr-only"
             />
             <StarIcon
-              size={24}
+              size={32}
               className={`transition-all ${
                 (hoverRating || currentRating) >= value
                   ? 'stroke-amber-500 fill-amber-500'

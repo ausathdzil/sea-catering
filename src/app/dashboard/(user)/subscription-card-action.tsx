@@ -5,7 +5,7 @@ import {
   HistoryIcon,
   LoaderIcon,
   PauseIcon,
-  PlayIcon
+  PlayIcon,
 } from 'lucide-react';
 
 import { useState } from 'react';
@@ -152,14 +152,13 @@ function PauseSubscription({
         <TooltipContent>Pause subscription</TooltipContent>
       </Tooltip>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle>Pause Subscription</DrawerTitle>
-            <DrawerDescription className="sr-only md:not-sr-only">
-              Pause your subscription to stop receiving meals. You can resume
-              your subscription at any time.
-            </DrawerDescription>
-          </DrawerHeader>
+        <DrawerHeader>
+          <DrawerTitle>Pause Subscription</DrawerTitle>
+          <DrawerDescription className="sr-only md:not-sr-only">
+            You can resume your subscription at any time.
+          </DrawerDescription>
+        </DrawerHeader>
+        <div className="w-full max-w-sm mx-auto">
           <Calendar
             mode="single"
             selected={date}
@@ -167,7 +166,7 @@ function PauseSubscription({
               setDate(date);
             }}
             required
-            className="mx-auto [--cell-size:clamp(0px,calc(100vw/7.5),40px)]"
+            className="mx-auto [--cell-size:clamp(0px,calc(100vw/7.5),48px)]"
             disabled={(date) => date < new Date() || date >= dueDate}
           />
           <DrawerFooter>

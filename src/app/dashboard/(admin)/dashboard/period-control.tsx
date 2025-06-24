@@ -66,35 +66,36 @@ export function PeriodControl() {
           </Button>
         </DrawerTrigger>
         <DrawerContent className="w-auto overflow-hidden p-0">
-          <DrawerHeader>
-            <DrawerTitle>Period</DrawerTitle>
-            <DrawerDescription>
-              Range at least 30 days to see the data.
-            </DrawerDescription>
-          </DrawerHeader>
-          <Calendar
-            mode="range"
-            selected={range}
-            min={29}
-            onSelect={(range) => {
-              setRange(range);
-              handleSearchParams();
-            }}
-            className="mx-auto [--cell-size:clamp(0px,calc(100vw/7.5),48px)]"
-            disabled={(date) => date > today}
-          />
-          <DrawerFooter>
-            <Button
-              className="w-full max-w-xs mx-auto"
-              variant="outline"
-              onClick={() => {
-                setRange(undefined);
+          <div className="w-full max-w-sm mx-auto">
+            <DrawerHeader>
+              <DrawerTitle>Period</DrawerTitle>
+              <DrawerDescription>
+                Range at least 30 days to see the data.
+              </DrawerDescription>
+            </DrawerHeader>
+            <Calendar
+              mode="range"
+              selected={range}
+              min={29}
+              onSelect={(range) => {
+                setRange(range);
                 handleSearchParams();
               }}
-            >
-              Clear
-            </Button>
-          </DrawerFooter>
+              className="mx-auto [--cell-size:clamp(0px,calc(100vw/7.5),48px)]"
+              disabled={(date) => date > today}
+            />
+            <DrawerFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setRange(undefined);
+                  handleSearchParams();
+                }}
+              >
+                Clear
+              </Button>
+            </DrawerFooter>
+          </div>
         </DrawerContent>
       </Drawer>
     </div>

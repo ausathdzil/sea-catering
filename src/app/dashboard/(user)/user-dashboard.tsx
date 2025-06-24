@@ -19,6 +19,8 @@ import { Separator } from '@/components/ui/separator';
 import { Subscription } from '@/db/schema';
 import { SubscriptionCardAction } from './subscription-card-action';
 import { getCachedUserSubscriptions } from './user-data';
+import Link from 'next/link';
+import { buttonVariants } from '@/components/ui/button';
 
 export async function UserDashboard({ userId }: { userId: string }) {
   const subscriptions = await getCachedUserSubscriptions(userId);
@@ -39,6 +41,12 @@ export async function UserDashboard({ userId }: { userId: string }) {
           <p className="text-muted-foreground">
             You don&apos;t have any subscriptions yet.
           </p>
+          <Link
+            className={buttonVariants({ variant: 'secondary', size: 'lg' })}
+            href="/subscription"
+          >
+            Subscribe
+          </Link>
         </div>
       )}
     </>
