@@ -42,7 +42,7 @@ const updatePasswordSchema = z
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: 'Passwords do not match',
-    path: ['confirmPassword'],
+    path: ['confirm-password'],
   });
 
 export async function updatePassword(
