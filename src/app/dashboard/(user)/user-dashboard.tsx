@@ -6,8 +6,6 @@ import {
   UtensilsIcon,
 } from 'lucide-react';
 
-import { unstable_cache as cache } from 'next/cache';
-
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
@@ -20,21 +18,10 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Subscription } from '@/db/schema';
 import { SubscriptionCardAction } from './subscription-card-action';
-import { getUserSubscriptions } from './user-data';
+import { getCachedUserSubscriptions } from './user-data';
 
 export async function UserDashboard({ userId }: { userId: string }) {
-  const getCachedSubscriptions = cache(
-    async () => {
-      return getUserSubscriptions(userId);
-    },
-    [`user-subscriptions-${userId}`],
-    {
-      tags: [`user-subscriptions-${userId}`],
-      revalidate: 3600,
-    }
-  );
-
-  const subscriptions = await getCachedSubscriptions();
+  const subscriptions = await getCachedUserSubscriptions(userId);
 
   return (
     <>

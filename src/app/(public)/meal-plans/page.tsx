@@ -1,4 +1,3 @@
-import { unstable_cache as cache } from 'next/cache';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -25,7 +24,7 @@ import {
 } from '@/components/ui/drawer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { getMealPlans } from '../public-data';
+import { getCachedMealPlans } from '../public-data';
 
 export default function MealPlansPage() {
   return (
@@ -47,10 +46,6 @@ export default function MealPlansPage() {
 }
 
 async function MealPlanCard() {
-  const getCachedMealPlans = cache(async () => {
-    return getMealPlans();
-  });
-
   const plans = await getCachedMealPlans();
 
   return (

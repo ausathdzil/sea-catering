@@ -7,10 +7,10 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
-  getMonthlyRecurringRevenue,
-  getNewSubscriptions,
-  getReactivations,
-  getSubscriptions,
+  getCachedMonthlyRecurringRevenue,
+  getCachedNewSubscriptions,
+  getCachedReactivations,
+  getCachedSubscriptions,
 } from '../admin-data';
 import { PeriodControl } from './period-control';
 import { SubscriptionsChart } from './subscriptions-chart';
@@ -48,7 +48,7 @@ async function NewSubscriptionsCard({
   startDate?: Date;
   endDate?: Date;
 }) {
-  const newSubscriptions = await getNewSubscriptions(startDate, endDate);
+  const newSubscriptions = await getCachedNewSubscriptions(startDate, endDate);
 
   return (
     <Card>
@@ -75,7 +75,7 @@ async function MonthlyRevenueCard({
   startDate?: Date;
   endDate?: Date;
 }) {
-  const monthlyRecurringRevenue = await getMonthlyRecurringRevenue(
+  const monthlyRecurringRevenue = await getCachedMonthlyRecurringRevenue(
     startDate,
     endDate
   );
@@ -109,7 +109,7 @@ async function ReactivationsCard({
   startDate?: Date;
   endDate?: Date;
 }) {
-  const reactivations = await getReactivations(startDate, endDate);
+  const reactivations = await getCachedReactivations(startDate, endDate);
 
   return (
     <Card>
@@ -130,7 +130,7 @@ async function ReactivationsCard({
 }
 
 async function SubscriptionsCard() {
-  const subscriptions = await getSubscriptions();
+  const subscriptions = await getCachedSubscriptions();
 
   return <SubscriptionsChart subscriptions={subscriptions} />;
 }

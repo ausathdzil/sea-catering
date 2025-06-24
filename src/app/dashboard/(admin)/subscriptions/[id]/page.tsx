@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { getSubsriptionById } from '../../admin-data';
+import { getCachedSubsriptionById } from '../../admin-data';
 import EditSubscriptionForm from './edit-subscription-form';
 
 interface SubscriptionPageProps {
@@ -12,7 +12,7 @@ interface SubscriptionPageProps {
 export default async function SubscriptionPage(props: SubscriptionPageProps) {
   const { id } = await props.params;
 
-  const subscription = await getSubsriptionById(id);
+  const subscription = await getCachedSubsriptionById(id);
 
   if (!subscription) {
     notFound();

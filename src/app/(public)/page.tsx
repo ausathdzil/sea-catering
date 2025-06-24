@@ -1,6 +1,5 @@
 import { CheckIcon, HandPlatterIcon, LogInIcon } from 'lucide-react';
 
-import { unstable_cache as cache } from 'next/cache';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -8,7 +7,7 @@ import { Suspense } from 'react';
 import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { getTestimonials } from './public-data';
+import { getCachedTestimonials } from './public-data';
 import { TestimonialCarousel } from './testimonials/testimonial-carousel';
 import { TestimonialForm } from './testimonials/testimonial-form';
 
@@ -126,14 +125,6 @@ export default function Home() {
 }
 
 async function TestimnialSection() {
-  const getCachedTestimonials = cache(
-    async () => {
-      return getTestimonials();
-    },
-    ['testimonials'],
-    { tags: ['testimonials'], revalidate: 3600 }
-  );
-
   const testimonials = await getCachedTestimonials();
 
   return (

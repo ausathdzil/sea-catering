@@ -7,7 +7,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { verifySession } from '@/lib/dal';
 import { cn } from '@/lib/utils';
-import { getMealPlans } from '../(public)/public-data';
+import { getCachedMealPlans } from '../(public)/public-data';
 import { SubscriptionForm } from './subscription-form';
 
 export default function SubscriptionPage() {
@@ -82,7 +82,7 @@ export default function SubscriptionPage() {
 async function SubscriptionSection() {
   const session = await verifySession();
 
-  const mealPlans = await getMealPlans();
+  const mealPlans = await getCachedMealPlans();
 
   return session.isAuth ? (
     <SubscriptionForm mealPlans={mealPlans} />

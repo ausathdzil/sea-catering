@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 import { db } from '@/db';
 import { subscriptionsTable } from '@/db/schema';
-import { getUserSubscription } from './user-data';
+import { getCachedUserSubscription } from './user-data';
 
 export async function pauseSubscription(
   userId: string,
@@ -13,7 +13,7 @@ export async function pauseSubscription(
   pausedUntil: Date | null,
   subscriptionId: string
 ) {
-  const subscription = await getUserSubscription(subscriptionId, userId);
+  const subscription = await getCachedUserSubscription(subscriptionId, userId);
   if (!subscription) return null;
 
   const mealPlan = subscription.mealPlan;
@@ -113,7 +113,7 @@ export async function cancelSubscription(
   subscriptionId: string,
   userId: string
 ) {
-  const subscription = await getUserSubscription(subscriptionId, userId);
+  const subscription = await getCachedUserSubscription(subscriptionId, userId);
   if (!subscription) return null;
 
   const mealPlan = subscription.mealPlan;
@@ -150,7 +150,7 @@ export async function reactivateSubscription(
   subscriptionId: string,
   userId: string
 ) {
-  const subscription = await getUserSubscription(subscriptionId, userId);
+  const subscription = await getCachedUserSubscription(subscriptionId, userId);
   if (!subscription) return null;
 
   const mealPlan = subscription.mealPlan;

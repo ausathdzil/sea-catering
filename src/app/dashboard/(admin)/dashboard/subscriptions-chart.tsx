@@ -16,7 +16,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { getSubscriptions } from '../admin-data';
+import { getCachedSubscriptions } from '../admin-data';
 
 const chartConfig = {
   count: {
@@ -35,7 +35,7 @@ const chartConfig = {
 export function SubscriptionsChart({
   subscriptions,
 }: {
-  subscriptions: Awaited<ReturnType<typeof getSubscriptions>>;
+  subscriptions: Awaited<ReturnType<typeof getCachedSubscriptions>>;
 }) {
   const isMobile = useIsMobile();
 

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { getUser } from '../../admin-data';
+import { getCachedUserById } from '../../admin-data';
 import { EditUserForm } from './edit-user-form';
 
 interface UserPageProps {
@@ -12,7 +12,7 @@ interface UserPageProps {
 export default async function UserPage(props: UserPageProps) {
   const { id } = await props.params;
 
-  const user = await getUser(id);
+  const user = await getCachedUserById(id);
 
   if (!user) {
     notFound();
