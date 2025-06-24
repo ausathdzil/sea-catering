@@ -115,9 +115,9 @@ export async function updatePassword(
     message: 'Password updated successfully',
     errors: {},
     fields: {
-      currentPassword: rawFormData.currentPassword,
-      newPassword: rawFormData.newPassword,
-      confirmPassword: rawFormData.confirmPassword,
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
     },
   };
 }
