@@ -33,7 +33,7 @@ const userNavItems = [
   },
   {
     title: 'Account',
-    url: '#',
+    url: '/dashboard/account',
     icon: BookUserIcon,
   },
   {
@@ -61,7 +61,7 @@ const adminNavItems = [
   },
   {
     title: 'Account',
-    url: '#',
+    url: '/dashboard/account',
     icon: BookUserIcon,
   },
   {
