@@ -38,7 +38,7 @@ const userNavItems = [
   },
   {
     title: 'Security',
-    url: '#',
+    url: '/dashboard/security',
     icon: LockIcon,
   },
 ];
@@ -66,7 +66,7 @@ const adminNavItems = [
   },
   {
     title: 'Security',
-    url: '#',
+    url: '/dashboard/security',
     icon: LockIcon,
   },
 ];
