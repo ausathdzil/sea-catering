@@ -91,7 +91,7 @@ export default function Home() {
           height={400}
           priority
           quality={100}
-          className="hidden 2xl:block"
+          className="hidden xl:block"
         />
       </div>
 

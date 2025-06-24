@@ -31,7 +31,7 @@ export default function RootLayout({
         className={cn(
           inter.variable,
           dmSans.variable,
-          'font-sans dark:antialiased tracking-[-0.015em]'
+          'font-sans tracking-[-0.015em]'
         )}
       >
         {children}

@@ -10,6 +10,7 @@ import {
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { unstable_ViewTransition as ViewTransition } from 'react';
 
 import {
   Sidebar,
@@ -86,10 +87,12 @@ export function DashboardSidebar() {
               asChild
             >
               <Link href="/">
-                <Image src="/logo.png" alt="logo" width={30} height={30} />
-                <span className="text-lg font-semibold font-dm-sans">
-                  SEA Catering
-                </span>
+                <ViewTransition name="mark">
+                  <Image src="/logo.png" alt="logo" width={30} height={30} />
+                  <span className="text-lg font-semibold font-dm-sans">
+                    SEA Catering
+                  </span>
+                </ViewTransition>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

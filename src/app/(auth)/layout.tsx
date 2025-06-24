@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { unstable_ViewTransition as ViewTransition } from 'react';
 
 export default function AuthLayout({
   children,
@@ -14,12 +15,16 @@ export default function AuthLayout({
             className="flex items-center gap-1 font-medium font-dm-sans"
             href="/"
           >
-            <Image src="/logo.png" alt="logo" width={28} height={28} />
-            SEA Catering
+            <ViewTransition name="mark">
+              <Image src="/logo.png" alt="logo" width={28} height={28} />
+              <span className="hidden md:block">SEA Catering</span>
+            </ViewTransition>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">{children}</div>
+          <div className="w-full max-w-xs">
+            <ViewTransition name="auth">{children}</ViewTransition>
+          </div>
         </div>
       </div>
       <div className="p-4 hidden lg:block">

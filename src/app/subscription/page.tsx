@@ -1,11 +1,10 @@
 import { ArrowLeftIcon, Calculator, InfoIcon } from 'lucide-react';
 
 import Link from 'next/link';
-import { Suspense } from 'react';
+import { Suspense, unstable_ViewTransition as ViewTransition } from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { verifySession } from '@/lib/dal';
 import { cn } from '@/lib/utils';
 import { getCachedMealPlans } from '../(public)/public-data';
 import { SubscriptionForm } from './subscription-form';
@@ -21,8 +20,10 @@ export default function SubscriptionPage() {
           )}
           href="/"
         >
-          <ArrowLeftIcon />
-          SEA Catering
+          <ViewTransition name="mark">
+            <ArrowLeftIcon />
+            <span>SEA Catering</span>
+          </ViewTransition>
         </Link>
       </div>
       <div className="flex flex-col gap-4 p-4 lg:p-8 xl:p-16">
@@ -80,22 +81,9 @@ export default function SubscriptionPage() {
 }
 
 async function SubscriptionSection() {
-  const session = await verifySession();
-
   const mealPlans = await getCachedMealPlans();
 
-  return session.isAuth ? (
-    <SubscriptionForm mealPlans={mealPlans} />
-  ) : (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <p className="text-sm text-muted-foreground text-center sm:text-base">
-        You need to sign in to create a subscription plan.
-      </p>
-      <Link className={buttonVariants()} href="/sign-in">
-        Sign In
-      </Link>
-    </div>
-  );
+  return <SubscriptionForm mealPlans={mealPlans} />;
 }
 
 function SubscriptionSkeleton() {

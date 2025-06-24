@@ -3,6 +3,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ArrowRightIcon, TelescopeIcon } from 'lucide-react';
 import Link from 'next/link';
+import { unstable_ViewTransition as ViewTransition } from 'react';
 import { Header } from './header';
 
 export default function PublicLayout({
@@ -13,7 +14,7 @@ export default function PublicLayout({
   return (
     <div className="flex flex-col items-center min-h-screen">
       <Header />
-      {children}
+      <ViewTransition name="public">{children}</ViewTransition>
       <footer className="w-full flex flex-col">
         <div className="flex flex-col items-center justify-center gap-4 py-8 md:py-12 bg-accent/25 text-accent-foreground">
           <TelescopeIcon className="size-12 stroke-primary" />
