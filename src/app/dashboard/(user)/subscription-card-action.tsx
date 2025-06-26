@@ -104,15 +104,17 @@ function PauseSubscription({
       date ?? null,
       subscriptionId
     );
-    toast(
-      status === 'paused'
-        ? 'Your subscription has been resumed'
-        : 'Your subscription has been paused',
-      {
+    if (status === 'paused') {
+      toast.success('Your subscription has been resumed', {
         className: '[&_svg]:size-4',
-        icon: status === 'paused' ? <PlayIcon /> : <PauseIcon />,
-      }
-    );
+        icon: <PlayIcon />,
+      });
+    } else {
+      toast.warning('Your subscription has been paused', {
+        className: '[&_svg]:size-4',
+        icon: <PauseIcon />,
+      });
+    }
     setIsLoading(false);
     setOpen(false);
   };

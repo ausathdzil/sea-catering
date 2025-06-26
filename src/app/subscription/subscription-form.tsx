@@ -51,6 +51,7 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
   const [deliveryDays, setDeliveryDays] = useState<string[]>([]);
   const [allergies, setAllergies] = useState<Tag[]>([]);
   const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+  const [selectedBasePlan, setSelectedBasePlan] = useState<string>('');
 
   const router = useRouter();
   const { data: session } = useSession();
@@ -64,6 +65,18 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
     createSubscriptionWithUserId,
     initialState
   );
+
+  const getBasePlanPrice = (planName: string) => {
+    const plan = mealPlans.find((p) => p.name === planName);
+    return plan ? plan.price : 0;
+  };
+
+  const totalPrice = (() => {
+    const basePrice = getBasePlanPrice(selectedBasePlan);
+    if (!basePrice || mealTypes.length === 0 || deliveryDays.length === 0)
+      return 0;
+    return basePrice * mealTypes.length * deliveryDays.length * 4.3;
+  })();
 
   useEffect(() => {
     if (state && state.message) {
@@ -144,7 +157,13 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
 
       <div className="grid gap-2">
         <Label htmlFor="base-plan">Base Meal Plan</Label>
-        <RadioGroup name="base-plan" required className="flex flex-col gap-3">
+        <RadioGroup
+          name="base-plan"
+          required
+          className="flex flex-col gap-3"
+          onValueChange={setSelectedBasePlan}
+          defaultValue={state?.fields.basePlan}
+        >
           {mealPlans.map((mealPlan) => (
             <Label
               key={mealPlan.id}
@@ -311,6 +330,22 @@ export function SubscriptionForm({ mealPlans }: { mealPlans: MealPlan[] }) {
         </div>
       </div>
 
+      <div className="col-span-2 flex flex-col items-center">
+        <span className="text-lg font-semibold">
+          Total Price:{' '}
+          <span className="text-primary">
+            {totalPrice > 0
+              ? new Intl.NumberFormat('id-ID', {
+                  style: 'currency',
+                  currency: 'IDR',
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                }).format(totalPrice)
+              : '-'}
+          </span>
+        </span>
+        <span className="text-xs text-muted-foreground">(per month)</span>
+      </div>
       <div className="col-span-2">
         <Button className="w-full" disabled={isPending} type="submit">
           {isPending ? <LoaderIcon className="animate-spin" /> : 'Subscribe'}

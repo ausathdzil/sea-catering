@@ -1,8 +1,7 @@
-import { getCookieCache } from 'better-auth/cookies';
+import { getSessionCookie } from 'better-auth/cookies';
 import { NextRequest, NextResponse } from 'next/server';
 
 const protectedRoutes = ['/dashboard'];
-const adminRoutes = ['/dashboard/subscriptions', '/dashboard/users'];
 const publicRoutes = ['/sign-in', '/sign-up'];
 
 export async function middleware(req: NextRequest) {
@@ -10,22 +9,17 @@ export async function middleware(req: NextRequest) {
   const isProtectedRoute = protectedRoutes.some((route) =>
     path.startsWith(route)
   );
-  const isAdminRoute = adminRoutes.some((route) => path.startsWith(route));
   const isPublicRoute = publicRoutes.includes(path);
 
-  const session = await getCookieCache(req);
+  const session = getSessionCookie(req);
 
-  if (isProtectedRoute && !session?.user.id) {
+  if (isProtectedRoute && !session) {
     return NextResponse.redirect(new URL('/sign-in', req.nextUrl));
-  }
-
-  if (isAdminRoute && session?.user.role !== 'admin') {
-    return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
   }
 
   if (
     isPublicRoute &&
-    session?.user.id &&
+    session &&
     !req.nextUrl.pathname.startsWith('/dashboard')
   ) {
     return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
