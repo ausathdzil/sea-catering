@@ -74,8 +74,6 @@ const adminNavItems = [
 export function DashboardSidebar() {
   const { data: session } = useSession();
 
-  const items = session?.user.role === 'admin' ? adminNavItems : userNavItems;
-
   return (
     <Sidebar className="gap-0">
       <SidebarHeader className="pt-4">
@@ -99,7 +97,9 @@ export function DashboardSidebar() {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={items} />
+        <NavMain
+          items={session?.user.role === 'admin' ? adminNavItems : userNavItems}
+        />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

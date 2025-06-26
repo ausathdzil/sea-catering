@@ -105,6 +105,15 @@
       opacity: 0;
       animation: appear 0.2s ease 0.2s forwards;
     }
+
+    ::view-transition-old(content) {
+      animation: hide 0.2s ease-out forwards;
+    }
+
+    ::view-transition-new(content) {
+      opacity: 0;
+      animation: appear 0.4s ease 0.4s forwards;
+    }
   }
 }
 

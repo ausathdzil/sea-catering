@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { PasswordInput } from '@/app/(auth)/password-input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { useSession } from '@/lib/auth-client';
+import { signOut } from '@/lib/auth-client';
 import {
   updatePassword,
   UpdatePasswordFormStateOrNull,
@@ -27,9 +27,6 @@ const initialState: UpdatePasswordFormStateOrNull = {
 };
 
 export function UpdatePasswordForm() {
-  const { data: session } = useSession();
-  if (!session) redirect('/sign-in');
-
   const [state, formAction, isPending] = useActionState(
     updatePassword,
     initialState
@@ -38,7 +35,19 @@ export function UpdatePasswordForm() {
   useEffect(() => {
     if (state && state.message) {
       if (state.success) {
-        toast.success(state.message);
+        toast.success(state.message, {
+          classNames: {
+            actionButton:
+              '!bg-destructive !hover:bg-destructive/90 !text-destructive-foreground',
+          },
+          action: {
+            label: 'Sign out',
+            onClick: () => {
+              signOut();
+              redirect('/sign-in');
+            },
+          },
+        });
       } else {
         toast.error(state.message);
       }

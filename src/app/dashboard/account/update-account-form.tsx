@@ -2,34 +2,35 @@
 
 import { LoaderIcon, SaveIcon } from 'lucide-react';
 
-import { redirect } from 'next/navigation';
 import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useSession } from '@/lib/auth-client';
 import {
   updateAccount,
   UpdateAccountFormStateOrNull,
 } from './update-account-action';
 
-export function UpdateAccountForm() {
-  const { data: session } = useSession();
+interface UpdateAccountFormProps {
+  name: string;
+  userId: string;
+}
 
-  if (!session) redirect('/sign-in');
+export function UpdateAccountForm(props: UpdateAccountFormProps) {
+  const { name, userId } = props;
 
   const initialState: UpdateAccountFormStateOrNull = {
     success: false,
     message: '',
     errors: {},
     fields: {
-      name: session.user.name,
+      name,
     },
   };
 
-  const updateAccountWithId = updateAccount.bind(null, session.user.id);
+  const updateAccountWithId = updateAccount.bind(null, userId);
   const [state, formAction, isPending] = useActionState(
     updateAccountWithId,
     initialState
