@@ -1,13 +1,3 @@
-'use client';
-
-import {
-  BookUserIcon,
-  ChefHatIcon,
-  GaugeIcon,
-  LockIcon,
-  UsersRoundIcon,
-} from 'lucide-react';
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { unstable_ViewTransition as ViewTransition } from 'react';
@@ -21,58 +11,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { useSession } from '@/lib/auth-client';
+import { verifySession } from '@/lib/dal';
 import { NavMain } from './nav-main';
 import { NavUser } from './nav-user';
 
-const userNavItems = [
-  {
-    title: 'Subscriptions',
-    url: '/dashboard',
-    icon: ChefHatIcon,
-  },
-  {
-    title: 'Account',
-    url: '/dashboard/account',
-    icon: BookUserIcon,
-  },
-  {
-    title: 'Security',
-    url: '/dashboard/security',
-    icon: LockIcon,
-  },
-];
-
-const adminNavItems = [
-  {
-    title: 'Dashboard',
-    url: '/dashboard',
-    icon: GaugeIcon,
-  },
-  {
-    title: 'Subscriptions',
-    url: '/dashboard/subscriptions',
-    icon: ChefHatIcon,
-  },
-  {
-    title: 'Users',
-    url: '/dashboard/users',
-    icon: UsersRoundIcon,
-  },
-  {
-    title: 'Account',
-    url: '/dashboard/account',
-    icon: BookUserIcon,
-  },
-  {
-    title: 'Security',
-    url: '/dashboard/security',
-    icon: LockIcon,
-  },
-];
-
-export function DashboardSidebar() {
-  const { data: session } = useSession();
+export async function DashboardSidebar() {
+  const session = await verifySession();
+  const role = session?.role;
 
   return (
     <Sidebar className="gap-0">
@@ -97,9 +42,7 @@ export function DashboardSidebar() {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain
-          items={session?.user.role === 'admin' ? adminNavItems : userNavItems}
-        />
+        <NavMain role={role ?? 'user'} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

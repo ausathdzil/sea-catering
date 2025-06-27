@@ -1,5 +1,6 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
+import { verifySession } from '@/lib/dal';
 import { getCachedUserById } from '../../admin-data';
 import { UpdateUserForm } from './update-user-form';
 
@@ -10,6 +11,12 @@ interface UserPageProps {
 }
 
 export default async function UserPage(props: UserPageProps) {
+  const session = await verifySession();
+
+  if (session.role !== 'admin') {
+    redirect('/dashboard');
+  }
+
   const { id } = await props.params;
 
   const user = await getCachedUserById(id);

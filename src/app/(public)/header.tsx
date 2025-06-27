@@ -62,7 +62,7 @@ export function Header() {
       )}
     >
       <div className="max-w-6xl w-full flex items-center gap-4">
-        <div className="flex items-center gap-2 md:gap-8">
+        <div className="hidden md:flex items-center gap-2 md:gap-8">
           <Link
             className="flex items-center gap-1 font-dm-sans font-semibold"
             href="/"

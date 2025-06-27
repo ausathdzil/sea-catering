@@ -4,6 +4,7 @@ import { UpdateAccountForm } from './update-account-form';
 
 export default async function AccountPage() {
   const session = await verifySession();
+
   const { name, userId } = session;
 
   return (

@@ -1,12 +1,10 @@
-import { redirect } from 'next/navigation';
-
 import { verifySession } from '@/lib/dal';
 import { DashboardHeader } from '../dashboard-header';
 import { UpdatePasswordForm } from './update-password-form';
 
 export default async function SecurityPage() {
   const session = await verifySession();
-  if (!session) redirect('/sign-in');
+  if (!session) return null;
 
   return (
     <div className="flex-1 flex flex-col">

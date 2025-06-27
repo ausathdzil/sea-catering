@@ -1,19 +1,10 @@
-import { redirect } from 'next/navigation';
-
-import { verifySession } from '@/lib/dal';
 import { DashboardHeader } from '../../dashboard-header';
 
-export default async function UsersLayout({
+export default function UsersLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
-  const session = await verifySession();
-
-  if (session.role !== 'admin') {
-    redirect('/dashboard');
-  }
-
+}>) {
   return (
     <div className="flex-1 flex flex-col">
       <DashboardHeader title="Users" />
