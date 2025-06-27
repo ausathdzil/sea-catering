@@ -82,7 +82,10 @@ export function NavMain({ role }: { role: string }) {
                     size="lg"
                     asChild
                   >
-                    <Link href={item.url}>
+                    <Link
+                      onClick={() => isMobile && setOpenMobile(false)}
+                      href={item.url}
+                    >
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
                     </Link>
